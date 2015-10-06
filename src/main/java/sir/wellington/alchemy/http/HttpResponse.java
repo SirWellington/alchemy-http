@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import java.util.Map;
 import jdk.nashorn.internal.ir.annotations.Immutable;
+import sir.wellington.alchemy.annotations.arguments.Nullable;
 
 /**
  *
@@ -30,6 +31,7 @@ public interface HttpResponse
 
     int statusCode();
 
+    @Nullable
     Map<String, String> responseHeaders();
 
     String asString();

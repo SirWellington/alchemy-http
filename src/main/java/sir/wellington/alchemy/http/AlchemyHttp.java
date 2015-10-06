@@ -13,56 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package sir.wellington.alchemy.http;
 
 import java.net.URL;
-import java.util.Map;
-import sir.wellington.alchemy.http.exceptions.HttpException;
-import sir.wellington.alchemy.http.operations.GetOperation;
-import sir.wellington.alchemy.http.operations.PostOperation;
-
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
+import sir.wellington.alchemy.http.operations.HttpOperation;
 
 /**
  *
  * @author SirWellington
  */
-public interface AlchemyHttp 
+@FluidAPIPattern
+public interface AlchemyHttp
 {
+    
     AlchemyHttp setDefaultHeader(String key, String value);
     
-    GetOperation<HttpResponse> get();
-    
-    PostOperation<HttpResponse> post();
+    HttpOperation<HttpResponse> at(URL url);
     
     static void test()
     {
+        Logger LOG = LoggerFactory.getLogger(AlchemyHttp.class);
+        
         AlchemyHttp http = null;
         URL url = null;
         
-        byte[] download = http.get()
-                .downloadBinary()
-                .at(url);
+        http.at(url)
+                .expecting(List.class)
+                .onSuccess(list -> LOG.info(list.toString()))
+                .get();
         
-        http.get()
-                .onSuccess(r -> r.asString())
-                .onFailure(null)
-                .at(url);
+        List list = http.at(url)
+                .expecting(List.class)
+                .get();
         
-        HttpException at = http.get()
-                .expecting(HttpException.class)
-                .at(url);
-        
-        Map perfect = http.get()
-                .usingHeader(null, null)
-                .usingHeader("someKey", "val")
-                .expecting(Map.class)
-                .at(url);
-        
-        http.post()
-                .body("some body")
+        String response = http.at(url)
                 .expecting(String.class)
-                .at(url);
+                .post("this is my message");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,14 @@
  */
 package sir.wellington.alchemy.http.operations;
 
-import com.google.gson.JsonElement;
+import sir.wellington.alchemy.http.exceptions.HttpException;
 
 /**
  *
  * @author SirWellington
- * @param <ResponseType>
  */
-public interface DeleteOperation<ResponseType> extends HttpOperation<DeleteOperation<ResponseType>, ResponseType>
+public interface HttpVerb<ResponseType>
 {
-    DeleteOperation<ResponseType> body(JsonElement json);
-    
-    DeleteOperation<ResponseType> body(String json);
-    
-    DeleteOperation<ResponseType> body(Object object);
-    
+
+    ResponseType execute(HttpRequest request) throws HttpException;
 }

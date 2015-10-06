@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,18 @@ package sir.wellington.alchemy.http.exceptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.http.HttpResponse;
 
 /**
  *
  * @author SirWellington
  */
-class OperationFailedException extends HttpException
+class OperationFailedException extends RuntimeException
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(OperationFailedException.class);
 
     public OperationFailedException()
     {
-    }
-
-    public OperationFailedException(HttpResponse response)
-    {
-        super(response);
-    }
-
-    public OperationFailedException(HttpResponse response, String message)
-    {
-        super(response, message);
-    }
-
-    public OperationFailedException(HttpResponse response, Throwable cause)
-    {
-        super(response, cause);
-    }
-
-    public OperationFailedException(HttpResponse response, String message, Throwable cause)
-    {
-        super(response, message, cause);
     }
 
     public OperationFailedException(String message)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,25 @@
  */
 package sir.wellington.alchemy.http.operations;
 
+import com.google.gson.JsonElement;
+import java.net.URL;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.concurrency.Immutable;
+
 /**
  *
  * @author SirWellington
  * @param <ResponseType>
  */
-public interface PutOperation<ResponseType> extends HttpOperation<PutOperation<ResponseType>, ResponseType>
+@Immutable
+public class HttpRequest
 {
+    private final static Logger LOG = LoggerFactory.getLogger(HttpRequest.class);
 
+    private Map<String, String> requestHeaders;
+    private URL url;
+    private JsonElement body;
+    private Class<?> responseClass;
 }

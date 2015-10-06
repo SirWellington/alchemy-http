@@ -68,6 +68,11 @@ public class HttpException extends RuntimeException
         super(cause);
     }
 
+    public boolean hasResponse()
+    {
+        return response != null;
+    }
+
     public HttpResponse getResponse()
     {
         return response;
