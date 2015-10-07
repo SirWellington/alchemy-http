@@ -15,6 +15,7 @@
  */
 package sir.wellington.alchemy.http.operations;
 
+import org.apache.http.client.HttpClient;
 import sir.wellington.alchemy.http.HttpResponse;
 import sir.wellington.alchemy.http.exceptions.HttpException;
 
@@ -24,5 +25,6 @@ import sir.wellington.alchemy.http.exceptions.HttpException;
  */
 public interface HttpVerb
 {
-    HttpResponse execute(HttpRequest request) throws HttpException;
+
+    HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws HttpException;
 }
