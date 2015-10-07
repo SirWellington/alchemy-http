@@ -19,6 +19,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.concurrency.Immutable;
@@ -38,136 +40,157 @@ import sir.wellington.alchemy.http.operations.HttpVerb;
 @Immutable
 @ThreadSafe
 @FluidAPIPattern
-class HttpOperationImpl<ReturnType, ExpectedResponseType> implements HttpOperation<ReturnType>
+class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOperation<ResponseType>
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(HttpOperationImpl.class);
 
     private final Map<String, String> requestHeaders;
-    private final Class<ExpectedResponseType> classOfResponseType;
-    private final OnSuccess<ExpectedResponseType> successCallback;
+    private final Class<ResponseType> classOfResponseType;
+    private final Class<CallbackResponseType> classOfCallbackResponseType;
+    private final OnSuccess<CallbackResponseType> successCallback;
     private final OnFailure failureCallback;
+    private URL url;
+    private HttpClient httpClient;
+    private ExecutorService async;
 
-    HttpOperationImpl(Class<ExpectedResponseType> classOfResponseType)
-    {
-        this(classOfResponseType, null, null, null);
-    }
-
-    HttpOperationImpl(Class<ExpectedResponseType> classOfResponseType,
+    HttpOperationImpl(Class<ResponseType> classOfResponseType,
+                      Class<CallbackResponseType> classOfCallbackResponseType,
                       Map<String, String> initialRequestHeaders,
-                      OnSuccess<ExpectedResponseType> successCallback,
+                      OnSuccess<CallbackResponseType> successCallback,
                       OnFailure failureCallback)
     {
         initialRequestHeaders = nullToEmpty(initialRequestHeaders);
 
         this.requestHeaders = ImmutableMap.copyOf(initialRequestHeaders);
         this.classOfResponseType = classOfResponseType;
+        this.classOfCallbackResponseType = classOfCallbackResponseType;
         this.successCallback = successCallback;
         this.failureCallback = failureCallback;
     }
 
     @Override
-    public HttpOperation<ReturnType> usingHeader(String key, String value)
+    public HttpOperation<ResponseType> usingHeader(String key, String value)
     {
         Map<String, String> newRequestHeaders = Maps.newHashMap(this.requestHeaders);
         newRequestHeaders.put(key, value);
 
-        return new HttpOperationImpl<>(classOfResponseType, newRequestHeaders, successCallback, failureCallback);
+        return new HttpOperationImpl<>(classOfResponseType,
+                                       classOfCallbackResponseType,
+                                       newRequestHeaders,
+                                       successCallback,
+                                       failureCallback);
     }
 
     @Override
     public <NewType> HttpOperation<NewType> expecting(Class<NewType> classOfNewType)
     {
         checkThat(classOfNewType).is(notNull());
-        return new HttpOperationImpl<>(classOfNewType, requestHeaders, null, null);
+
+        return new HttpOperationImpl<>(classOfNewType,
+                                       classOfCallbackResponseType,
+                                       requestHeaders,
+                                       null,
+                                       null);
     }
 
     @Override
-    public HttpOperation<Void> onSuccess(OnSuccess<ReturnType> onSuccessCallback)
+    public HttpOperation<Void> onSuccess(OnSuccess<ResponseType> onSuccessCallback)
     {
         checkThat(onSuccessCallback)
                 .usingMessage("callback cannot be null")
                 .is(notNull());
-        
-        return new HttpOperationImpl<Void>(Class<Void> voidClass, requestHeaders, onSuccessCallback, failureCallback);
+
+        return new HttpOperationImpl<>(Void.class,
+                                       classOfResponseType,
+                                       this.requestHeaders,
+                                       onSuccessCallback,
+                                       failureCallback);
     }
 
     @Override
     public HttpOperation<Void> onFailure(OnFailure onFailureCallback)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        checkThat(onFailureCallback)
+                .usingMessage("callback cannot be null")
+                .is(notNull());
+
+        return new HttpOperationImpl<>(Void.class,
+                                       classOfCallbackResponseType,
+                                       this.requestHeaders,
+                                       successCallback,
+                                       onFailureCallback);
     }
 
     @Override
-    public ReturnType at(URL url) throws HttpException
+    public ResponseType get() throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType get() throws HttpException
+    public ResponseType post() throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType post() throws HttpException
+    public ResponseType post(String jsonString) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType post(String jsonString) throws HttpException
+    public ResponseType post(Object body) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType post(Object body) throws HttpException
+    public ResponseType put() throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType put() throws HttpException
+    public ResponseType put(String jsonString) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType put(String jsonString) throws HttpException
+    public ResponseType put(Object body) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType put(Object body) throws HttpException
+    public ResponseType delete() throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType delete() throws HttpException
+    public ResponseType delete(String jsonString) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType delete(String jsonString) throws HttpException
+    public ResponseType delete(Object body) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReturnType delete(Object body) throws HttpException
+    public ResponseType customVerb(HttpVerb verb) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public ReturnType customVerb(HttpVerb verb) throws HttpException
+    private boolean isAsync()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return failureCallback != null || successCallback != null;
     }
 
 }

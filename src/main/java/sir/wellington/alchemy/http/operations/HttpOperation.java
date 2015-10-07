@@ -15,7 +15,6 @@
  */
 package sir.wellington.alchemy.http.operations;
 
-import java.net.URL;
 import sir.wellington.alchemy.http.exceptions.HttpException;
 
 /**
@@ -35,8 +34,6 @@ public interface HttpOperation<ResponseType>
     HttpOperation<Void> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
 
     HttpOperation<Void> onFailure(OnFailure onFailureCallback);
-
-    ResponseType at(URL url) throws HttpException;
 
     ResponseType get() throws HttpException;
 

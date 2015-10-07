@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http.operations;
-
-import com.google.gson.JsonElement;
-import java.net.URL;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.concurrency.Immutable;
+package sir.wellington.alchemy.http.exceptions;
 
 /**
  *
  * @author SirWellington
  */
-@Immutable
-public class HttpRequest
+class JsonParseException extends RuntimeException
 {
-    private final static Logger LOG = LoggerFactory.getLogger(HttpRequest.class);
 
-    private Map<String, String> requestHeaders;
-    private URL url;
-    private JsonElement body;
-    private Class<?> responseClass;
+    public JsonParseException()
+    {
+    }
+
+    public JsonParseException(String message)
+    {
+        super(message);
+    }
+
+    public JsonParseException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public JsonParseException(Throwable cause)
+    {
+        super(cause);
+    }
+
 }

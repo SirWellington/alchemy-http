@@ -15,14 +15,14 @@
  */
 package sir.wellington.alchemy.http.operations;
 
+import sir.wellington.alchemy.http.HttpResponse;
 import sir.wellington.alchemy.http.exceptions.HttpException;
 
 /**
  *
  * @author SirWellington
  */
-public interface HttpVerb<ResponseType>
+public interface HttpVerb
 {
-
-    ResponseType execute(HttpRequest request) throws HttpException;
+    HttpResponse execute(HttpRequest request) throws HttpException;
 }
