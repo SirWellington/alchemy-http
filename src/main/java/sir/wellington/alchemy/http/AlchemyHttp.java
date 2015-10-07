@@ -43,12 +43,15 @@ public interface AlchemyHttp
         
         http.at(url)
                 .expecting(List.class)
-                .onSuccess(list -> LOG.info(list.toString()))
+                .onSuccess(list -> LOG.debug(list.toString()))
+                .onFailure(ex -> LOG.error(ex.toString()))
                 .get();
         
+        
         List list = http.at(url)
-                .expecting(List.class)
-                .get();
+        .onSuccess(response -> LOG.info(response.toString()))
+        .expecting(List.class)
+        .get();
         
         String response = http.at(url)
                 .expecting(String.class)

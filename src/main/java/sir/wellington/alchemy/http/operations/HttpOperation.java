@@ -31,9 +31,7 @@ public interface HttpOperation<ResponseType>
 
     <NewType> HttpOperation<NewType> expecting(Class<NewType> classOfNewType);
 
-    HttpOperation<Void> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
-
-    HttpOperation<Void> onFailure(OnFailure onFailureCallback);
+    AsyncHttpOperation<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
 
     ResponseType get() throws HttpException;
 
@@ -57,14 +55,29 @@ public interface HttpOperation<ResponseType>
 
     ResponseType customVerb(HttpVerb verb) throws HttpException;
 
+    interface AsyncHttpOperation<CallbackResponseType> extends HttpOperation<Void>
+    {
+
+        AsyncHttpOperation<CallbackResponseType> onFailure(OnFailure onFailureCallback);
+    }
+
     interface OnSuccess<ResponseType>
     {
 
         void processResponse(ResponseType response);
+
+        OnSuccess NO_OP = response ->
+        {
+        };
     }
 
     interface OnFailure
     {
+
+        OnFailure NO_OP = ex ->
+        {
+
+        };
 
         void handleError(HttpException ex);
     }

@@ -25,8 +25,8 @@ import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.BUILDER;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
-import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import static sir.wellington.alchemy.arguments.assertions.Assertions.nonEmptyMap;
+import static sir.wellington.alchemy.arguments.assertions.Assertions.notNull;
 import sir.wellington.alchemy.collections.maps.MapOperations;
 
 /**
