@@ -21,18 +21,85 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.concurrency.Immutable;
+import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
+import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.BUILDER;
+import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
+import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import sir.wellington.alchemy.collections.maps.MapOperations;
 
 /**
  *
  * @author SirWellington
  */
 @Immutable
-public class HttpRequest
+@BuilderPattern(role = PRODUCT)
+public interface HttpRequest
 {
-    private final static Logger LOG = LoggerFactory.getLogger(HttpRequest.class);
 
-    private Map<String, String> requestHeaders;
-    private URL url;
-    private JsonElement body;
-    private Class<?> responseClass;
+    @BuilderPattern(role = BUILDER)
+    class Builder
+    {
+
+        private final static Logger LOG = LoggerFactory.getLogger(HttpRequest.class);
+
+        private Map<String, String> requestHeaders;
+        private URL url;
+        private JsonElement body;
+        private Class<?> responseClass;
+
+        public static Builder newInstance()
+        {
+            return new Builder();
+        }
+
+        public Builder usingRequestHeaders(Map<String, String> requestHeaders) throws IllegalArgumentException
+        {
+            checkThat(requestHeaders).is(nonEmptyMap());
+            this.requestHeaders = MapOperations.immutableCopyOf(requestHeaders);
+            return this;
+        }
+
+        public Builder usingUrl(URL url) throws IllegalArgumentException
+        {
+            checkThat(url).is(notNull());
+            this.url = url;
+            return this;
+        }
+
+        public Builder usingBody(JsonElement body)
+        {
+            this.body = body;
+            return this;
+        }
+
+        public Builder usingResponseClass(Class<?> responseClass)
+        {
+            checkThat(responseClass).is(notNull());
+            this.responseClass = responseClass;
+            return this;
+        }
+
+        public HttpRequest build() throws IllegalArgumentException
+        {
+            checkThat(url)
+                    .usingMessage("missing url")
+                    .is(notNull());
+
+            checkThat(responseClass)
+                    .usingMessage("missing response Class")
+                    .is(notNull());
+
+            return new Impl();
+        }
+
+        @Immutable
+        @BuilderPattern(role = PRODUCT)
+        private static class Impl implements HttpRequest
+        {
+        }
+
+    }
+
 }
