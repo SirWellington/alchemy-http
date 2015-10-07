@@ -15,7 +15,6 @@
  */
 package sir.wellington.alchemy.http;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.net.URL;
 import java.util.Map;
@@ -27,7 +26,10 @@ import sir.wellington.alchemy.annotations.concurrency.Immutable;
 import sir.wellington.alchemy.annotations.concurrency.ThreadSafe;
 import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import static sir.wellington.alchemy.arguments.assertions.Assertions.not;
+import static sir.wellington.alchemy.arguments.assertions.Assertions.notNull;
+import static sir.wellington.alchemy.arguments.assertions.Assertions.sameInstance;
+import static sir.wellington.alchemy.collections.maps.MapOperations.immutableCopyOf;
 import static sir.wellington.alchemy.collections.maps.MapOperations.nullToEmpty;
 import sir.wellington.alchemy.http.exceptions.HttpException;
 import sir.wellington.alchemy.http.operations.HttpOperation;
@@ -46,10 +48,13 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
     private final static Logger LOG = LoggerFactory.getLogger(HttpOperationImpl.class);
 
     private final Map<String, String> requestHeaders;
+
     private final Class<ResponseType> classOfResponseType;
     private final Class<CallbackResponseType> classOfCallbackResponseType;
+
     private final OnSuccess<CallbackResponseType> successCallback;
     private final OnFailure failureCallback;
+
     private URL url;
     private HttpClient httpClient;
     private ExecutorService async;
@@ -62,7 +67,7 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
     {
         initialRequestHeaders = nullToEmpty(initialRequestHeaders);
 
-        this.requestHeaders = ImmutableMap.copyOf(initialRequestHeaders);
+        this.requestHeaders = immutableCopyOf(initialRequestHeaders);
         this.classOfResponseType = classOfResponseType;
         this.classOfCallbackResponseType = classOfCallbackResponseType;
         this.successCallback = successCallback;
@@ -87,8 +92,12 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
     {
         checkThat(classOfNewType).is(notNull());
 
+        checkThat(classOfNewType)
+                .usingMessage("Cannot expect Void")
+                .is(not(sameInstance(Void.class)));
+
         return new HttpOperationImpl<>(classOfNewType,
-                                       classOfCallbackResponseType,
+                                       Void.class,
                                        requestHeaders,
                                        null,
                                        null);
@@ -101,11 +110,24 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
                 .usingMessage("callback cannot be null")
                 .is(notNull());
 
-        return new HttpOperationImpl<>(Void.class,
-                                       classOfResponseType,
-                                       this.requestHeaders,
-                                       onSuccessCallback,
-                                       failureCallback);
+        if (this.classOfCallbackResponseType == Void.class)
+        {
+            return new HttpOperationImpl<Void, ResponseType>(Void.class,
+                                                             this.classOfResponseType,
+                                                             this.requestHeaders,
+                                                             onSuccessCallback,
+                                                             failureCallback);
+        }
+        else
+        {
+
+            return new HttpOperationImpl<Void, CallbackResponseType>(Void.class,
+                                                                     this.classOfCallbackResponseType,
+                                                                     this.requestHeaders,
+                                                                     successCallback,
+                                                                     failureCallback);
+        }
+
     }
 
     @Override
@@ -115,11 +137,24 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
                 .usingMessage("callback cannot be null")
                 .is(notNull());
 
-        return new HttpOperationImpl<>(Void.class,
-                                       classOfCallbackResponseType,
-                                       this.requestHeaders,
-                                       successCallback,
-                                       onFailureCallback);
+        if (this.classOfCallbackResponseType == Void.class)
+        {
+
+            return new HttpOperationImpl<Void, ResponseType>(Void.class,
+                                                             this.classOfResponseType,
+                                                             this.requestHeaders,
+                                                             null,
+                                                             onFailureCallback);
+        }
+        else
+        {
+            return new HttpOperationImpl<Void, CallbackResponseType>(Void.class,
+                                                                     classOfCallbackResponseType,
+                                                                     this.requestHeaders,
+                                                                     successCallback,
+                                                                     onFailureCallback);
+        }
+
     }
 
     @Override
