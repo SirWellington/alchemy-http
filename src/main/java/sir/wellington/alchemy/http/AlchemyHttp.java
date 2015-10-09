@@ -15,16 +15,14 @@
  */
 package sir.wellington.alchemy.http;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.concurrency.Immutable;
 import sir.wellington.alchemy.annotations.concurrency.ThreadSafe;
 import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
-import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.assertions.Assertions.nonEmptyString;
 import sir.wellington.alchemy.http.operations.HttpOperation;
 
 /**
@@ -36,48 +34,43 @@ import sir.wellington.alchemy.http.operations.HttpOperation;
 @FluidAPIPattern
 public interface AlchemyHttp
 {
-    
+
     AlchemyHttp setDefaultHeader(String key, String value);
-    
-    HttpOperation.Step1 at(URL url);
-    
-    default HttpOperation.Step1 at(String url) throws MalformedURLException
-    {
-        checkThat(url)
-                .usingMessage("missing URL")
-                .is(nonEmptyString());
-        
-        return at(new URL(url));
-    }
-    
+
+    HttpOperation.Step1 begin();
+
     static void test()
     {
         Logger LOG = LoggerFactory.getLogger(AlchemyHttp.class);
-        
+
         AlchemyHttp http = null;
         URL url = null;
-        
-        http.at(url)
-                .then()
-                .onSuccess(list -> LOG.debug(list.toString()))
-                .onFailure(ex -> LOG.error(ex.toString()))
-                .get();
-        
-        List list = http.at(url)
-                .then()
-                .get()
-                .as(List.class);
-        
-        String response = http.at(url)
-                .then()
-                .post("this is my message")
-                .asString();
-        
-        http.at(url)
-                .usingHeader("header key", "value")
-                .then()
+
+        http.begin()
+                .body("this is my message")
+                .post()
                 .onSuccess(r -> LOG.info(r.asString()))
                 .onFailure(HttpOperation.OnFailure.NO_OP)
-                .post();
+                .at(url);
+
+        List list = http.begin()
+                .get()
+                .expecting(List.class)
+                .at(url);
+
+        String response = http.begin()
+                .body("this is my message")
+                .post()
+                .expecting(String.class)
+                .at(url);
+
+        http.begin()
+                .post()
+                .usingHeader("header key", "value")
+                .usingHeader("another key", "val")
+                .expecting(Map.class)
+                .onSuccess(m -> LOG.info(m.toString()))
+                .onFailure(HttpOperation.OnFailure.NO_OP)
+                .at(url);
     }
 }
