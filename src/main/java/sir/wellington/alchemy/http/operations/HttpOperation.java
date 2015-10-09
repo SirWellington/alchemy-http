@@ -17,6 +17,7 @@ package sir.wellington.alchemy.http.operations;
 
 import sir.wellington.alchemy.annotations.arguments.NonEmpty;
 import sir.wellington.alchemy.annotations.arguments.NonNull;
+import sir.wellington.alchemy.http.HttpResponse;
 import sir.wellington.alchemy.http.exceptions.HttpException;
 
 /**
@@ -28,62 +29,60 @@ import sir.wellington.alchemy.http.exceptions.HttpException;
 public interface HttpOperation
 {
 
-    interface Step1<ResponseType>
+    interface Step1
     {
 
-        Step1<ResponseType> usingHeader(String key, String value) throws IllegalArgumentException;
+        Step1 usingHeader(String key, String value) throws IllegalArgumentException;
 
-        <NewType> Step1<NewType> expecting(Class<NewType> classOfNewType) throws IllegalArgumentException;
+        Step1 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
 
-        Step1<ResponseType> followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
-
-        default Step1<ResponseType> followRedirects()
+        default Step1 followRedirects()
         {
             return followRedirects(10);
         }
 
-        Step2<ResponseType> then();
+        Step2 then();
     }
 
-    interface Step2<ResponseType>
+    interface Step2
     {
 
-        ResponseType get() throws HttpException;
+        HttpResponse get() throws HttpException;
 
-        ResponseType post() throws HttpException;
+        HttpResponse post() throws HttpException;
 
-        ResponseType post(@NonEmpty String jsonBody) throws HttpException;
+        HttpResponse post(@NonEmpty String jsonBody) throws HttpException;
 
-        ResponseType post(@NonNull Object body) throws HttpException;
+        HttpResponse post(@NonNull Object body) throws HttpException;
 
-        ResponseType put() throws HttpException;
+        HttpResponse put() throws HttpException;
 
-        ResponseType put(@NonEmpty String jsonBody) throws HttpException;
+        HttpResponse put(@NonEmpty String jsonBody) throws HttpException;
 
-        ResponseType put(@NonNull Object body) throws HttpException;
+        HttpResponse put(@NonNull Object body) throws HttpException;
 
-        ResponseType delete() throws HttpException;
+        HttpResponse delete() throws HttpException;
 
-        ResponseType delete(@NonEmpty String jsonBody) throws HttpException;
+        HttpResponse delete(@NonEmpty String jsonBody) throws HttpException;
 
-        ResponseType delete(@NonNull Object body) throws HttpException;
+        HttpResponse delete(@NonNull Object body) throws HttpException;
 
-        ResponseType customVerb(HttpVerb verb) throws HttpException;
+        HttpResponse customVerb(HttpVerb verb) throws HttpException;
 
-        Step3<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
+        Step3 onSuccess(OnSuccess onSuccessCallback);
     }
 
-    interface Step3<ResponseType>
+    interface Step3
     {
 
-        Step2<Void> onFailure(OnFailure onFailureCallback);
+        Step2 onFailure(OnFailure onFailureCallback);
 
     }
 
-    interface OnSuccess<ResponseType>
+    interface OnSuccess
     {
 
-        void processResponse(ResponseType response);
+        void processResponse(HttpResponse response);
 
         OnSuccess NO_OP = response ->
         {

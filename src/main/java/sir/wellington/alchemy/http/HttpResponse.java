@@ -44,6 +44,12 @@ public interface HttpResponse
 
     int statusCode();
 
+    default boolean isOk()
+    {
+        int statusCode = statusCode();
+        return (statusCode >= 200 && statusCode <= 208) || statusCode == 226;
+    }
+
     @Nullable
     Map<String, String> responseHeaders();
 
@@ -91,7 +97,7 @@ public interface HttpResponse
         public HttpResponse build() throws IllegalStateException
         {
             checkThat(statusCode)
-                    .usingException(ex -> new IllegalStateException("No status code supplieda" + statusCode))
+                    .usingException(ex -> new IllegalStateException("No status code supplied"))
                     .is(positiveInteger());
 
             return new Impl(statusCode, responseHeaders, gson, response);

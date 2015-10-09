@@ -44,34 +44,31 @@ interface OperationExecutor<ResponseType> extends Callable<ResponseType>
     @Override
     public ResponseType call() throws Exception;
 
-    static <ResponseType> OperationExecutor<ResponseType> newSyncRunner(HttpClient apacheHttpClient,
-                                                                      HttpRequest request,
-                                                                      HttpVerb verb,
-                                                                      Class<ResponseType> classOfResponseType)
+    static OperationExecutor<HttpResponse> newSyncRunner(HttpClient apacheHttpClient,
+                                                         HttpRequest request,
+                                                         HttpVerb verb)
     {
         checkThat(apacheHttpClient).is(notNull());
         checkThat(request).is(notNull());
         checkThat(verb).is(notNull());
-        checkThat(classOfResponseType).is(notNull());
 
-        return new Sync(request, apacheHttpClient, verb, classOfResponseType);
+        return new Sync(request, apacheHttpClient, verb);
     }
 
-    static <ResponseType> OperationExecutor<Void> newAsyncRunner(HttpClient apacheHttpClient,
-                                                               HttpRequest request,
-                                                               HttpVerb verb,
-                                                               Class<ResponseType> classOfResponseType,
-                                                               OnSuccess<ResponseType> successCallback,
-                                                               OnFailure failureCallback,
-                                                               ExecutorService executorService)
+    static OperationExecutor<Void> newAsyncRunner(HttpClient apacheHttpClient,
+                                                  HttpRequest request,
+                                                  HttpVerb verb,
+                                                  OnSuccess successCallback,
+                                                  OnFailure failureCallback,
+                                                  ExecutorService executorService)
     {
-        OperationExecutor<ResponseType> syncRunner = newSyncRunner(apacheHttpClient, request, verb, classOfResponseType);
+        OperationExecutor<HttpResponse> syncRunner = newSyncRunner(apacheHttpClient, request, verb);
 
-        return new Async<>(syncRunner, executorService, successCallback, failureCallback);
+        return new Async(syncRunner, executorService, successCallback, failureCallback);
     }
 
     @DecoratorPattern(role = CONCRETE_COMPONENT)
-    class Sync<ResponseType> implements OperationExecutor<ResponseType>
+    class Sync implements OperationExecutor
     {
 
         private static final Logger LOG = LoggerFactory.getLogger(Sync.class);
@@ -79,18 +76,16 @@ interface OperationExecutor<ResponseType> extends Callable<ResponseType>
         private final HttpRequest request;
         private final HttpClient apacheHttpClient;
         private final HttpVerb verb;
-        private final Class<ResponseType> classOfResponseType;
 
-        Sync(HttpRequest request, HttpClient apacheHttpClient, HttpVerb verb, Class<ResponseType> classOfResponseType)
+        Sync(HttpRequest request, HttpClient apacheHttpClient, HttpVerb verb)
         {
             this.request = request;
             this.apacheHttpClient = apacheHttpClient;
             this.verb = verb;
-            this.classOfResponseType = classOfResponseType;
         }
 
         @Override
-        public ResponseType call() throws Exception
+        public HttpResponse call() throws Exception
         {
             LOG.debug("Running HTTP Request {}", request);
 
@@ -118,42 +113,26 @@ interface OperationExecutor<ResponseType> extends Callable<ResponseType>
             }
 
             LOG.debug("HTTP Request {} successfully executed: {}", request, response);
-            if (clientWants(HttpResponse.class))
-            {
-                return (ResponseType) response;
-            }
-            else if (clientWants(String.class))
-            {
-                return (ResponseType) response.asString();
-            }
-            else
-            {
-                return response.as(classOfResponseType);
-            }
-        }
-
-        private boolean clientWants(Class<?> aClass)
-        {
-            return this.classOfResponseType == aClass;
+            return response;
         }
 
     }
 
     @DecoratorPattern(role = CONCRETE_DECORATOR)
-    class Async<ResponseType> implements OperationExecutor<Void>
+    class Async implements OperationExecutor
     {
 
         private static final Logger LOG = LoggerFactory.getLogger(Async.class);
 
-        private final OperationExecutor<ResponseType> synchronousDelegate;
+        private final OperationExecutor<HttpResponse> synchronousDelegate;
 
         private final ExecutorService async;
-        private final HttpOperation.OnSuccess<ResponseType> successCallback;
+        private final HttpOperation.OnSuccess successCallback;
         private final HttpOperation.OnFailure failureCallback;
 
-        Async(OperationExecutor<ResponseType> synchronousDelegate,
+        Async(OperationExecutor<HttpResponse> synchronousDelegate,
               ExecutorService async,
-              HttpOperation.OnSuccess<ResponseType> successCallback,
+              HttpOperation.OnSuccess successCallback,
               HttpOperation.OnFailure failureCallback)
         {
             this.synchronousDelegate = synchronousDelegate;
@@ -174,7 +153,7 @@ interface OperationExecutor<ResponseType> extends Callable<ResponseType>
         {
             LOG.debug("Starting Async HTTP Request using delegate {}", synchronousDelegate);
 
-            ResponseType response;
+            HttpResponse response;
 
             try
             {
