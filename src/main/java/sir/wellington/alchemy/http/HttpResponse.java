@@ -21,6 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 import sir.wellington.alchemy.annotations.arguments.Nullable;
 import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
@@ -157,6 +158,50 @@ public interface HttpResponse
                     throw new JsonParseException("Failed to parse json to class: " + classOfT, ex);
                 }
             }
+
+            @Override
+            public int hashCode()
+            {
+                int hash = 3;
+                hash = 41 * hash + this.statusCode;
+                hash = 41 * hash + Objects.hashCode(this.responseHeaders);
+                hash = 41 * hash + Objects.hashCode(this.response);
+                return hash;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (obj == null)
+                {
+                    return false;
+                }
+                if (getClass() != obj.getClass())
+                {
+                    return false;
+                }
+                final Impl other = (Impl) obj;
+                if (this.statusCode != other.statusCode)
+                {
+                    return false;
+                }
+                if (!Objects.equals(this.responseHeaders, other.responseHeaders))
+                {
+                    return false;
+                }
+                if (!Objects.equals(this.response, other.response))
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Impl{" + "statusCode=" + statusCode + ", responseHeaders=" + responseHeaders + ", response=" + response + '}';
+            }
+
         }
     }
 }

@@ -20,8 +20,16 @@ import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.access.Internal;
+import sir.wellington.alchemy.annotations.patterns.DecoratorPattern;
+import static sir.wellington.alchemy.annotations.patterns.DecoratorPattern.Role.CONCRETE_COMPONENT;
+import static sir.wellington.alchemy.annotations.patterns.DecoratorPattern.Role.CONCRETE_DECORATOR;
+import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.assertions.Assertions.notNull;
 import sir.wellington.alchemy.http.exceptions.HttpException;
 import sir.wellington.alchemy.http.operations.HttpOperation;
+import sir.wellington.alchemy.http.operations.HttpOperation.OnFailure;
+import sir.wellington.alchemy.http.operations.HttpOperation.OnSuccess;
 import sir.wellington.alchemy.http.operations.HttpRequest;
 import sir.wellington.alchemy.http.operations.HttpVerb;
 
@@ -29,21 +37,57 @@ import sir.wellington.alchemy.http.operations.HttpVerb;
  *
  * @author SirWellington
  */
-interface OperationRunner<ResponseType> extends Callable<ResponseType>
+@Internal
+interface OperationExecutor<ResponseType> extends Callable<ResponseType>
 {
 
     @Override
     public ResponseType call() throws Exception;
 
-    class Sync<ResponseType> implements OperationRunner<ResponseType>
+    static <ResponseType> OperationExecutor<ResponseType> newSyncRunner(HttpClient apacheHttpClient,
+                                                                      HttpRequest request,
+                                                                      HttpVerb verb,
+                                                                      Class<ResponseType> classOfResponseType)
+    {
+        checkThat(apacheHttpClient).is(notNull());
+        checkThat(request).is(notNull());
+        checkThat(verb).is(notNull());
+        checkThat(classOfResponseType).is(notNull());
+
+        return new Sync(request, apacheHttpClient, verb, classOfResponseType);
+    }
+
+    static <ResponseType> OperationExecutor<Void> newAsyncRunner(HttpClient apacheHttpClient,
+                                                               HttpRequest request,
+                                                               HttpVerb verb,
+                                                               Class<ResponseType> classOfResponseType,
+                                                               OnSuccess<ResponseType> successCallback,
+                                                               OnFailure failureCallback,
+                                                               ExecutorService executorService)
+    {
+        OperationExecutor<ResponseType> syncRunner = newSyncRunner(apacheHttpClient, request, verb, classOfResponseType);
+
+        return new Async<>(syncRunner, executorService, successCallback, failureCallback);
+    }
+
+    @DecoratorPattern(role = CONCRETE_COMPONENT)
+    class Sync<ResponseType> implements OperationExecutor<ResponseType>
     {
 
         private static final Logger LOG = LoggerFactory.getLogger(Sync.class);
 
-        private HttpRequest request;
-        private HttpClient apacheHttpClient;
-        private HttpVerb verb;
-        Class<ResponseType> classOfResponseType;
+        private final HttpRequest request;
+        private final HttpClient apacheHttpClient;
+        private final HttpVerb verb;
+        private final Class<ResponseType> classOfResponseType;
+
+        Sync(HttpRequest request, HttpClient apacheHttpClient, HttpVerb verb, Class<ResponseType> classOfResponseType)
+        {
+            this.request = request;
+            this.apacheHttpClient = apacheHttpClient;
+            this.verb = verb;
+            this.classOfResponseType = classOfResponseType;
+        }
 
         @Override
         public ResponseType call() throws Exception
@@ -95,16 +139,28 @@ interface OperationRunner<ResponseType> extends Callable<ResponseType>
 
     }
 
-    class Async<ResponseType> implements OperationRunner<Void>
+    @DecoratorPattern(role = CONCRETE_DECORATOR)
+    class Async<ResponseType> implements OperationExecutor<Void>
     {
 
         private static final Logger LOG = LoggerFactory.getLogger(Async.class);
 
-        private OperationRunner<ResponseType> synchronousDelegate;
+        private final OperationExecutor<ResponseType> synchronousDelegate;
 
-        private ExecutorService async;
-        private HttpOperation.OnSuccess<ResponseType> successCallback;
-        private HttpOperation.OnFailure failureCallback;
+        private final ExecutorService async;
+        private final HttpOperation.OnSuccess<ResponseType> successCallback;
+        private final HttpOperation.OnFailure failureCallback;
+
+        Async(OperationExecutor<ResponseType> synchronousDelegate,
+              ExecutorService async,
+              HttpOperation.OnSuccess<ResponseType> successCallback,
+              HttpOperation.OnFailure failureCallback)
+        {
+            this.synchronousDelegate = synchronousDelegate;
+            this.async = async;
+            this.successCallback = successCallback;
+            this.failureCallback = failureCallback;
+        }
 
         @Override
         public Void call() throws Exception

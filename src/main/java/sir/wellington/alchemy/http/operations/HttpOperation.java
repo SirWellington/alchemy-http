@@ -15,50 +15,69 @@
  */
 package sir.wellington.alchemy.http.operations;
 
+import sir.wellington.alchemy.annotations.arguments.NonEmpty;
+import sir.wellington.alchemy.annotations.arguments.NonNull;
 import sir.wellington.alchemy.http.exceptions.HttpException;
 
 /**
  *
- * @param <ResponseType>
  *
  * @author SirWellington
  *
  */
-public interface HttpOperation<ResponseType>
+public interface HttpOperation
 {
 
-    HttpOperation<ResponseType> usingHeader(String key, String value);
-
-    <NewType> HttpOperation<NewType> expecting(Class<NewType> classOfNewType);
-
-    AsyncHttpOperation<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
-
-    ResponseType get() throws HttpException;
-
-    ResponseType post() throws HttpException;
-
-    ResponseType post(String jsonString) throws HttpException;
-
-    ResponseType post(Object body) throws HttpException;
-
-    ResponseType put() throws HttpException;
-
-    ResponseType put(String jsonString) throws HttpException;
-
-    ResponseType put(Object body) throws HttpException;
-
-    ResponseType delete() throws HttpException;
-
-    ResponseType delete(String jsonString) throws HttpException;
-
-    ResponseType delete(Object body) throws HttpException;
-
-    ResponseType customVerb(HttpVerb verb) throws HttpException;
-
-    interface AsyncHttpOperation<CallbackResponseType> extends HttpOperation<Void>
+    interface Step1<ResponseType>
     {
 
-        AsyncHttpOperation<CallbackResponseType> onFailure(OnFailure onFailureCallback);
+        Step1<ResponseType> usingHeader(String key, String value) throws IllegalArgumentException;
+
+        <NewType> Step1<NewType> expecting(Class<NewType> classOfNewType) throws IllegalArgumentException;
+
+        Step1<ResponseType> followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
+
+        default Step1<ResponseType> followRedirects()
+        {
+            return followRedirects(10);
+        }
+
+        Step2<ResponseType> then();
+    }
+
+    interface Step2<ResponseType>
+    {
+
+        ResponseType get() throws HttpException;
+
+        ResponseType post() throws HttpException;
+
+        ResponseType post(@NonEmpty String jsonBody) throws HttpException;
+
+        ResponseType post(@NonNull Object body) throws HttpException;
+
+        ResponseType put() throws HttpException;
+
+        ResponseType put(@NonEmpty String jsonBody) throws HttpException;
+
+        ResponseType put(@NonNull Object body) throws HttpException;
+
+        ResponseType delete() throws HttpException;
+
+        ResponseType delete(@NonEmpty String jsonBody) throws HttpException;
+
+        ResponseType delete(@NonNull Object body) throws HttpException;
+
+        ResponseType customVerb(HttpVerb verb) throws HttpException;
+
+        Step3<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
+    }
+
+    interface Step3<ResponseType>
+    {
+
+        Step2<Void> onFailure(OnFailure onFailureCallback);
+
     }
 
     interface OnSuccess<ResponseType>

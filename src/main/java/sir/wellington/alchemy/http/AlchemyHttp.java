@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.concurrency.Immutable;
+import sir.wellington.alchemy.annotations.concurrency.ThreadSafe;
 import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
 import sir.wellington.alchemy.http.operations.HttpOperation;
 
@@ -26,35 +28,46 @@ import sir.wellington.alchemy.http.operations.HttpOperation;
  *
  * @author SirWellington
  */
+@Immutable
+@ThreadSafe
 @FluidAPIPattern
 public interface AlchemyHttp
 {
-    
+
     AlchemyHttp setDefaultHeader(String key, String value);
-    
-    HttpOperation<HttpResponse> at(URL url);
-    
+
+    HttpOperation.Step1<HttpResponse> at(URL url);
+
     static void test()
     {
         Logger LOG = LoggerFactory.getLogger(AlchemyHttp.class);
-        
+
         AlchemyHttp http = null;
         URL url = null;
-        
+
         http.at(url)
                 .expecting(List.class)
+                .then()
                 .onSuccess(list -> LOG.debug(list.toString()))
                 .onFailure(ex -> LOG.error(ex.toString()))
                 .get();
-        
-        
+
         List list = http.at(url)
-        .onSuccess(response -> LOG.info(response.toString()))
-        .expecting(List.class)
-        .get();
-        
+                .expecting(List.class)
+                .then()
+                .get();
+
         String response = http.at(url)
                 .expecting(String.class)
+                .then()
                 .post("this is my message");
+
+        http.at(url)
+                .expecting(String.class)
+                .usingHeader("header key", "value")
+                .then()
+                .onSuccess(m -> LOG.info(m))
+                .onFailure(HttpOperation.OnFailure.NO_OP)
+                .post();
     }
 }

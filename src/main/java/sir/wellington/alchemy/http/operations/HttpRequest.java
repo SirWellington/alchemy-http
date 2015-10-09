@@ -18,6 +18,7 @@ package sir.wellington.alchemy.http.operations;
 import com.google.gson.JsonElement;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.concurrency.Immutable;
@@ -38,6 +39,17 @@ import sir.wellington.alchemy.collections.maps.MapOperations;
 public interface HttpRequest
 {
 
+    Map<String, String> getRequestHeaders();
+
+    URL getUrl();
+
+    JsonElement getBody();
+
+    default boolean hasBody()
+    {
+        return getBody() != null;
+    }
+
     @BuilderPattern(role = BUILDER)
     class Builder
     {
@@ -47,11 +59,26 @@ public interface HttpRequest
         private Map<String, String> requestHeaders;
         private URL url;
         private JsonElement body;
-        private Class<?> responseClass;
 
         public static Builder newInstance()
         {
             return new Builder();
+        }
+
+        public static Builder from(HttpRequest other)
+        {
+            Builder builder = newInstance();
+
+            if (other == null)
+            {
+                return builder;
+            }
+
+            builder.url = other.getUrl();
+            builder.requestHeaders = other.getRequestHeaders();
+            builder.body = other.getBody();
+
+            return builder;
         }
 
         public Builder usingRequestHeaders(Map<String, String> requestHeaders) throws IllegalArgumentException
@@ -74,30 +101,91 @@ public interface HttpRequest
             return this;
         }
 
-        public Builder usingResponseClass(Class<?> responseClass)
-        {
-            checkThat(responseClass).is(notNull());
-            this.responseClass = responseClass;
-            return this;
-        }
-
         public HttpRequest build() throws IllegalArgumentException
         {
             checkThat(url)
                     .usingMessage("missing url")
                     .is(notNull());
 
-            checkThat(responseClass)
-                    .usingMessage("missing response Class")
-                    .is(notNull());
+            Impl instance = new Impl();
 
-            return new Impl();
+            instance.body = this.body;
+            instance.requestHeaders = this.requestHeaders;
+            instance.url = this.url;
+
+            return instance;
         }
 
         @Immutable
         @BuilderPattern(role = PRODUCT)
         private static class Impl implements HttpRequest
         {
+
+            private Map<String, String> requestHeaders;
+            private URL url;
+            private JsonElement body;
+
+            @Override
+            public Map<String, String> getRequestHeaders()
+            {
+                return requestHeaders;
+            }
+
+            @Override
+            public URL getUrl()
+            {
+                return url;
+            }
+
+            @Override
+            public JsonElement getBody()
+            {
+                return body;
+            }
+
+            @Override
+            public int hashCode()
+            {
+                int hash = 3;
+                hash = 97 * hash + Objects.hashCode(this.requestHeaders);
+                hash = 97 * hash + Objects.hashCode(this.url);
+                hash = 97 * hash + Objects.hashCode(this.body);
+                return hash;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (obj == null)
+                {
+                    return false;
+                }
+                if (getClass() != obj.getClass())
+                {
+                    return false;
+                }
+                final Impl other = (Impl) obj;
+                if (!Objects.equals(this.requestHeaders, other.requestHeaders))
+                {
+                    return false;
+                }
+                if (!Objects.equals(this.url, other.url))
+                {
+                    return false;
+                }
+                if (!Objects.equals(this.body, other.body))
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Impl{" + "requestHeaders=" + requestHeaders + ", url=" + url + ", body=" + body + '}';
+            }
+
         }
 
     }

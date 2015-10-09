@@ -19,7 +19,7 @@ package sir.wellington.alchemy.http.exceptions;
  *
  * @author SirWellington
  */
-class JsonParseException extends RuntimeException
+public class JsonParseException extends RuntimeException
 {
 
     public JsonParseException()

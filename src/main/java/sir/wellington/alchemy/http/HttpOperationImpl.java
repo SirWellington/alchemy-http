@@ -16,7 +16,8 @@
 package sir.wellington.alchemy.http;
 
 import com.google.common.collect.Maps;
-import java.net.URL;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
@@ -26,13 +27,18 @@ import sir.wellington.alchemy.annotations.concurrency.Immutable;
 import sir.wellington.alchemy.annotations.concurrency.ThreadSafe;
 import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.assertions.Assertions.nonEmptyString;
 import static sir.wellington.alchemy.arguments.assertions.Assertions.not;
 import static sir.wellington.alchemy.arguments.assertions.Assertions.notNull;
 import static sir.wellington.alchemy.arguments.assertions.Assertions.sameInstance;
-import static sir.wellington.alchemy.collections.maps.MapOperations.immutableCopyOf;
-import static sir.wellington.alchemy.collections.maps.MapOperations.nullToEmpty;
 import sir.wellington.alchemy.http.exceptions.HttpException;
-import sir.wellington.alchemy.http.operations.HttpOperation;
+import sir.wellington.alchemy.http.exceptions.JsonParseException;
+import sir.wellington.alchemy.http.operations.HttpOperation.OnFailure;
+import sir.wellington.alchemy.http.operations.HttpOperation.OnSuccess;
+import sir.wellington.alchemy.http.operations.HttpOperation.Step1;
+import sir.wellington.alchemy.http.operations.HttpOperation.Step2;
+import sir.wellington.alchemy.http.operations.HttpOperation.Step3;
+import sir.wellington.alchemy.http.operations.HttpRequest;
 import sir.wellington.alchemy.http.operations.HttpVerb;
 
 /**
@@ -42,53 +48,63 @@ import sir.wellington.alchemy.http.operations.HttpVerb;
 @Immutable
 @ThreadSafe
 @FluidAPIPattern
-class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOperation<ResponseType>
+class HttpOperationImpl<ResponseType, CallbackResponseType> implements Step1<ResponseType>,
+                                                                       Step2<ResponseType>,
+                                                                       Step3<ResponseType>
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(HttpOperationImpl.class);
+    private final static Gson GSON = new Gson();
 
-    private final Map<String, String> requestHeaders;
+    private Class<ResponseType> classOfResponseType;
+    private Class<CallbackResponseType> classOfCallbackResponseType;
 
-    private final Class<ResponseType> classOfResponseType;
-    private final Class<CallbackResponseType> classOfCallbackResponseType;
+    private OnSuccess<CallbackResponseType> successCallback;
+    private OnFailure failureCallback;
 
-    private final OnSuccess<CallbackResponseType> successCallback;
-    private final OnFailure failureCallback;
-
-    private URL url;
+    private HttpRequest request;
     private HttpClient httpClient;
     private ExecutorService async;
 
+    private HttpOperationImpl()
+    {
+
+    }
+
     HttpOperationImpl(Class<ResponseType> classOfResponseType,
                       Class<CallbackResponseType> classOfCallbackResponseType,
-                      Map<String, String> initialRequestHeaders,
                       OnSuccess<CallbackResponseType> successCallback,
-                      OnFailure failureCallback)
+                      OnFailure failureCallback,
+                      HttpRequest request,
+                      HttpClient httpClient,
+                      ExecutorService async)
     {
-        initialRequestHeaders = nullToEmpty(initialRequestHeaders);
-
-        this.requestHeaders = immutableCopyOf(initialRequestHeaders);
         this.classOfResponseType = classOfResponseType;
         this.classOfCallbackResponseType = classOfCallbackResponseType;
         this.successCallback = successCallback;
         this.failureCallback = failureCallback;
+        this.request = request;
+        this.httpClient = httpClient;
+        this.async = async;
     }
 
     @Override
-    public HttpOperation<ResponseType> usingHeader(String key, String value)
+    public Step1<ResponseType> usingHeader(String key, String value)
     {
-        Map<String, String> newRequestHeaders = Maps.newHashMap(this.requestHeaders);
+        Map<String, String> newRequestHeaders = Maps.newHashMap(request.getRequestHeaders());
         newRequestHeaders.put(key, value);
 
         return new HttpOperationImpl<>(classOfResponseType,
                                        classOfCallbackResponseType,
-                                       newRequestHeaders,
                                        successCallback,
-                                       failureCallback);
+                                       failureCallback,
+                                       request,
+                                       httpClient,
+                                       async);
     }
 
     @Override
-    public <NewType> HttpOperation<NewType> expecting(Class<NewType> classOfNewType)
+    public <NewType> Step1<NewType> expecting(Class<NewType> classOfNewType)
     {
         checkThat(classOfNewType).is(notNull());
 
@@ -98,63 +114,64 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
 
         return new HttpOperationImpl<>(classOfNewType,
                                        Void.class,
-                                       requestHeaders,
                                        null,
-                                       null);
+                                       null,
+                                       request,
+                                       httpClient,
+                                       async);
+    }
+
+    private boolean isAsync()
+    {
+        return failureCallback != null || successCallback != null;
     }
 
     @Override
-    public HttpOperation<Void> onSuccess(OnSuccess<ResponseType> onSuccessCallback)
+    public Step1<ResponseType> followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
     {
-        checkThat(onSuccessCallback)
-                .usingMessage("callback cannot be null")
-                .is(notNull());
-
-        if (this.classOfCallbackResponseType == Void.class)
-        {
-            return new HttpOperationImpl<Void, ResponseType>(Void.class,
-                                                             this.classOfResponseType,
-                                                             this.requestHeaders,
-                                                             onSuccessCallback,
-                                                             failureCallback);
-        }
-        else
-        {
-
-            return new HttpOperationImpl<Void, CallbackResponseType>(Void.class,
-                                                                     this.classOfCallbackResponseType,
-                                                                     this.requestHeaders,
-                                                                     successCallback,
-                                                                     failureCallback);
-        }
-
+        return this;
     }
 
     @Override
-    public HttpOperation<Void> onFailure(OnFailure onFailureCallback)
+    public Step2<ResponseType> then()
     {
-        checkThat(onFailureCallback)
-                .usingMessage("callback cannot be null")
-                .is(notNull());
+        return this;
+    }
 
-        if (this.classOfCallbackResponseType == Void.class)
-        {
+    @Override
+    public ResponseType post(String jsonBody) throws HttpException
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-            return new HttpOperationImpl<Void, ResponseType>(Void.class,
-                                                             this.classOfResponseType,
-                                                             this.requestHeaders,
-                                                             null,
-                                                             onFailureCallback);
-        }
-        else
-        {
-            return new HttpOperationImpl<Void, CallbackResponseType>(Void.class,
-                                                                     classOfCallbackResponseType,
-                                                                     this.requestHeaders,
-                                                                     successCallback,
-                                                                     onFailureCallback);
-        }
+    @Override
+    public ResponseType post(Object body) throws HttpException
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    @Override
+    public ResponseType put(String jsonBody) throws HttpException
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ResponseType put(Object body) throws HttpException
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ResponseType delete(String jsonBody) throws HttpException
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ResponseType delete(Object body) throws HttpException
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -170,31 +187,7 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
     }
 
     @Override
-    public ResponseType post(String jsonString) throws HttpException
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ResponseType post(Object body) throws HttpException
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public ResponseType put() throws HttpException
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ResponseType put(String jsonString) throws HttpException
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ResponseType put(Object body) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -206,26 +199,86 @@ class HttpOperationImpl<ResponseType, CallbackResponseType> implements HttpOpera
     }
 
     @Override
-    public ResponseType delete(String jsonString) throws HttpException
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ResponseType delete(Object body) throws HttpException
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public ResponseType customVerb(HttpVerb verb) throws HttpException
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private boolean isAsync()
+    private static <S, A> HttpOperationImpl<S, A> copyFrom(HttpOperationImpl<S, A> other)
     {
-        return failureCallback != null || successCallback != null;
+        HttpOperationImpl<S, A> instance = new HttpOperationImpl<>();
+        instance.async = other.async;
+        instance.classOfCallbackResponseType = other.classOfCallbackResponseType;
+        instance.classOfResponseType = other.classOfResponseType;
+        instance.failureCallback = other.failureCallback;
+        instance.successCallback = other.successCallback;
+        instance.request = other.request;
+        instance.httpClient = other.httpClient;
+
+        return instance;
     }
 
+    @Override
+    public Step3<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback)
+    {
+        checkThat(onSuccessCallback)
+                .usingMessage("callback cannot be null")
+                .is(notNull());
+
+        checkThat(this.successCallback)
+                .usingMessage("Only one callback is allowed per request")
+                .is(not(notNull()));
+
+        return new HttpOperationImpl<>(classOfResponseType, classOfResponseType, onSuccessCallback, failureCallback, request, httpClient, async);
+
+    }
+
+    @Override
+    public Step2<Void> onFailure(OnFailure onFailureCallback)
+    {
+        return new HttpOperationImpl<>(Void.class, classOfCallbackResponseType, successCallback, onFailureCallback, request, httpClient, async);
+    }
+
+    private Step2<ResponseType> body(String jsonString) throws IllegalArgumentException
+    {
+        checkThat(jsonString)
+                .usingMessage("jsonString is empty")
+                .is(nonEmptyString());
+
+        this.request = HttpRequest.Builder.from(request)
+                .usingBody(GSON.toJsonTree(jsonString))
+                .build();
+
+        return this;
+    }
+
+    private Step2<ResponseType> body(Object body) throws IllegalArgumentException
+    {
+        checkThat(body)
+                .usingMessage("body cannot be null")
+                .is(notNull());
+
+        JsonElement jsonBody;
+        try
+        {
+            jsonBody = GSON.toJsonTree(body);
+        }
+        catch (Exception ex)
+        {
+            LOG.error("failed to serialize {} as JSON", body);
+            throw new JsonParseException(ex);
+        }
+
+        LOG.debug("Body {} stored as JSON {}", body, jsonBody);
+
+        HttpRequest newRequest = HttpRequest.Builder.from(request)
+                .usingBody(jsonBody)
+                .build();
+
+        HttpOperationImpl<ResponseType, CallbackResponseType> instance = copyFrom(this);
+
+        instance.request = newRequest;
+
+        return instance;
+    }
 }
