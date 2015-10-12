@@ -15,30 +15,47 @@
  */
 package sir.wellington.alchemy.http.exceptions;
 
+import sir.wellington.alchemy.http.HttpResponse;
+
 /**
  *
  * @author SirWellington
  */
-public class JsonParseException extends RuntimeException
+public class JsonException extends AlchemyHttpException
 {
 
-    public JsonParseException()
+    public JsonException()
     {
     }
 
-    public JsonParseException(String message)
+    public JsonException(String message)
     {
         super(message);
     }
 
-    public JsonParseException(String message, Throwable cause)
+    public JsonException(String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    public JsonParseException(Throwable cause)
+    public JsonException(Throwable cause)
     {
         super(cause);
+    }
+
+    public JsonException(HttpResponse response, String message)
+    {
+        super(response, message);
+    }
+
+    public JsonException(HttpResponse response, String message, Throwable cause)
+    {
+        super(response, message, cause);
+    }
+
+    public JsonException(HttpResponse response, Throwable cause)
+    {
+        super(response, cause);
     }
 
 }

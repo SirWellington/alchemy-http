@@ -26,9 +26,9 @@ import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.BUILDER;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.assertions.Assertions.nonEmptyMap;
-import static sir.wellington.alchemy.arguments.assertions.Assertions.notNull;
-import sir.wellington.alchemy.collections.maps.MapOperations;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import sir.wellington.alchemy.collections.maps.Maps;
 
 /**
  *
@@ -45,9 +45,16 @@ public interface HttpRequest
 
     JsonElement getBody();
 
+    HttpVerb getVerb();
+
     default boolean hasBody()
     {
         return getBody() != null;
+    }
+    
+    static HttpRequest copyOf(HttpRequest other)
+    {
+        return Builder.from(other).build();
     }
 
     @BuilderPattern(role = BUILDER)
@@ -59,6 +66,7 @@ public interface HttpRequest
         private Map<String, String> requestHeaders;
         private URL url;
         private JsonElement body;
+        private HttpVerb verb;
 
         public static Builder newInstance()
         {
@@ -84,7 +92,7 @@ public interface HttpRequest
         public Builder usingRequestHeaders(Map<String, String> requestHeaders) throws IllegalArgumentException
         {
             checkThat(requestHeaders).is(nonEmptyMap());
-            this.requestHeaders = MapOperations.immutableCopyOf(requestHeaders);
+            this.requestHeaders = Maps.immutableCopyOf(requestHeaders);
             return this;
         }
 
@@ -101,10 +109,21 @@ public interface HttpRequest
             return this;
         }
 
+        public Builder usingVerb(HttpVerb verb) throws IllegalArgumentException
+        {
+            checkThat(verb).usingMessage("missing verb").is(notNull());
+            this.verb = verb;
+            return this;
+        }
+
         public HttpRequest build() throws IllegalArgumentException
         {
             checkThat(url)
                     .usingMessage("missing url")
+                    .is(notNull());
+
+            checkThat(verb)
+                    .usingMessage("missing HTTP Verb")
                     .is(notNull());
 
             Impl instance = new Impl();
@@ -124,6 +143,7 @@ public interface HttpRequest
             private Map<String, String> requestHeaders;
             private URL url;
             private JsonElement body;
+            private HttpVerb verb;
 
             @Override
             public Map<String, String> getRequestHeaders()
@@ -144,12 +164,19 @@ public interface HttpRequest
             }
 
             @Override
+            public HttpVerb getVerb()
+            {
+                return verb;
+            }
+
+            @Override
             public int hashCode()
             {
-                int hash = 3;
-                hash = 97 * hash + Objects.hashCode(this.requestHeaders);
-                hash = 97 * hash + Objects.hashCode(this.url);
-                hash = 97 * hash + Objects.hashCode(this.body);
+                int hash = 7;
+                hash = 89 * hash + Objects.hashCode(this.requestHeaders);
+                hash = 89 * hash + Objects.hashCode(this.url);
+                hash = 89 * hash + Objects.hashCode(this.body);
+                hash = 89 * hash + Objects.hashCode(this.verb);
                 return hash;
             }
 
@@ -177,13 +204,17 @@ public interface HttpRequest
                 {
                     return false;
                 }
+                if (!Objects.equals(this.verb, other.verb))
+                {
+                    return false;
+                }
                 return true;
             }
 
             @Override
             public String toString()
             {
-                return "Impl{" + "requestHeaders=" + requestHeaders + ", url=" + url + ", body=" + body + '}';
+                return "Impl{" + "requestHeaders=" + requestHeaders + ", url=" + url + ", body=" + body + ", verb=" + verb + '}';
             }
 
         }

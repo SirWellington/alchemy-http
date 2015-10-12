@@ -15,17 +15,14 @@
  */
 package sir.wellington.alchemy.http.exceptions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.http.HttpResponse;
 
 /**
  *
  * @author SirWellington
  */
-class OperationFailedException extends RuntimeException
+class OperationFailedException extends AlchemyHttpException
 {
-
-    private final static Logger LOG = LoggerFactory.getLogger(OperationFailedException.class);
 
     public OperationFailedException()
     {
@@ -44,6 +41,21 @@ class OperationFailedException extends RuntimeException
     public OperationFailedException(Throwable cause)
     {
         super(cause);
+    }
+
+    public OperationFailedException(HttpResponse response, String message)
+    {
+        super(response, message);
+    }
+
+    public OperationFailedException(HttpResponse response, String message, Throwable cause)
+    {
+        super(response, message, cause);
+    }
+
+    public OperationFailedException(HttpResponse response, Throwable cause)
+    {
+        super(response, cause);
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package sir.wellington.alchemy.http;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +40,12 @@ public interface AlchemyHttp
 
     HttpOperation.Step1 begin();
 
-    static void test()
+    public static void main(String[] args) throws MalformedURLException
     {
         Logger LOG = LoggerFactory.getLogger(AlchemyHttp.class);
 
         AlchemyHttp http = null;
-        URL url = null;
+        URL url = new URL("google.com");
 
         http.begin()
                 .body("this is my message")

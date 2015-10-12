@@ -28,9 +28,10 @@ import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.BUILDER;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.assertions.Assertions.nonEmptyMap;
-import static sir.wellington.alchemy.arguments.assertions.Assertions.notNull;
-import static sir.wellington.alchemy.arguments.assertions.Assertions.positiveInteger;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import static sir.wellington.alchemy.arguments.Assertions.positiveInteger;
+import sir.wellington.alchemy.http.exceptions.JsonException;
 
 /**
  *
@@ -57,7 +58,7 @@ public interface HttpResponse
 
     JsonElement asJSON() throws JsonParseException;
 
-    <T> T as(Class<T> classOfT) throws JsonParseException;
+    <T> T as(Class<T> classOfT) throws JsonException;
 
     @BuilderPattern(role = BUILDER)
     static class Builder

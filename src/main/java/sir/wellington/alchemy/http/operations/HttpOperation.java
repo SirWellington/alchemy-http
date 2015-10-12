@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,14 @@
  */
 package sir.wellington.alchemy.http.operations;
 
+import com.google.common.io.Resources;
 import java.net.URL;
 import sir.wellington.alchemy.annotations.arguments.NonEmpty;
 import sir.wellington.alchemy.annotations.arguments.NonNull;
+import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.http.HttpResponse;
-import sir.wellington.alchemy.http.exceptions.HttpException;
+import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
  *
@@ -33,19 +36,34 @@ public interface HttpOperation
     interface Step1
     {
 
+        default byte[] download(URL url) throws AlchemyHttpException
+        {
+            checkThat(url)
+                    .usingException(ex -> new AlchemyHttpException("missing url"))
+                    .is(notNull());
+            try
+            {
+                return Resources.toByteArray(url);
+            }
+            catch (Exception ex)
+            {
+                throw new AlchemyHttpException("Could not download from URL" + url, ex);
+            }
+        }
+
         Step1 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
 
         Step1 body(@NonNull Object body) throws IllegalArgumentException;
 
-        Step2 get() throws HttpException;
+        Step2 get() throws AlchemyHttpException;
 
-        Step2 post() throws HttpException;
+        Step2 post() throws AlchemyHttpException;
 
-        Step2 put() throws HttpException;
+        Step2 put() throws AlchemyHttpException;
 
-        Step2 delete() throws HttpException;
+        Step2 delete() throws AlchemyHttpException;
 
-        Step2 customVerb(@NonNull HttpVerb verb) throws HttpException;
+        Step2 customVerb(@NonNull HttpVerb verb) throws AlchemyHttpException;
 
     }
 
@@ -61,7 +79,7 @@ public interface HttpOperation
             return followRedirects(10);
         }
 
-        HttpResponse at(URL url) throws HttpException;
+        HttpResponse at(URL url) throws AlchemyHttpException;
 
         Step4<HttpResponse> onSuccess(OnSuccess<HttpResponse> onSuccessCallback);
 
@@ -71,7 +89,7 @@ public interface HttpOperation
     interface Step3<ResponseType>
     {
 
-        ResponseType at(URL url) throws HttpException;
+        ResponseType at(URL url) throws AlchemyHttpException;
 
         Step4<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
@@ -106,6 +124,6 @@ public interface HttpOperation
 
         };
 
-        void handleError(HttpException ex);
+        void handleError(AlchemyHttpException ex);
     }
 }
