@@ -59,6 +59,32 @@ public interface HttpResponse
     JsonElement asJSON() throws JsonParseException;
 
     <T> T as(Class<T> classOfT) throws JsonException;
+    
+    //TODO: Refine
+    default boolean equals(HttpResponse other) 
+    {
+        if(other == null)
+        {
+            return false;
+        }
+        
+        if (this.statusCode() != other.statusCode())
+        {
+            return false;
+        }
+        
+        if(!Objects.equals(this.responseHeaders(), other.responseHeaders())
+        {
+            return false;
+        }
+        
+        if(!Objects.equals(this.asString(), other.asString())
+        {
+            return false;
+        }
+        
+        return true;
+    }
 
     @BuilderPattern(role = BUILDER)
     static class Builder
@@ -76,6 +102,7 @@ public interface HttpResponse
 
         public Builder withStatusCode(int statusCode) throws IllegalArgumentException
         {
+            //TODO: Also add check that status code is in the HTTP Range
             checkThat(statusCode).is(positiveInteger());
             this.statusCode = statusCode;
             return this;
@@ -83,6 +110,7 @@ public interface HttpResponse
 
         public Builder withResponseHeaders(Map<String, String> responseHeaders) throws IllegalArgumentException
         {
+            //TODO: An empty map of Headers is probably ok
             checkThat(responseHeaders).is(nonEmptyMap());
             this.responseHeaders = responseHeaders;
             return this;
@@ -179,6 +207,7 @@ public interface HttpResponse
             @Override
             public boolean equals(Object obj)
             {
+                //TODO: Add implementation that checks against interface, not implementation
                 if (obj == null)
                 {
                     return false;
