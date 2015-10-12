@@ -18,6 +18,7 @@ package sir.wellington.alchemy.http.operations;
 import com.google.gson.JsonElement;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.concurrency.Immutable;
@@ -27,7 +28,7 @@ import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PR
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
-import sir.wellington.alchemy.collections.maps.MapOperations;
+import sir.wellington.alchemy.collections.maps.Maps;
 
 /**
  *
@@ -38,6 +39,24 @@ import sir.wellington.alchemy.collections.maps.MapOperations;
 public interface HttpRequest
 {
 
+    Map<String, String> getRequestHeaders();
+
+    URL getUrl();
+
+    JsonElement getBody();
+
+    HttpVerb getVerb();
+
+    default boolean hasBody()
+    {
+        return getBody() != null;
+    }
+    
+    static HttpRequest copyOf(HttpRequest other)
+    {
+        return Builder.from(other).build();
+    }
+
     @BuilderPattern(role = BUILDER)
     class Builder
     {
@@ -47,17 +66,33 @@ public interface HttpRequest
         private Map<String, String> requestHeaders;
         private URL url;
         private JsonElement body;
-        private Class<?> responseClass;
+        private HttpVerb verb;
 
         public static Builder newInstance()
         {
             return new Builder();
         }
 
+        public static Builder from(HttpRequest other)
+        {
+            Builder builder = newInstance();
+
+            if (other == null)
+            {
+                return builder;
+            }
+
+            builder.url = other.getUrl();
+            builder.requestHeaders = other.getRequestHeaders();
+            builder.body = other.getBody();
+
+            return builder;
+        }
+
         public Builder usingRequestHeaders(Map<String, String> requestHeaders) throws IllegalArgumentException
         {
             checkThat(requestHeaders).is(nonEmptyMap());
-            this.requestHeaders = MapOperations.immutableCopyOf(requestHeaders);
+            this.requestHeaders = Maps.immutableCopyOf(requestHeaders);
             return this;
         }
 
@@ -74,10 +109,10 @@ public interface HttpRequest
             return this;
         }
 
-        public Builder usingResponseClass(Class<?> responseClass)
+        public Builder usingVerb(HttpVerb verb) throws IllegalArgumentException
         {
-            checkThat(responseClass).is(notNull());
-            this.responseClass = responseClass;
+            checkThat(verb).usingMessage("missing verb").is(notNull());
+            this.verb = verb;
             return this;
         }
 
@@ -87,17 +122,101 @@ public interface HttpRequest
                     .usingMessage("missing url")
                     .is(notNull());
 
-            checkThat(responseClass)
-                    .usingMessage("missing response Class")
+            checkThat(verb)
+                    .usingMessage("missing HTTP Verb")
                     .is(notNull());
 
-            return new Impl();
+            Impl instance = new Impl();
+
+            instance.body = this.body;
+            instance.requestHeaders = this.requestHeaders;
+            instance.url = this.url;
+
+            return instance;
         }
 
         @Immutable
         @BuilderPattern(role = PRODUCT)
         private static class Impl implements HttpRequest
         {
+
+            private Map<String, String> requestHeaders;
+            private URL url;
+            private JsonElement body;
+            private HttpVerb verb;
+
+            @Override
+            public Map<String, String> getRequestHeaders()
+            {
+                return requestHeaders;
+            }
+
+            @Override
+            public URL getUrl()
+            {
+                return url;
+            }
+
+            @Override
+            public JsonElement getBody()
+            {
+                return body;
+            }
+
+            @Override
+            public HttpVerb getVerb()
+            {
+                return verb;
+            }
+
+            @Override
+            public int hashCode()
+            {
+                int hash = 7;
+                hash = 89 * hash + Objects.hashCode(this.requestHeaders);
+                hash = 89 * hash + Objects.hashCode(this.url);
+                hash = 89 * hash + Objects.hashCode(this.body);
+                hash = 89 * hash + Objects.hashCode(this.verb);
+                return hash;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                if (obj == null)
+                {
+                    return false;
+                }
+                if (getClass() != obj.getClass())
+                {
+                    return false;
+                }
+                final Impl other = (Impl) obj;
+                if (!Objects.equals(this.requestHeaders, other.requestHeaders))
+                {
+                    return false;
+                }
+                if (!Objects.equals(this.url, other.url))
+                {
+                    return false;
+                }
+                if (!Objects.equals(this.body, other.body))
+                {
+                    return false;
+                }
+                if (!Objects.equals(this.verb, other.verb))
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Impl{" + "requestHeaders=" + requestHeaders + ", url=" + url + ", body=" + body + ", verb=" + verb + '}';
+            }
+
         }
 
     }

@@ -5,7 +5,8 @@
     <groupId>sir.wellington.alchemy</groupId>
     <artifactId>alchemy-http</artifactId>
     <version>1.0-SNAPSHOT</version>
-    
+    <packaging>jar</packaging>
+
     <name>${project.artifactId}</name>
     <url>https://github.com/SirWellington/alchemy-http</url>
     <description>
@@ -14,8 +15,6 @@
         Makes it dead-simple to call RESTful Web Services in Java. It is strongly suited for
         APIs written in REST and JSON.
     </description>
-    
-    <packaging>jar</packaging>
 
     <organization>
         <name>Sir Wellington</name>
@@ -101,12 +100,6 @@
         </dependency>
         
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
-        
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.3.1</version>
@@ -115,7 +108,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-annotations</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>sir.wellington.commons</groupId>
@@ -132,6 +125,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
         </dependency>
     </dependencies>
     

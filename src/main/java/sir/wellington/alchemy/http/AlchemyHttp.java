@@ -15,10 +15,14 @@
  */
 package sir.wellington.alchemy.http;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.concurrency.Immutable;
+import sir.wellington.alchemy.annotations.concurrency.ThreadSafe;
 import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
 import sir.wellington.alchemy.http.operations.HttpOperation;
 
@@ -26,32 +30,48 @@ import sir.wellington.alchemy.http.operations.HttpOperation;
  *
  * @author SirWellington
  */
+@Immutable
+@ThreadSafe
 @FluidAPIPattern
 public interface AlchemyHttp
 {
-    
+
     AlchemyHttp setDefaultHeader(String key, String value);
-    
-    HttpOperation<HttpResponse> at(URL url);
-    
-    static void test()
+
+    HttpOperation.Step1 begin();
+
+    public static void main(String[] args) throws MalformedURLException
     {
         Logger LOG = LoggerFactory.getLogger(AlchemyHttp.class);
-        
+
         AlchemyHttp http = null;
-        URL url = null;
-        
-        http.at(url)
+        URL url = new URL("google.com");
+
+        http.begin()
+                .body("this is my message")
+                .post()
+                .onSuccess(r -> LOG.info(r.asString()))
+                .onFailure(HttpOperation.OnFailure.NO_OP)
+                .at(url);
+
+        List list = http.begin()
+                .get()
                 .expecting(List.class)
-                .onSuccess(list -> LOG.info(list.toString()))
-                .get();
-        
-        List list = http.at(url)
-                .expecting(List.class)
-                .get();
-        
-        String response = http.at(url)
+                .at(url);
+
+        String response = http.begin()
+                .body("this is my message")
+                .post()
                 .expecting(String.class)
-                .post("this is my message");
+                .at(url);
+
+        http.begin()
+                .post()
+                .usingHeader("header key", "value")
+                .usingHeader("another key", "val")
+                .expecting(Map.class)
+                .onSuccess(m -> LOG.info(m.toString()))
+                .onFailure(HttpOperation.OnFailure.NO_OP)
+                .at(url);
     }
 }

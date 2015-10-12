@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,51 +21,46 @@ import sir.wellington.alchemy.http.HttpResponse;
  *
  * @author SirWellington
  */
-public class HttpException extends RuntimeException
+public class AlchemyHttpException extends RuntimeException
 {
 
     private HttpResponse response;
 
-    public HttpException()
+    public AlchemyHttpException()
     {
     }
 
-    public HttpException(HttpResponse response)
+    public AlchemyHttpException(String message)
     {
-        this.response = response;
+        super(message);
     }
 
-    public HttpException(HttpResponse response, String message)
+    public AlchemyHttpException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public AlchemyHttpException(Throwable cause)
+    {
+        super(cause);
+    }
+
+    public AlchemyHttpException(HttpResponse response, String message)
     {
         super(message);
         this.response = response;
     }
 
-    public HttpException(HttpResponse response, Throwable cause)
-    {
-        super(cause);
-        this.response = response;
-    }
-
-    public HttpException(HttpResponse response, String message, Throwable cause)
+    public AlchemyHttpException(HttpResponse response, String message, Throwable cause)
     {
         super(message, cause);
         this.response = response;
     }
 
-    public HttpException(String message)
-    {
-        super(message);
-    }
-
-    public HttpException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-
-    public HttpException(Throwable cause)
+    public AlchemyHttpException(HttpResponse response, Throwable cause)
     {
         super(cause);
+        this.response = response;
     }
 
     public boolean hasResponse()

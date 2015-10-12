@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,57 +15,115 @@
  */
 package sir.wellington.alchemy.http.operations;
 
-import sir.wellington.alchemy.http.exceptions.HttpException;
+import com.google.common.io.Resources;
+import java.net.URL;
+import sir.wellington.alchemy.annotations.arguments.NonEmpty;
+import sir.wellington.alchemy.annotations.arguments.NonNull;
+import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import sir.wellington.alchemy.http.HttpResponse;
+import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
  *
- * @param <ResponseType>
  *
  * @author SirWellington
  *
  */
-public interface HttpOperation<ResponseType>
+public interface HttpOperation
 {
 
-    HttpOperation<ResponseType> usingHeader(String key, String value);
+    interface Step1
+    {
 
-    <NewType> HttpOperation<NewType> expecting(Class<NewType> classOfNewType);
+        default byte[] download(URL url) throws AlchemyHttpException
+        {
+            checkThat(url)
+                    .usingException(ex -> new AlchemyHttpException("missing url"))
+                    .is(notNull());
+            try
+            {
+                return Resources.toByteArray(url);
+            }
+            catch (Exception ex)
+            {
+                throw new AlchemyHttpException("Could not download from URL" + url, ex);
+            }
+        }
 
-    HttpOperation<Void> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
+        Step1 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
 
-    HttpOperation<Void> onFailure(OnFailure onFailureCallback);
+        Step1 body(@NonNull Object body) throws IllegalArgumentException;
 
-    ResponseType get() throws HttpException;
+        Step2 get() throws AlchemyHttpException;
 
-    ResponseType post() throws HttpException;
+        Step2 post() throws AlchemyHttpException;
 
-    ResponseType post(String jsonString) throws HttpException;
+        Step2 put() throws AlchemyHttpException;
 
-    ResponseType post(Object body) throws HttpException;
+        Step2 delete() throws AlchemyHttpException;
 
-    ResponseType put() throws HttpException;
+        Step2 customVerb(@NonNull HttpVerb verb) throws AlchemyHttpException;
 
-    ResponseType put(String jsonString) throws HttpException;
+    }
 
-    ResponseType put(Object body) throws HttpException;
+    interface Step2
+    {
 
-    ResponseType delete() throws HttpException;
+        Step2 usingHeader(String key, String value) throws IllegalArgumentException;
 
-    ResponseType delete(String jsonString) throws HttpException;
+        Step2 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
 
-    ResponseType delete(Object body) throws HttpException;
+        default Step2 followRedirects()
+        {
+            return followRedirects(10);
+        }
 
-    ResponseType customVerb(HttpVerb verb) throws HttpException;
+        HttpResponse at(URL url) throws AlchemyHttpException;
+
+        Step4<HttpResponse> onSuccess(OnSuccess<HttpResponse> onSuccessCallback);
+
+        <ResponseType> Step3<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException;
+    }
+
+    interface Step3<ResponseType>
+    {
+
+        ResponseType at(URL url) throws AlchemyHttpException;
+
+        Step4<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
+    }
+
+    interface Step4<ResponseType>
+    {
+
+        Step5<ResponseType> onFailure(OnFailure onFailureCallback);
+    }
+
+    interface Step5<ResponseType>
+    {
+
+        void at(URL url);
+    }
 
     interface OnSuccess<ResponseType>
     {
 
         void processResponse(ResponseType response);
+
+        OnSuccess NO_OP = response ->
+        {
+        };
     }
 
     interface OnFailure
     {
 
-        void handleError(HttpException ex);
+        OnFailure NO_OP = ex ->
+        {
+
+        };
+
+        void handleError(AlchemyHttpException ex);
     }
 }
