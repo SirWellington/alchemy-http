@@ -213,7 +213,7 @@ public interface AlchemyHttp
                 .get()
                 .usingHeader("X-Mashape-Key", "3OoZRAgXILmsh6fzCW8MyQwbwCN2p17o64yjsn6qdjtZ9H1UdP")
                 .onSuccess(r -> System.out.println(r))
-                .onFailure(ex -> System.out.println("Failed: " + ex.getResponse()))
+                .onFailure(ex -> System.out.println("Failed: " + ex))
                 .at(url);
 
     }

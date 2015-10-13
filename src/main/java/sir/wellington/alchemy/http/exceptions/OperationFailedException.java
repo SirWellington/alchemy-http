@@ -16,12 +16,13 @@
 package sir.wellington.alchemy.http.exceptions;
 
 import sir.wellington.alchemy.http.HttpResponse;
+import sir.wellington.alchemy.http.operations.HttpRequest;
 
 /**
  *
  * @author SirWellington
  */
-class OperationFailedException extends AlchemyHttpException
+public class OperationFailedException extends AlchemyHttpException
 {
 
     public OperationFailedException()
@@ -43,6 +44,31 @@ class OperationFailedException extends AlchemyHttpException
         super(cause);
     }
 
+    public OperationFailedException(HttpRequest request)
+    {
+        super(request);
+    }
+
+    public OperationFailedException(HttpRequest request, String message)
+    {
+        super(request, message);
+    }
+
+    public OperationFailedException(HttpRequest request, String message, Throwable cause)
+    {
+        super(request, message, cause);
+    }
+
+    public OperationFailedException(HttpRequest request, Throwable cause)
+    {
+        super(request, cause);
+    }
+
+    public OperationFailedException(HttpResponse response)
+    {
+        super(response);
+    }
+
     public OperationFailedException(HttpResponse response, String message)
     {
         super(response, message);
@@ -56,6 +82,26 @@ class OperationFailedException extends AlchemyHttpException
     public OperationFailedException(HttpResponse response, Throwable cause)
     {
         super(response, cause);
+    }
+
+    public OperationFailedException(HttpRequest request, HttpResponse response)
+    {
+        super(request, response);
+    }
+
+    public OperationFailedException(HttpRequest request, HttpResponse response, String message)
+    {
+        super(request, response, message);
+    }
+
+    public OperationFailedException(HttpRequest request, HttpResponse response, String message, Throwable cause)
+    {
+        super(request, response, message, cause);
+    }
+
+    public OperationFailedException(HttpRequest request, HttpResponse response, Throwable cause)
+    {
+        super(request, response, cause);
     }
 
 }

@@ -131,23 +131,23 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         catch (Exception ex)
         {
             LOG.error("Failed to execute verb {} on request {}", verb, request, ex);
-            throw ex;
+            throw new AlchemyHttpException(request, ex);
         }
 
         if (response == null)
         {
             LOG.error("HTTP Verb {} returned null response", verb);
-            throw new AlchemyHttpException("HTTP Verb returned null response");
+            throw new AlchemyHttpException(request, "HTTP Verb returned null response");
         }
-        
+
         LOG.debug("HTTP Request {} successfully executed: {}", request, response);
 
         if (!response.isOk())
         {
-            throw new AlchemyHttpException(response, "Http Response not OK. Status Code: " + response.statusCode());
+            throw new AlchemyHttpException(request, response, "Http Response not OK. Status Code: " + response.statusCode());
         }
 
-        if (classOfResponseType == HttpRequest.class)
+        if (classOfResponseType == HttpResponse.class)
         {
             return (ResponseType) response;
         }
@@ -164,7 +164,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             }
             catch (JsonParseException ex)
             {
-                throw new JsonException(response, "Failed to marshal JSON into class of type: " + classOfResponseType, ex);
+                throw new JsonException(request, response, "Failed to marshal JSON into class of type: " + classOfResponseType, ex);
             }
         }
     }

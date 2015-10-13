@@ -22,6 +22,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.concurrency.Immutable;
+import sir.wellington.alchemy.annotations.concurrency.Mutable;
 import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.BUILDER;
 import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
@@ -30,7 +31,7 @@ import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.collections.maps.Maps;
 import static sir.wellington.alchemy.collections.maps.Maps.immutableCopyOf;
-import static sir.wellington.alchemy.collections.maps.Maps.nullToEmpty;
+import static sir.wellington.alchemy.collections.maps.Maps.mutableCopyOf;
 
 /**
  *
@@ -115,6 +116,7 @@ public interface HttpRequest
     }
 
     @BuilderPattern(role = BUILDER)
+    @Mutable
     class Builder
     {
 
@@ -142,10 +144,10 @@ public interface HttpRequest
             }
 
             builder.url = other.getUrl();
-            builder.requestHeaders = nullToEmpty(other.getRequestHeaders());
+            builder.requestHeaders = mutableCopyOf(other.getRequestHeaders());
             builder.body = other.getBody();
             builder.verb = other.getVerb();
-            builder.queryParams = nullToEmpty(other.getQueryParams());
+            builder.queryParams = mutableCopyOf(other.getQueryParams());
 
             return builder;
         }
@@ -219,7 +221,7 @@ public interface HttpRequest
             @Override
             public Map<String, String> getRequestHeaders()
             {
-                return queryParams;
+                return requestHeaders;
             }
 
             @Override

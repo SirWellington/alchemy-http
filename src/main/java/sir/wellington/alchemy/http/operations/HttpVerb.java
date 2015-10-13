@@ -48,6 +48,7 @@ import sir.wellington.alchemy.arguments.FailedAssertionException;
 import sir.wellington.alchemy.http.HttpResponse;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 import sir.wellington.alchemy.http.exceptions.JsonException;
+import sir.wellington.alchemy.http.exceptions.OperationFailedException;
 
 /**
  *
@@ -203,7 +204,12 @@ public interface HttpVerb
             catch (JsonParseException ex)
             {
                 LOG.error("Could not parse Response from Request {} as JSON", request, ex);
-                throw new JsonException("Failed to parse Json", ex);
+                throw new JsonException(request, "Failed to parse Json", ex);
+            }
+            catch (Exception ex)
+            {
+                LOG.error("Could not parse Response from Request {}", request, ex);
+                throw new OperationFailedException(request, ex);
             }
 
             HttpResponse response = HttpResponse.Builder.newInstance()
@@ -219,15 +225,15 @@ public interface HttpVerb
         private JsonElement extractJsonFromResponse(org.apache.http.HttpResponse apacheResponse)
         {
 
-            HttpEntity entity = null;
+            HttpEntity entity = apacheResponse.getEntity();
+            Header contentType = entity.getContentType();
+
+            checkThat(contentType)
+                    .is(validContentType);
+
             String entityString = null;
             try
             {
-                entity = apacheResponse.getEntity();
-                Header contentType = entity.getContentType();
-
-                checkThat(contentType)
-                        .is(validContentType);
 
                 try (InputStream istream = entity.getContent();)
                 {
@@ -276,12 +282,12 @@ public interface HttpVerb
             checkThat(contentType)
                     .usingMessage("missing Content-Type")
                     .is(nonEmptyString());
-            
+
             if (contentType.contains("application/json"))
             {
                 return;
             }
-            
+
             if (contentType.contains("text/plain"))
             {
                 return;

@@ -16,6 +16,7 @@
 package sir.wellington.alchemy.http.exceptions;
 
 import sir.wellington.alchemy.http.HttpResponse;
+import sir.wellington.alchemy.http.operations.HttpRequest;
 
 /**
  *
@@ -43,6 +44,31 @@ public class JsonException extends AlchemyHttpException
         super(cause);
     }
 
+    public JsonException(HttpRequest request)
+    {
+        super(request);
+    }
+
+    public JsonException(HttpRequest request, String message)
+    {
+        super(request, message);
+    }
+
+    public JsonException(HttpRequest request, String message, Throwable cause)
+    {
+        super(request, message, cause);
+    }
+
+    public JsonException(HttpRequest request, Throwable cause)
+    {
+        super(request, cause);
+    }
+
+    public JsonException(HttpResponse response)
+    {
+        super(response);
+    }
+
     public JsonException(HttpResponse response, String message)
     {
         super(response, message);
@@ -56,6 +82,26 @@ public class JsonException extends AlchemyHttpException
     public JsonException(HttpResponse response, Throwable cause)
     {
         super(response, cause);
+    }
+
+    public JsonException(HttpRequest request, HttpResponse response)
+    {
+        super(request, response);
+    }
+
+    public JsonException(HttpRequest request, HttpResponse response, String message)
+    {
+        super(request, response, message);
+    }
+
+    public JsonException(HttpRequest request, HttpResponse response, String message, Throwable cause)
+    {
+        super(request, response, message, cause);
+    }
+
+    public JsonException(HttpRequest request, HttpResponse response, Throwable cause)
+    {
+        super(request, response, cause);
     }
 
 }

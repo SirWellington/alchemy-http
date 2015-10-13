@@ -16,6 +16,7 @@
 package sir.wellington.alchemy.http.exceptions;
 
 import sir.wellington.alchemy.http.HttpResponse;
+import sir.wellington.alchemy.http.operations.HttpRequest;
 
 /**
  *
@@ -24,6 +25,7 @@ import sir.wellington.alchemy.http.HttpResponse;
 public class AlchemyHttpException extends RuntimeException
 {
 
+    private HttpRequest request;
     private HttpResponse response;
 
     public AlchemyHttpException()
@@ -45,6 +47,34 @@ public class AlchemyHttpException extends RuntimeException
         super(cause);
     }
 
+    public AlchemyHttpException(HttpRequest request)
+    {
+        this.request = request;
+    }
+
+    public AlchemyHttpException(HttpRequest request, String message)
+    {
+        super(message);
+        this.request = request;
+    }
+
+    public AlchemyHttpException(HttpRequest request, String message, Throwable cause)
+    {
+        super(message, cause);
+        this.request = request;
+    }
+
+    public AlchemyHttpException(HttpRequest request, Throwable cause)
+    {
+        super(cause);
+        this.request = request;
+    }
+
+    public AlchemyHttpException(HttpResponse response)
+    {
+        this.response = response;
+    }
+
     public AlchemyHttpException(HttpResponse response, String message)
     {
         super(message);
@@ -63,14 +93,57 @@ public class AlchemyHttpException extends RuntimeException
         this.response = response;
     }
 
+    public AlchemyHttpException(HttpRequest request, HttpResponse response)
+    {
+        this.request = request;
+        this.response = response;
+    }
+
+    public AlchemyHttpException(HttpRequest request, HttpResponse response, String message)
+    {
+        super(message);
+        this.request = request;
+        this.response = response;
+    }
+
+    public AlchemyHttpException(HttpRequest request, HttpResponse response, String message, Throwable cause)
+    {
+        super(message, cause);
+        this.request = request;
+        this.response = response;
+    }
+
+    public AlchemyHttpException(HttpRequest request, HttpResponse response, Throwable cause)
+    {
+        super(cause);
+        this.request = request;
+        this.response = response;
+    }
+
+    public boolean hasRequest()
+    {
+        return request != null;
+    }
+
     public boolean hasResponse()
     {
         return response != null;
     }
 
+    public HttpRequest getRequest()
+    {
+        return request;
+    }
+
     public HttpResponse getResponse()
     {
         return response;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "AlchemyHttpException{" + "request=" + request + ", response=" + response + '}';
     }
 
 }
