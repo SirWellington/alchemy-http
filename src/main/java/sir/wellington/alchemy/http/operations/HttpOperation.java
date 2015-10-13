@@ -16,10 +16,12 @@
 package sir.wellington.alchemy.http.operations;
 
 import com.google.common.io.Resources;
+import com.google.gson.JsonObject;
 import java.net.URL;
 import sir.wellington.alchemy.annotations.arguments.NonEmpty;
 import sir.wellington.alchemy.annotations.arguments.NonNull;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.http.HttpResponse;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
@@ -49,6 +51,14 @@ public interface HttpOperation
             {
                 throw new AlchemyHttpException("Could not download from URL" + url, ex);
             }
+        }
+
+        default Step1 bodyWithJsonObjectKeyValue(String key, String value) throws IllegalArgumentException
+        {
+            checkThat(key).usingMessage("missing key").is(nonEmptyString());
+            JsonObject object = new JsonObject();
+            object.addProperty(key, value);
+            return body(object);
         }
 
         Step1 body(@NonEmpty String jsonBody) throws IllegalArgumentException;

@@ -59,7 +59,7 @@ class Step2Impl implements HttpOperation.Step2
         //Value of an HTTP Header can be empty ?
         value = Strings.nullToEmpty(value);
 
-        Map<String, String> requestHeaders = Maps.nullToEmpty(request.getRequestHeaders());
+        Map<String, String> requestHeaders = Maps.mutableCopyOf(request.getRequestHeaders());
         requestHeaders.put(key, value);
 
         this.request = HttpRequest.Builder.from(request)
@@ -82,7 +82,11 @@ class Step2Impl implements HttpOperation.Step2
     public HttpResponse at(URL url) throws AlchemyHttpException
     {
         //Ready to do a sync request
-        return stateMachine.executeSync(request);
+        HttpRequest requestCopy = HttpRequest.Builder.from(request)
+                .usingUrl(url)
+                .build();
+
+        return stateMachine.executeSync(requestCopy);
     }
 
     @Override

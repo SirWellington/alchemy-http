@@ -29,6 +29,8 @@ import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.collections.maps.Maps;
+import static sir.wellington.alchemy.collections.maps.Maps.immutableCopyOf;
+import static sir.wellington.alchemy.collections.maps.Maps.nullToEmpty;
 
 /**
  *
@@ -41,6 +43,8 @@ public interface HttpRequest
 
     Map<String, String> getRequestHeaders();
 
+    Map<String, String> getQueryParams();
+
     URL getUrl();
 
     JsonElement getBody();
@@ -51,7 +55,60 @@ public interface HttpRequest
     {
         return getBody() != null;
     }
-    
+
+    default boolean equals(HttpRequest other)
+    {
+        if (other == null)
+        {
+            return false;
+        }
+
+        if (this == other)
+        {
+            return true;
+        }
+
+        if (!Objects.equals(this.getRequestHeaders(), other.getRequestHeaders()))
+        {
+            return false;
+        }
+
+        if (!Objects.equals(this.getQueryParams(), other.getQueryParams()))
+        {
+            return false;
+        }
+
+        if (!Objects.equals(this.getUrl(), other.getUrl()))
+        {
+            return false;
+        }
+
+        if (!Objects.equals(this.getBody(), other.getBody()))
+        {
+            return false;
+        }
+
+        if (!Objects.equals(this.getVerb(), other.getVerb()))
+        {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    default void checkValid() throws IllegalStateException
+    {
+        checkThat(getVerb())
+                .usingException(ex -> new IllegalStateException("missing HTTP Verb"))
+                .is(notNull());
+
+        checkThat(getUrl())
+                .usingException(ex -> new IllegalStateException("missing URL"))
+                .is(notNull());
+
+    }
+
     static HttpRequest copyOf(HttpRequest other)
     {
         return Builder.from(other).build();
@@ -63,7 +120,9 @@ public interface HttpRequest
 
         private final static Logger LOG = LoggerFactory.getLogger(HttpRequest.class);
 
-        private Map<String, String> requestHeaders;
+        private Map<String, String> requestHeaders = Maps.create();
+        private Map<String, String> queryParams = Maps.create();
+
         private URL url;
         private JsonElement body;
         private HttpVerb verb;
@@ -83,8 +142,10 @@ public interface HttpRequest
             }
 
             builder.url = other.getUrl();
-            builder.requestHeaders = other.getRequestHeaders();
+            builder.requestHeaders = nullToEmpty(other.getRequestHeaders());
             builder.body = other.getBody();
+            builder.verb = other.getVerb();
+            builder.queryParams = nullToEmpty(other.getQueryParams());
 
             return builder;
         }
@@ -92,7 +153,15 @@ public interface HttpRequest
         public Builder usingRequestHeaders(Map<String, String> requestHeaders) throws IllegalArgumentException
         {
             checkThat(requestHeaders).is(nonEmptyMap());
-            this.requestHeaders = Maps.immutableCopyOf(requestHeaders);
+            this.requestHeaders.clear();
+            this.requestHeaders.putAll(requestHeaders);
+            return this;
+        }
+
+        public Builder usingQueryParams(Map<String, String> queryParams) throws IllegalArgumentException
+        {
+            this.queryParams.clear();
+            this.queryParams.putAll(queryParams);
             return this;
         }
 
@@ -118,21 +187,21 @@ public interface HttpRequest
 
         public HttpRequest build() throws IllegalArgumentException
         {
-            checkThat(url)
-                    .usingMessage("missing url")
-                    .is(notNull());
-
-            checkThat(verb)
-                    .usingMessage("missing HTTP Verb")
-                    .is(notNull());
-
             Impl instance = new Impl();
 
+            instance.requestHeaders = immutableCopyOf(this.requestHeaders);
+            instance.queryParams = immutableCopyOf(this.queryParams);
             instance.body = this.body;
-            instance.requestHeaders = this.requestHeaders;
             instance.url = this.url;
+            instance.verb = this.verb;
 
             return instance;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Builder{" + "requestHeaders=" + requestHeaders + ", queryParams=" + queryParams + ", url=" + url + ", body=" + body + ", verb=" + verb + '}';
         }
 
         @Immutable
@@ -141,6 +210,8 @@ public interface HttpRequest
         {
 
             private Map<String, String> requestHeaders;
+            private Map<String, String> queryParams;
+
             private URL url;
             private JsonElement body;
             private HttpVerb verb;
@@ -148,7 +219,13 @@ public interface HttpRequest
             @Override
             public Map<String, String> getRequestHeaders()
             {
-                return requestHeaders;
+                return queryParams;
+            }
+
+            @Override
+            public Map<String, String> getQueryParams()
+            {
+                return queryParams;
             }
 
             @Override
@@ -173,10 +250,11 @@ public interface HttpRequest
             public int hashCode()
             {
                 int hash = 7;
-                hash = 89 * hash + Objects.hashCode(this.requestHeaders);
-                hash = 89 * hash + Objects.hashCode(this.url);
-                hash = 89 * hash + Objects.hashCode(this.body);
-                hash = 89 * hash + Objects.hashCode(this.verb);
+                hash = 83 * hash + Objects.hashCode(this.requestHeaders);
+                hash = 83 * hash + Objects.hashCode(this.queryParams);
+                hash = 83 * hash + Objects.hashCode(this.url);
+                hash = 83 * hash + Objects.hashCode(this.body);
+                hash = 83 * hash + Objects.hashCode(this.verb);
                 return hash;
             }
 
@@ -187,34 +265,18 @@ public interface HttpRequest
                 {
                     return false;
                 }
-                if (getClass() != obj.getClass())
+                if (!(obj instanceof HttpRequest))
                 {
                     return false;
                 }
-                final Impl other = (Impl) obj;
-                if (!Objects.equals(this.requestHeaders, other.requestHeaders))
-                {
-                    return false;
-                }
-                if (!Objects.equals(this.url, other.url))
-                {
-                    return false;
-                }
-                if (!Objects.equals(this.body, other.body))
-                {
-                    return false;
-                }
-                if (!Objects.equals(this.verb, other.verb))
-                {
-                    return false;
-                }
-                return true;
+
+                return this.equals((HttpRequest) obj);
             }
 
             @Override
             public String toString()
             {
-                return "Impl{" + "requestHeaders=" + requestHeaders + ", url=" + url + ", body=" + body + ", verb=" + verb + '}';
+                return "Impl{" + "requestHeaders=" + requestHeaders + ", queryParams=" + queryParams + ", url=" + url + ", body=" + body + ", verb=" + verb + '}';
             }
 
         }

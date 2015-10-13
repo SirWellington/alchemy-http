@@ -59,30 +59,30 @@ public interface HttpResponse
     JsonElement asJSON() throws JsonParseException;
 
     <T> T as(Class<T> classOfT) throws JsonException;
-    
+
     //TODO: Refine
-    default boolean equals(HttpResponse other) 
+    default boolean equals(HttpResponse other)
     {
-        if(other == null)
+        if (other == null)
         {
             return false;
         }
-        
+
         if (this.statusCode() != other.statusCode())
         {
             return false;
         }
-        
-        if(!Objects.equals(this.responseHeaders(), other.responseHeaders())
+
+        if (!Objects.equals(this.responseHeaders(), other.responseHeaders()))
         {
             return false;
         }
-        
-        if(!Objects.equals(this.asString(), other.asString())
+
+        if (!Objects.equals(this.asString(), other.asString()))
         {
             return false;
         }
-        
+
         return true;
     }
 
@@ -212,24 +212,12 @@ public interface HttpResponse
                 {
                     return false;
                 }
-                if (getClass() != obj.getClass())
+                if (!(obj instanceof HttpResponse))
                 {
                     return false;
                 }
-                final Impl other = (Impl) obj;
-                if (this.statusCode != other.statusCode)
-                {
-                    return false;
-                }
-                if (!Objects.equals(this.responseHeaders, other.responseHeaders))
-                {
-                    return false;
-                }
-                if (!Objects.equals(this.response, other.response))
-                {
-                    return false;
-                }
-                return true;
+
+                return this.equals((HttpResponse) obj);
             }
 
             @Override

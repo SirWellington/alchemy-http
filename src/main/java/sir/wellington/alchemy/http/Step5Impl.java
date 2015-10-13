@@ -63,8 +63,12 @@ final class Step5Impl<ResponseType> implements HttpOperation.Step5<ResponseType>
         checkThat(url)
                 .usingMessage("missing URL")
                 .is(notNull());
+        
+        HttpRequest requestCopy = HttpRequest.Builder.from(request)
+                .usingUrl(url)
+                .build();
 
-        stateMachine.executeAsync(request, classOfResponseType, successCallback, failureCallback);
+        stateMachine.executeAsync(requestCopy, classOfResponseType, successCallback, failureCallback);
     }
 
     @Override

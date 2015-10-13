@@ -15,8 +15,16 @@
  */
 package sir.wellington.alchemy.http;
 
+import com.google.common.io.Resources;
+import com.google.common.util.concurrent.MoreExecutors;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import org.apache.http.client.HttpClient;
 import sir.wellington.alchemy.annotations.access.Internal;
+import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 import sir.wellington.alchemy.http.operations.HttpOperation;
 import sir.wellington.alchemy.http.operations.HttpOperation.Step1;
@@ -46,6 +54,12 @@ interface AlchemyHttpStateMachine
 
     Step1 begin(HttpRequest initialRequest);
 
+    default byte[] downloadAt(URL url) throws IOException, IllegalArgumentException
+    {
+        checkThat(url).is(notNull());
+        return Resources.toByteArray(url);
+    }
+
     Step2 getStep2(HttpRequest request) throws IllegalArgumentException;
 
     <ResponseType> Step3<ResponseType> getStep3(HttpRequest request,
@@ -72,5 +86,40 @@ interface AlchemyHttpStateMachine
                                      Class<ResponseType> classOfResponseType,
                                      HttpOperation.OnSuccess<ResponseType> successCallback,
                                      HttpOperation.OnFailure failureCallback);
+
+    class Builder
+    {
+
+        private HttpClient apacheHttpClient;
+        private ExecutorService executor = MoreExecutors.newDirectExecutorService();
+
+        static Builder newInstance()
+        {
+            return new Builder();
+        }
+
+        Builder withExecutorService(ExecutorService executor) throws IllegalArgumentException
+        {
+            checkThat(executor).is(notNull());
+            this.executor = executor;
+            return this;
+        }
+
+        Builder withApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
+        {
+            checkThat(apacheHttpClient).is(notNull());
+            this.apacheHttpClient = apacheHttpClient;
+            return this;
+        }
+
+        AlchemyHttpStateMachine build() throws IllegalStateException
+        {
+            checkThat(apacheHttpClient)
+                    .usingException(ex -> new IllegalStateException("missing Apache HTTP Client"))
+                    .is(notNull());
+
+            return new AlchemyMachineImpl(apacheHttpClient, executor);
+        }
+    }
 
 }

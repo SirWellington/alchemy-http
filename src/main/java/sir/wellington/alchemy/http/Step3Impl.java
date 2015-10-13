@@ -55,7 +55,11 @@ class Step3Impl<ResponseType> implements HttpOperation.Step3<ResponseType>
                 .usingMessage("missing url")
                 .is(notNull());
 
-        return stateMachine.executeSync(this.request, classOfResponseType);
+        HttpRequest requestCopy = HttpRequest.Builder.from(request)
+                .usingUrl(url)
+                .build();
+
+        return stateMachine.executeSync(requestCopy, classOfResponseType);
     }
 
     @Override

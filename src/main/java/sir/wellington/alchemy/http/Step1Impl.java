@@ -16,6 +16,7 @@
 package sir.wellington.alchemy.http;
 
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParser;
@@ -40,6 +41,7 @@ class Step1Impl implements HttpOperation.Step1
 
     private final AlchemyHttpStateMachine stateMachine;
     private final JsonParser jsonParser;
+    private final Gson gson = new Gson();
     private final HttpRequest request;
 
     private JsonElement body;
@@ -68,7 +70,7 @@ class Step1Impl implements HttpOperation.Step1
         {
             try
             {
-                this.body = jsonParser.parse(jsonBody);
+                this.body = gson.toJsonTree(jsonBody);
             }
             catch (Exception ex)
             {
@@ -87,6 +89,15 @@ class Step1Impl implements HttpOperation.Step1
         }
         else
         {
+            try
+            {
+                this.body = gson.toJsonTree(body);
+            }
+            catch (Exception ex)
+            {
+                LOG.error("Could not convert {} to JSON", body, ex);
+                throw new AlchemyHttpException("Could not convert to JSON", ex);
+            }
         }
         return this;
     }
@@ -94,25 +105,25 @@ class Step1Impl implements HttpOperation.Step1
     @Override
     public HttpOperation.Step2 get() throws AlchemyHttpException
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return customVerb(HttpVerb.get());
     }
 
     @Override
     public HttpOperation.Step2 post() throws AlchemyHttpException
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return customVerb(HttpVerb.post());
     }
 
     @Override
     public HttpOperation.Step2 put() throws AlchemyHttpException
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return customVerb(HttpVerb.put());
     }
 
     @Override
     public HttpOperation.Step2 delete() throws AlchemyHttpException
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return customVerb(HttpVerb.delete());
     }
 
     @Override

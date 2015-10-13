@@ -22,8 +22,10 @@ import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.access.Internal;
-import sir.wellington.alchemy.arguments.Arguments;
-import sir.wellington.alchemy.arguments.Assertions;
+import static sir.wellington.alchemy.arguments.Arguments.checkThat;
+import static sir.wellington.alchemy.arguments.Assertions.not;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import static sir.wellington.alchemy.arguments.Assertions.sameInstance;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 import sir.wellington.alchemy.http.exceptions.JsonException;
 import sir.wellington.alchemy.http.operations.HttpOperation;
@@ -51,13 +53,16 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
 
     private <ResponseType> void checkClass(Class<ResponseType> classOfResponseType)
     {
-        Arguments.checkThat(classOfResponseType).is(Assertions.notNull()).usingMessage("expected class cannot be Void").is(Assertions.not(Assertions.sameInstance(Void.class)));
+        checkThat(classOfResponseType)
+                .is(notNull())
+                .usingMessage("expected class cannot be Void")
+                .is(not(sameInstance(Void.class)));
     }
 
     @Override
     public HttpOperation.Step1 begin(HttpRequest initialRequest) throws IllegalArgumentException
     {
-        Arguments.checkThat(initialRequest).is(Assertions.notNull());
+        checkThat(initialRequest).is(notNull());
         HttpRequest requestCopy = HttpRequest.copyOf(initialRequest);
         LOG.debug("Beginning HTTP request {}", requestCopy);
         return new Step1Impl(this, requestCopy, new JsonParser());
@@ -82,7 +87,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     public <ResponseType> HttpOperation.Step4<ResponseType> getStep4(HttpRequest request, Class<ResponseType> classOfResponseType, HttpOperation.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException
     {
         checkClass(classOfResponseType);
-        Arguments.checkThat(successCallback).is(Assertions.notNull());
+        checkThat(successCallback).is(notNull());
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step4Impl<>(this, requestCopy, classOfResponseType, successCallback);
     }
@@ -91,8 +96,8 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     public <ResponseType> HttpOperation.Step5<ResponseType> getStep5(HttpRequest request, Class<ResponseType> classOfResponseType, HttpOperation.OnSuccess<ResponseType> successCallback, HttpOperation.OnFailure failureCallback)
     {
         checkClass(classOfResponseType);
-        Arguments.checkThat(successCallback).is(Assertions.notNull());
-        Arguments.checkThat(failureCallback).is(Assertions.notNull());
+        checkThat(successCallback).is(notNull());
+        checkThat(failureCallback).is(notNull());
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step5Impl<>(this, requestCopy, classOfResponseType, successCallback, failureCallback);
     }
@@ -100,16 +105,19 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     @Override
     public <ResponseType> ResponseType executeSync(HttpRequest request, Class<ResponseType> classOfResponseType)
     {
-        checkClass(classOfResponseType);
-        Arguments.checkThat(request).is(Assertions.notNull());
-        HttpRequest requestCopy = HttpRequest.copyOf(request);
         LOG.debug("Executing synchronous HTTP Request {}", request);
-        Arguments.checkThat(apacheHttpClient).is(Assertions.notNull());
-        Arguments.checkThat(request).is(Assertions.notNull());
-        Arguments.checkThat(classOfResponseType).is(Assertions.notNull()).is(Assertions.not(Assertions.sameInstance(Void.class)));
-        LOG.debug("Running HTTP Request {}", request);
+
+        request.checkValid();
+        checkClass(classOfResponseType);
+        checkThat(request).is(notNull());
+
+        checkThat(apacheHttpClient).is(notNull());
+
         HttpVerb verb = request.getVerb();
-        Arguments.checkThat(verb).usingException((sir.wellington.alchemy.arguments.FailedAssertionException ex) -> new IllegalStateException("Request missing verb: " + request)).is(Assertions.notNull());
+        checkThat(verb)
+                .usingException(ex -> new IllegalStateException("Request missing verb: " + request)).
+                is(notNull());
+
         HttpResponse response = null;
         try
         {
@@ -125,12 +133,20 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             LOG.error("Failed to execute verb {} on request {}", verb, request, ex);
             throw ex;
         }
+
         if (response == null)
         {
             LOG.error("HTTP Verb {} returned null response", verb);
             throw new AlchemyHttpException("HTTP Verb returned null response");
         }
+        
         LOG.debug("HTTP Request {} successfully executed: {}", request, response);
+
+        if (!response.isOk())
+        {
+            throw new AlchemyHttpException(response, "Http Response not OK. Status Code: " + response.statusCode());
+        }
+
         if (classOfResponseType == HttpRequest.class)
         {
             return (ResponseType) response;
@@ -157,6 +173,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     public <ResponseType> void executeAsync(HttpRequest request, Class<ResponseType> classOfResponseType, HttpOperation.OnSuccess<ResponseType> successCallback, HttpOperation.OnFailure failureCallback)
     {
         LOG.debug("Executing Async HTTP Request {}", request);
+        request.checkValid();
         ResponseType response;
         try
         {
@@ -164,13 +181,13 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         }
         catch (AlchemyHttpException ex)
         {
-            LOG.error("Http Operation Failed", ex);
+            LOG.trace("Http Operation Failed", ex);
             failureCallback.handleError(ex);
             return;
         }
         catch (Exception ex)
         {
-            LOG.error("Async request failed", ex);
+            LOG.debug("Async request failed", ex);
             failureCallback.handleError(new AlchemyHttpException(ex));
             return;
         }
