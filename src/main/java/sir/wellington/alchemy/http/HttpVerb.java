@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http.operations;
+package sir.wellington.alchemy.http;
 
 import static com.google.common.base.Charsets.UTF_8;
 import com.google.common.base.Strings;
@@ -226,10 +226,9 @@ public interface HttpVerb
         {
 
             HttpEntity entity = apacheResponse.getEntity();
-            Header contentType = entity.getContentType();
+            String contentType = entity.getContentType().getValue();
 
-            checkThat(contentType)
-                    .is(validContentType);
+            checkThat(contentType).is(validContentType);
 
             String entityString = null;
             try
@@ -271,13 +270,19 @@ public interface HttpVerb
             }
             else
             {
-                return gson.fromJson(entityString, JsonElement.class);
+                if (contentType.contains("application/json"))
+                {
+                    return gson.fromJson(entityString, JsonElement.class);
+                }
+                else
+                {
+                    return gson.toJsonTree(entityString);
+                }
             }
 
         }
-        private final Assertion<Header> validContentType = header ->
+        private final Assertion<String> validContentType = contentType ->
         {
-            String contentType = header.getValue();
 
             checkThat(contentType)
                     .usingMessage("missing Content-Type")

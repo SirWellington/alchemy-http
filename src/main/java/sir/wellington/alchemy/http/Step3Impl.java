@@ -21,14 +21,12 @@ import org.slf4j.LoggerFactory;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
-import sir.wellington.alchemy.http.operations.HttpOperation;
-import sir.wellington.alchemy.http.operations.HttpRequest;
 
 /**
  *
  * @author SirWellington
  */
-class Step3Impl<ResponseType> implements HttpOperation.Step3<ResponseType>
+class Step3Impl<ResponseType> implements AlchemyRequest.Step3<ResponseType>
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Step3Impl.class);
@@ -63,7 +61,7 @@ class Step3Impl<ResponseType> implements HttpOperation.Step3<ResponseType>
     }
 
     @Override
-    public HttpOperation.Step4<ResponseType> onSuccess(HttpOperation.OnSuccess<ResponseType> onSuccessCallback)
+    public AlchemyRequest.Step4<ResponseType> onSuccess(AlchemyRequest.OnSuccess<ResponseType> onSuccessCallback)
     {
         checkThat(onSuccessCallback)
                 .usingMessage("callback cannot be null")

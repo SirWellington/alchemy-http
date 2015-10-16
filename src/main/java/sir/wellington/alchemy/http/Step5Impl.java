@@ -20,14 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
-import sir.wellington.alchemy.http.operations.HttpOperation;
-import sir.wellington.alchemy.http.operations.HttpRequest;
 
 /**
  *
  * @author SirWellington
  */
-final class Step5Impl<ResponseType> implements HttpOperation.Step5<ResponseType>
+final class Step5Impl<ResponseType> implements AlchemyRequest.Step5<ResponseType>
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Step5Impl.class);
@@ -35,14 +33,14 @@ final class Step5Impl<ResponseType> implements HttpOperation.Step5<ResponseType>
     private final AlchemyHttpStateMachine stateMachine;
     private final HttpRequest request;
     private final Class<ResponseType> classOfResponseType;
-    private final HttpOperation.OnSuccess<ResponseType> successCallback;
-    private final HttpOperation.OnFailure failureCallback;
+    private final AlchemyRequest.OnSuccess<ResponseType> successCallback;
+    private final AlchemyRequest.OnFailure failureCallback;
 
     Step5Impl(AlchemyHttpStateMachine stateMachine,
               HttpRequest request,
               Class<ResponseType> classOfResponseType,
-              HttpOperation.OnSuccess<ResponseType> successCallback,
-              HttpOperation.OnFailure failureCallback)
+              AlchemyRequest.OnSuccess<ResponseType> successCallback,
+              AlchemyRequest.OnFailure failureCallback)
     {
         checkThat(stateMachine).is(notNull());
         checkThat(request).is(notNull());

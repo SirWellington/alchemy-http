@@ -28,9 +28,6 @@ import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import static sir.wellington.alchemy.arguments.Assertions.sameInstance;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 import sir.wellington.alchemy.http.exceptions.JsonException;
-import sir.wellington.alchemy.http.operations.HttpOperation;
-import sir.wellington.alchemy.http.operations.HttpRequest;
-import sir.wellington.alchemy.http.operations.HttpVerb;
 
 /**
  *
@@ -60,7 +57,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     }
 
     @Override
-    public HttpOperation.Step1 begin(HttpRequest initialRequest) throws IllegalArgumentException
+    public AlchemyRequest.Step1 begin(HttpRequest initialRequest) throws IllegalArgumentException
     {
         checkThat(initialRequest).is(notNull());
         HttpRequest requestCopy = HttpRequest.copyOf(initialRequest);
@@ -69,14 +66,14 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     }
 
     @Override
-    public HttpOperation.Step2 getStep2(HttpRequest request) throws IllegalArgumentException
+    public AlchemyRequest.Step2 getStep2(HttpRequest request) throws IllegalArgumentException
     {
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step2Impl(this, requestCopy);
     }
 
     @Override
-    public <ResponseType> HttpOperation.Step3<ResponseType> getStep3(HttpRequest request, Class<ResponseType> classOfResponseType) throws IllegalArgumentException
+    public <ResponseType> AlchemyRequest.Step3<ResponseType> getStep3(HttpRequest request, Class<ResponseType> classOfResponseType) throws IllegalArgumentException
     {
         checkClass(classOfResponseType);
         HttpRequest requestCopy = HttpRequest.copyOf(request);
@@ -84,7 +81,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     }
 
     @Override
-    public <ResponseType> HttpOperation.Step4<ResponseType> getStep4(HttpRequest request, Class<ResponseType> classOfResponseType, HttpOperation.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException
+    public <ResponseType> AlchemyRequest.Step4<ResponseType> getStep4(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequest.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException
     {
         checkClass(classOfResponseType);
         checkThat(successCallback).is(notNull());
@@ -93,7 +90,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     }
 
     @Override
-    public <ResponseType> HttpOperation.Step5<ResponseType> getStep5(HttpRequest request, Class<ResponseType> classOfResponseType, HttpOperation.OnSuccess<ResponseType> successCallback, HttpOperation.OnFailure failureCallback)
+    public <ResponseType> AlchemyRequest.Step5<ResponseType> getStep5(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequest.OnSuccess<ResponseType> successCallback, AlchemyRequest.OnFailure failureCallback)
     {
         checkClass(classOfResponseType);
         checkThat(successCallback).is(notNull());
@@ -125,7 +122,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         }
         catch (AlchemyHttpException ex)
         {
-            LOG.error("Encountered HttpException when running verb {} on request {}", verb, request, ex);
+            LOG.info("Encountered AlchemyHttpException when running verb {} on request {}", verb, request, ex);
             throw ex;
         }
         catch (Exception ex)
@@ -170,7 +167,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     }
 
     @Override
-    public <ResponseType> void executeAsync(HttpRequest request, Class<ResponseType> classOfResponseType, HttpOperation.OnSuccess<ResponseType> successCallback, HttpOperation.OnFailure failureCallback)
+    public <ResponseType> void executeAsync(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequest.OnSuccess<ResponseType> successCallback, AlchemyRequest.OnFailure failureCallback)
     {
         LOG.debug("Executing Async HTTP Request {}", request);
         request.checkValid();

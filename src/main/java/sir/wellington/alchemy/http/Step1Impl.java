@@ -26,15 +26,12 @@ import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 import sir.wellington.alchemy.http.exceptions.JsonException;
-import sir.wellington.alchemy.http.operations.HttpOperation;
-import sir.wellington.alchemy.http.operations.HttpRequest;
-import sir.wellington.alchemy.http.operations.HttpVerb;
 
 /**
  *
  * @author SirWellington
  */
-class Step1Impl implements HttpOperation.Step1
+class Step1Impl implements AlchemyRequest.Step1
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Step1Impl.class);
@@ -60,7 +57,7 @@ class Step1Impl implements HttpOperation.Step1
     }
 
     @Override
-    public HttpOperation.Step1 body(String jsonBody) throws IllegalArgumentException
+    public AlchemyRequest.Step1 body(String jsonBody) throws IllegalArgumentException
     {
         if (Strings.isNullOrEmpty(jsonBody))
         {
@@ -81,7 +78,7 @@ class Step1Impl implements HttpOperation.Step1
     }
 
     @Override
-    public HttpOperation.Step1 body(Object body) throws IllegalArgumentException
+    public AlchemyRequest.Step1 body(Object body) throws IllegalArgumentException
     {
         if (body == null)
         {
@@ -103,31 +100,31 @@ class Step1Impl implements HttpOperation.Step1
     }
 
     @Override
-    public HttpOperation.Step2 get() throws AlchemyHttpException
+    public AlchemyRequest.Step2 get() throws AlchemyHttpException
     {
         return customVerb(HttpVerb.get());
     }
 
     @Override
-    public HttpOperation.Step2 post() throws AlchemyHttpException
+    public AlchemyRequest.Step2 post() throws AlchemyHttpException
     {
         return customVerb(HttpVerb.post());
     }
 
     @Override
-    public HttpOperation.Step2 put() throws AlchemyHttpException
+    public AlchemyRequest.Step2 put() throws AlchemyHttpException
     {
         return customVerb(HttpVerb.put());
     }
 
     @Override
-    public HttpOperation.Step2 delete() throws AlchemyHttpException
+    public AlchemyRequest.Step2 delete() throws AlchemyHttpException
     {
         return customVerb(HttpVerb.delete());
     }
 
     @Override
-    public HttpOperation.Step2 customVerb(HttpVerb verb) throws AlchemyHttpException
+    public AlchemyRequest.Step2 customVerb(HttpVerb verb) throws AlchemyHttpException
     {
         checkThat(verb).is(notNull());
 

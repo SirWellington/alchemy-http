@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http.operations;
+package sir.wellington.alchemy.http;
 
+import com.google.common.base.Joiner;
+import static com.google.common.collect.Lists.newArrayList;
 import com.google.common.io.Resources;
 import com.google.gson.JsonObject;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import sir.wellington.alchemy.annotations.arguments.NonEmpty;
 import sir.wellington.alchemy.annotations.arguments.NonNull;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
-import sir.wellington.alchemy.http.HttpResponse;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
@@ -32,7 +35,7 @@ import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
  * @author SirWellington
  *
  */
-public interface HttpOperation
+public interface AlchemyRequest
 {
 
     interface Step1
@@ -82,6 +85,31 @@ public interface HttpOperation
 
         Step2 usingHeader(String key, String value) throws IllegalArgumentException;
 
+        Step2 usingQueryParam(String name, String value) throws IllegalArgumentException;
+
+        default Step2 accept(String mediaType, String... others) throws IllegalArgumentException
+        {
+            checkThat(mediaType).is(nonEmptyString());
+            
+            List<String> othersList = newArrayList(others);
+            othersList.add(mediaType);
+            
+            String accepts = Joiner.on(",")
+                    .join(othersList);
+            
+            return usingHeader("Accept", accepts);
+        }
+
+        default Step2 usingQueryParam(String name, Number value) throws IllegalArgumentException
+        {
+            return usingHeader(name, String.valueOf(value));
+        }
+
+        default Step2 usingQueryParam(String name, boolean value) throws IllegalArgumentException
+        {
+            return usingHeader(name, String.valueOf(value));
+        }
+
         Step2 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
 
         default Step2 followRedirects()
@@ -90,6 +118,11 @@ public interface HttpOperation
         }
 
         HttpResponse at(URL url) throws AlchemyHttpException;
+
+        default HttpResponse at(String url) throws AlchemyHttpException, MalformedURLException
+        {
+            return at(new URL(url));
+        }
 
         Step4<HttpResponse> onSuccess(OnSuccess<HttpResponse> onSuccessCallback);
 
@@ -100,6 +133,11 @@ public interface HttpOperation
     {
 
         ResponseType at(URL url) throws AlchemyHttpException;
+
+        default ResponseType at(String url) throws AlchemyHttpException, MalformedURLException
+        {
+            return at(new URL(url));
+        }
 
         Step4<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
@@ -114,6 +152,12 @@ public interface HttpOperation
     {
 
         void at(URL url);
+
+        default void at(String url) throws MalformedURLException
+        {
+            at(new URL(url));
+        }
+
     }
 
     interface OnSuccess<ResponseType>

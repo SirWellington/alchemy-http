@@ -26,13 +26,11 @@ import sir.wellington.alchemy.annotations.access.Internal;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
-import sir.wellington.alchemy.http.operations.HttpOperation;
-import sir.wellington.alchemy.http.operations.HttpOperation.Step1;
-import sir.wellington.alchemy.http.operations.HttpOperation.Step2;
-import sir.wellington.alchemy.http.operations.HttpOperation.Step3;
-import sir.wellington.alchemy.http.operations.HttpOperation.Step4;
-import sir.wellington.alchemy.http.operations.HttpOperation.Step5;
-import sir.wellington.alchemy.http.operations.HttpRequest;
+import sir.wellington.alchemy.http.AlchemyRequest.Step1;
+import sir.wellington.alchemy.http.AlchemyRequest.Step2;
+import sir.wellington.alchemy.http.AlchemyRequest.Step3;
+import sir.wellington.alchemy.http.AlchemyRequest.Step4;
+import sir.wellington.alchemy.http.AlchemyRequest.Step5;
 
 /**
  * This is an internal state machine for managing the transitions of an Alchemy Http Request.
@@ -67,12 +65,12 @@ interface AlchemyHttpStateMachine
 
     <ResponseType> Step4<ResponseType> getStep4(HttpRequest request,
                                                 Class<ResponseType> classOfResponseType,
-                                                HttpOperation.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException;
+                                                AlchemyRequest.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException;
 
     <ResponseType> Step5<ResponseType> getStep5(HttpRequest request,
                                                 Class<ResponseType> classOfResponseType,
-                                                HttpOperation.OnSuccess<ResponseType> successCallback,
-                                                HttpOperation.OnFailure failureCallback);
+                                                AlchemyRequest.OnSuccess<ResponseType> successCallback,
+                                                AlchemyRequest.OnFailure failureCallback);
 
     default HttpResponse executeSync(HttpRequest request) throws AlchemyHttpException
     {
@@ -84,8 +82,8 @@ interface AlchemyHttpStateMachine
 
     <ResponseType> void executeAsync(HttpRequest request,
                                      Class<ResponseType> classOfResponseType,
-                                     HttpOperation.OnSuccess<ResponseType> successCallback,
-                                     HttpOperation.OnFailure failureCallback);
+                                     AlchemyRequest.OnSuccess<ResponseType> successCallback,
+                                     AlchemyRequest.OnFailure failureCallback);
 
     class Builder
     {

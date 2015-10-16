@@ -16,7 +16,7 @@
 package sir.wellington.alchemy.http.exceptions;
 
 import sir.wellington.alchemy.http.HttpResponse;
-import sir.wellington.alchemy.http.operations.HttpRequest;
+import sir.wellington.alchemy.http.HttpRequest;
 
 /**
  *

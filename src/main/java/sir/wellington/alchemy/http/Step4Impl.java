@@ -19,14 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
-import sir.wellington.alchemy.http.operations.HttpOperation;
-import sir.wellington.alchemy.http.operations.HttpRequest;
 
 /**
  *
  * @author SirWellington
  */
-class Step4Impl<ResponseType> implements HttpOperation.Step4<ResponseType>
+class Step4Impl<ResponseType> implements AlchemyRequest.Step4<ResponseType>
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Step4Impl.class);
@@ -34,12 +32,12 @@ class Step4Impl<ResponseType> implements HttpOperation.Step4<ResponseType>
     private final AlchemyHttpStateMachine stateMachine;
     private final HttpRequest request;
     private final Class<ResponseType> classOfResponseType;
-    private final HttpOperation.OnSuccess<ResponseType> successCallback;
+    private final AlchemyRequest.OnSuccess<ResponseType> successCallback;
 
     public Step4Impl(AlchemyHttpStateMachine stateMachine,
                      HttpRequest request,
                      Class<ResponseType> classOfResponseType,
-                     HttpOperation.OnSuccess<ResponseType> successCallback)
+                     AlchemyRequest.OnSuccess<ResponseType> successCallback)
     {
         checkThat(stateMachine).is(notNull());
         checkThat(request).is(notNull());
@@ -53,7 +51,7 @@ class Step4Impl<ResponseType> implements HttpOperation.Step4<ResponseType>
     }
 
     @Override
-    public HttpOperation.Step5<ResponseType> onFailure(HttpOperation.OnFailure onFailureCallback)
+    public AlchemyRequest.Step5<ResponseType> onFailure(AlchemyRequest.OnFailure onFailureCallback)
     {
         checkThat(onFailureCallback)
                 .usingMessage("callback cannot be null")

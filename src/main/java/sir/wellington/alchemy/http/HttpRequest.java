@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http.operations;
+package sir.wellington.alchemy.http;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import java.net.URL;
 import java.util.Map;
@@ -29,9 +31,6 @@ import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PR
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
-import sir.wellington.alchemy.collections.maps.Maps;
-import static sir.wellington.alchemy.collections.maps.Maps.immutableCopyOf;
-import static sir.wellington.alchemy.collections.maps.Maps.mutableCopyOf;
 
 /**
  *
@@ -122,8 +121,8 @@ public interface HttpRequest
 
         private final static Logger LOG = LoggerFactory.getLogger(HttpRequest.class);
 
-        private Map<String, String> requestHeaders = Maps.create();
-        private Map<String, String> queryParams = Maps.create();
+        private Map<String, String> requestHeaders = Maps.newHashMap();
+        private Map<String, String> queryParams = Maps.newHashMap();
 
         private URL url;
         private JsonElement body;
@@ -144,10 +143,10 @@ public interface HttpRequest
             }
 
             builder.url = other.getUrl();
-            builder.requestHeaders = mutableCopyOf(other.getRequestHeaders());
+            builder.requestHeaders = Maps.newHashMap(other.getRequestHeaders());
             builder.body = other.getBody();
             builder.verb = other.getVerb();
-            builder.queryParams = mutableCopyOf(other.getQueryParams());
+            builder.queryParams = Maps.newHashMap(other.getQueryParams());
 
             return builder;
         }
@@ -191,8 +190,8 @@ public interface HttpRequest
         {
             Impl instance = new Impl();
 
-            instance.requestHeaders = immutableCopyOf(this.requestHeaders);
-            instance.queryParams = immutableCopyOf(this.queryParams);
+            instance.requestHeaders = ImmutableMap.copyOf(this.requestHeaders);
+            instance.queryParams = ImmutableMap.copyOf(this.queryParams);
             instance.body = this.body;
             instance.url = this.url;
             instance.verb = this.verb;

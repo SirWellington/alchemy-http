@@ -16,7 +16,7 @@
 package sir.wellington.alchemy.http.exceptions;
 
 import sir.wellington.alchemy.http.HttpResponse;
-import sir.wellington.alchemy.http.operations.HttpRequest;
+import sir.wellington.alchemy.http.HttpRequest;
 
 /**
  *
@@ -138,12 +138,6 @@ public class AlchemyHttpException extends RuntimeException
     public HttpResponse getResponse()
     {
         return response;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "AlchemyHttpException{" + "request=" + request + ", response=" + response + '}';
     }
 
 }

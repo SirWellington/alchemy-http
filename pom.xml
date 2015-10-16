@@ -115,12 +115,6 @@
             <artifactId>alchemy-arguments</artifactId>
             <version>1.1-SNAPSHOT</version>
         </dependency>
-        
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>alchemy-collections</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -136,6 +130,13 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.12</version>
         </dependency>
+        
+        <dependency>
+            <artifactId>groovy-all</artifactId>
+            <groupId>org.codehaus.groovy</groupId>
+            <version>2.4.5</version>
+        </dependency>
+        
     </dependencies>
     
     
@@ -228,6 +229,32 @@
                 </executions>
             </plugin>
             
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.9.2-01</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.4.3-01</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <artifactId>groovy-eclipse-compiler</artifactId>
+                <groupId>org.codehaus.groovy</groupId>
+                <version>2.9.2-01</version>
+                <extensions>true</extensions>
+            </plugin>
         </plugins>
     </build>
 </project>

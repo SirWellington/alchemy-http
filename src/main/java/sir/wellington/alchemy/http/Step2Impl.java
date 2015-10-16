@@ -16,6 +16,7 @@
 package sir.wellington.alchemy.http;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import java.net.URL;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -26,16 +27,13 @@ import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
 import static sir.wellington.alchemy.arguments.Assertions.not;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import static sir.wellington.alchemy.arguments.Assertions.sameInstance;
-import sir.wellington.alchemy.collections.maps.Maps;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
-import sir.wellington.alchemy.http.operations.HttpOperation;
-import sir.wellington.alchemy.http.operations.HttpRequest;
 
 /**
  *
  * @author SirWellington
  */
-class Step2Impl implements HttpOperation.Step2
+class Step2Impl implements AlchemyRequest.Step2
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Step2Impl.class);
@@ -53,13 +51,13 @@ class Step2Impl implements HttpOperation.Step2
     }
 
     @Override
-    public HttpOperation.Step2 usingHeader(String key, String value) throws IllegalArgumentException
+    public AlchemyRequest.Step2 usingHeader(String key, String value) throws IllegalArgumentException
     {
         checkThat(key).usingMessage("missing key").is(nonEmptyString());
         //Value of an HTTP Header can be empty ?
         value = Strings.nullToEmpty(value);
 
-        Map<String, String> requestHeaders = Maps.mutableCopyOf(request.getRequestHeaders());
+        Map<String, String> requestHeaders = Maps.newHashMap(request.getRequestHeaders());
         requestHeaders.put(key, value);
 
         this.request = HttpRequest.Builder.from(request)
@@ -70,7 +68,7 @@ class Step2Impl implements HttpOperation.Step2
     }
 
     @Override
-    public HttpOperation.Step2 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
+    public AlchemyRequest.Step2 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
     {
         checkThat(maxNumberOfTimes).is(greaterThanOrEqualTo(1));
         //TODO:
@@ -90,7 +88,7 @@ class Step2Impl implements HttpOperation.Step2
     }
 
     @Override
-    public HttpOperation.Step4<HttpResponse> onSuccess(HttpOperation.OnSuccess<HttpResponse> onSuccessCallback)
+    public AlchemyRequest.Step4<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccessCallback)
     {
 
         checkThat(onSuccessCallback)
@@ -101,7 +99,7 @@ class Step2Impl implements HttpOperation.Step2
     }
 
     @Override
-    public <ResponseType> HttpOperation.Step3<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException
+    public <ResponseType> AlchemyRequest.Step3<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException
     {
         checkThat(classOfResponseType)
                 .usingMessage("missing class of response type")
@@ -110,6 +108,27 @@ class Step2Impl implements HttpOperation.Step2
                 .is(not(sameInstance(Void.class)));
 
         return stateMachine.getStep3(request, classOfResponseType);
+    }
+
+    @Override
+    public AlchemyRequest.Step2 usingQueryParam(String name, String value) throws IllegalArgumentException
+    {
+        checkThat(name)
+                .usingMessage("missing name")
+                .is(nonEmptyString());
+
+        checkThat(value)
+                .usingMessage("missing value")
+                .is(nonEmptyString());
+
+        Map<String, String> queryParams = Maps.newHashMap(request.getQueryParams());
+        queryParams.put(name, value);
+
+        request = HttpRequest.Builder.from(request)
+                .usingQueryParams(queryParams)
+                .build();
+
+        return this;
     }
 
 }
