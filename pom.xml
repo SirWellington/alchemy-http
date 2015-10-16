@@ -121,11 +121,6 @@
             <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>sir.wellington.commons</groupId>
-            <artifactId>alchemy-arguments</artifactId>
-            <version>1.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.4.1</version>
@@ -146,7 +141,11 @@
             <groupId>org.codehaus.groovy</groupId>
             <version>2.4.5</version>
         </dependency>
-        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>alchemy-arguments</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     
     
