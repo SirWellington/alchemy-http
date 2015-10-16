@@ -33,7 +33,7 @@ import static sir.wellington.alchemy.arguments.Assertions.notNull;
 /**
  *
  *
- * @see #newBuilder() 
+ * @see #newBuilder()
  * @see AlchemyHttpBuilder
  *
  * @author SirWellington
@@ -67,6 +67,18 @@ public interface AlchemyHttp
         return newInstance(apacheHttpClient, MoreExecutors.newDirectExecutorService(), Collections.EMPTY_MAP);
     }
 
+    /**
+     * Creates a new {@link AlchemyHttp} instance.
+     *
+     * @param apacheHttpClient The {@linkplain HttpClient Apache Http Client} to use when making
+     *                         requests.
+     * @param executorService  For Async requests, this {@link ExecutorService} will be used.
+     * @param defaultHeaders   Default Headers are included in every request, unless otherwise
+     *                         specified.
+     *
+     * @return
+     * @throws IllegalArgumentException
+     */
     static AlchemyHttp newInstance(HttpClient apacheHttpClient,
                                    ExecutorService executorService,
                                    Map<String, String> defaultHeaders) throws IllegalArgumentException
@@ -87,7 +99,13 @@ public interface AlchemyHttp
                 .usingDefaultHeaders(defaultHeaders)
                 .build();
     }
-    
+
+    /**
+     * Creates a new {@link AlchemyHttpBuilder} instance that allows additional customization of the
+     * {@link AlchemyHttp} instance created.
+     *
+     * @return
+     */
     static AlchemyHttpBuilder newBuilder()
     {
         return AlchemyHttpBuilder.newInstance();
