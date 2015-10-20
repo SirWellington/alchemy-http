@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.not;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;

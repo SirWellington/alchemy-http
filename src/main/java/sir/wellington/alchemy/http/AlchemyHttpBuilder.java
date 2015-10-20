@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
-import sir.wellington.alchemy.annotations.access.Internal;
-import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
 import sir.wellington.alchemy.arguments.Arguments;
 import sir.wellington.alchemy.arguments.Assertions;
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
 /**
  *

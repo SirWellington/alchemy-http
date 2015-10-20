@@ -23,14 +23,14 @@ import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.concurrency.Immutable;
-import sir.wellington.alchemy.annotations.concurrency.Mutable;
-import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
-import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.BUILDER;
-import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
+import tech.sirwellington.alchemy.annotations.concurrency.Mutable;
+import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
 
 /**
  *

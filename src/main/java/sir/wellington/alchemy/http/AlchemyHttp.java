@@ -22,13 +22,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import sir.wellington.alchemy.annotations.concurrency.Immutable;
-import sir.wellington.alchemy.annotations.concurrency.ThreadSafe;
-import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
-import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
-import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
+import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;
+import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
+import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
 
 /**
  *
@@ -40,7 +40,7 @@ import static sir.wellington.alchemy.arguments.Assertions.notNull;
  */
 @Immutable
 @ThreadSafe
-@FluidAPIPattern
+@FluidAPIDesign
 @BuilderPattern(role = PRODUCT)
 public interface AlchemyHttp
 {

@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
-import sir.wellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;

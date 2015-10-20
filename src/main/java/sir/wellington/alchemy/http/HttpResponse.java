@@ -23,15 +23,15 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import jdk.nashorn.internal.ir.annotations.Immutable;
-import sir.wellington.alchemy.annotations.arguments.Nullable;
-import sir.wellington.alchemy.annotations.patterns.BuilderPattern;
-import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.BUILDER;
-import static sir.wellington.alchemy.annotations.patterns.BuilderPattern.Role.PRODUCT;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import static sir.wellington.alchemy.arguments.Assertions.positiveInteger;
 import sir.wellington.alchemy.http.exceptions.JsonException;
+import tech.sirwellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
 
 /**
  *

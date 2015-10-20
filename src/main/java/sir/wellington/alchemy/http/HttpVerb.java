@@ -41,7 +41,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import sir.wellington.alchemy.arguments.Assertion;
+import sir.wellington.alchemy.arguments.AlchemyAssertion;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import sir.wellington.alchemy.arguments.FailedAssertionException;
@@ -281,7 +281,7 @@ public interface HttpVerb
             }
 
         }
-        private final Assertion<String> validContentType = contentType ->
+        private final AlchemyAssertion<String> validContentType = contentType ->
         {
 
             checkThat(contentType)
