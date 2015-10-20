@@ -22,10 +22,10 @@ import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
-import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.Assertions.not;
-import static sir.wellington.alchemy.arguments.Assertions.notNull;
-import static sir.wellington.alchemy.arguments.Assertions.sameInstance;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.not;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 

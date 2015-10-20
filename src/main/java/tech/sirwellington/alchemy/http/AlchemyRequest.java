@@ -24,9 +24,9 @@ import java.net.URL;
 import java.util.List;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
-import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
-import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**

@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
-import sir.wellington.alchemy.arguments.Arguments;
-import sir.wellington.alchemy.arguments.Assertions;
+import tech.sirwellington.alchemy.arguments.Arguments;
+import tech.sirwellington.alchemy.arguments.Assertions;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
@@ -79,7 +79,7 @@ public final class AlchemyHttpBuilder
 
     public AlchemyHttp build() throws IllegalStateException
     {
-        Arguments.checkThat(apacheHttpClient).usingException((sir.wellington.alchemy.arguments.FailedAssertionException ex) -> new IllegalStateException("missing apache HTTP Client")).is(Assertions.notNull());
+        Arguments.checkThat(apacheHttpClient).usingException((tech.sirwellington.alchemy.arguments.FailedAssertionException ex) -> new IllegalStateException("missing apache HTTP Client")).is(Assertions.notNull());
         Arguments.checkThat(executor).usingException(IllegalStateException.class).is(Assertions.notNull());
         AlchemyHttpStateMachine stateMachine = AlchemyHttpStateMachine.Builder.newInstance().withApacheHttpClient(apacheHttpClient).withExecutorService(executor).build();
         return new AlchemyHttpImpl(defaultHeaders, stateMachine);

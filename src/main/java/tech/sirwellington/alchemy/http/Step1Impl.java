@@ -22,8 +22,8 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static sir.wellington.alchemy.arguments.Arguments.checkThat;
-import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
