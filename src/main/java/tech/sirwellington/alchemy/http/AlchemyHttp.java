@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http;
+package tech.sirwellington.alchemy.http;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Collections;

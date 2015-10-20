@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http;
+package tech.sirwellington.alchemy.http;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -26,8 +26,8 @@ import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.not;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import static sir.wellington.alchemy.arguments.Assertions.sameInstance;
-import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
-import sir.wellington.alchemy.http.exceptions.JsonException;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 /**
  *

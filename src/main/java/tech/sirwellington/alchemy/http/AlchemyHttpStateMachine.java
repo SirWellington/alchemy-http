@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http;
+package tech.sirwellington.alchemy.http;
 
 import com.google.common.io.Resources;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -25,12 +25,12 @@ import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
-import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
-import sir.wellington.alchemy.http.AlchemyRequest.Step1;
-import sir.wellington.alchemy.http.AlchemyRequest.Step2;
-import sir.wellington.alchemy.http.AlchemyRequest.Step3;
-import sir.wellington.alchemy.http.AlchemyRequest.Step4;
-import sir.wellington.alchemy.http.AlchemyRequest.Step5;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.http.AlchemyRequest.Step1;
+import tech.sirwellington.alchemy.http.AlchemyRequest.Step2;
+import tech.sirwellington.alchemy.http.AlchemyRequest.Step3;
+import tech.sirwellington.alchemy.http.AlchemyRequest.Step4;
+import tech.sirwellington.alchemy.http.AlchemyRequest.Step5;
 
 /**
  * This is an internal state machine for managing the transitions of an Alchemy Http Request.

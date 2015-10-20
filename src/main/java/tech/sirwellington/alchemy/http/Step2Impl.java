@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http;
+package tech.sirwellington.alchemy.http;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -27,7 +27,7 @@ import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
 import static sir.wellington.alchemy.arguments.Assertions.not;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import static sir.wellington.alchemy.arguments.Assertions.sameInstance;
-import sir.wellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
  *

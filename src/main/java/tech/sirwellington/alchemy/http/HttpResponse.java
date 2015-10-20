@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.http;
+package tech.sirwellington.alchemy.http;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -27,7 +27,7 @@ import static sir.wellington.alchemy.arguments.Arguments.checkThat;
 import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.alchemy.arguments.Assertions.notNull;
 import static sir.wellington.alchemy.arguments.Assertions.positiveInteger;
-import sir.wellington.alchemy.http.exceptions.JsonException;
+import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
