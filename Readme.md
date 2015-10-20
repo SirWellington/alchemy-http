@@ -9,8 +9,9 @@ Why can't making a REST call in Java be as easy and fluid as it is for other lan
 
 # Requirements
 
-+ JDK 8
-+ Maven
+* JDK 8
+* Maven installation
+* Thrift Compiler installation (for compilation)
 
 # Building
 To build, just run a `mvn clean install` to compile and install to your local maven repository
@@ -25,19 +26,37 @@ To use, simply add the following maven dependency.
 ## Release
 ```xml
 <dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-http</artifactId>
-	<version>1.0</version>
+	<groupId>sir.wellington.commons</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.0.0</version>
 </dependency>
 ```
-
 ## Snapshot
 
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-http</artifactId>
+	<artifactId>alchemy-arguments</artifactId>
 	<version>1.1-SNAPSHOT</version>
+</dependency>
+
+
+## JitPack
+
+You can also use [JitPack.io](https://jitpack.io/#SirWellington/commons-thrift/v1.0.0).
+
+```xml
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+```
+
+```xml
+<dependency>
+    <groupId>com.github.SirWellington</groupId>
+    <artifactId>commons-thrift</artifactId>
+    <version>v1.0.0</version>
 </dependency>
 ```
 
