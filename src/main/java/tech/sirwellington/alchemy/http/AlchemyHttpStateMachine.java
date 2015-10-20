@@ -113,7 +113,7 @@ interface AlchemyHttpStateMachine
         AlchemyHttpStateMachine build() throws IllegalStateException
         {
             checkThat(apacheHttpClient)
-                    .usingException(ex -> new IllegalStateException("missing Apache HTTP Client"))
+                    .throwing(ex -> new IllegalStateException("missing Apache HTTP Client"))
                     .is(notNull());
 
             return new AlchemyMachineImpl(apacheHttpClient, executor);

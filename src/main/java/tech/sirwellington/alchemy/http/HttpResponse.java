@@ -126,7 +126,7 @@ public interface HttpResponse
         public HttpResponse build() throws IllegalStateException
         {
             checkThat(statusCode)
-                    .usingException(ex -> new IllegalStateException("No status code supplied"))
+                    .throwing(ex -> new IllegalStateException("No status code supplied"))
                     .is(positiveInteger());
 
             return new Impl(statusCode, responseHeaders, gson, response);

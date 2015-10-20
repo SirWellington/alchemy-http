@@ -112,7 +112,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
 
         HttpVerb verb = request.getVerb();
         checkThat(verb)
-                .usingException(ex -> new IllegalStateException("Request missing verb: " + request)).
+                .throwing(ex -> new IllegalStateException("Request missing verb: " + request)).
                 is(notNull());
 
         HttpResponse response = null;

@@ -79,8 +79,8 @@ public final class AlchemyHttpBuilder
 
     public AlchemyHttp build() throws IllegalStateException
     {
-        Arguments.checkThat(apacheHttpClient).usingException((tech.sirwellington.alchemy.arguments.FailedAssertionException ex) -> new IllegalStateException("missing apache HTTP Client")).is(Assertions.notNull());
-        Arguments.checkThat(executor).usingException(IllegalStateException.class).is(Assertions.notNull());
+        Arguments.checkThat(apacheHttpClient).throwing((tech.sirwellington.alchemy.arguments.FailedAssertionException ex) -> new IllegalStateException("missing apache HTTP Client")).is(Assertions.notNull());
+        Arguments.checkThat(executor).throwing(IllegalStateException.class).is(Assertions.notNull());
         AlchemyHttpStateMachine stateMachine = AlchemyHttpStateMachine.Builder.newInstance().withApacheHttpClient(apacheHttpClient).withExecutorService(executor).build();
         return new AlchemyHttpImpl(defaultHeaders, stateMachine);
     }

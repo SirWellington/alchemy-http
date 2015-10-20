@@ -44,7 +44,7 @@ public interface AlchemyRequest
         default byte[] download(URL url) throws AlchemyHttpException
         {
             checkThat(url)
-                    .usingException(ex -> new AlchemyHttpException("missing url"))
+                    .throwing(ex -> new AlchemyHttpException("missing url"))
                     .is(notNull());
             try
             {

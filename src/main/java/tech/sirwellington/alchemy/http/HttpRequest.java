@@ -100,11 +100,11 @@ public interface HttpRequest
     default void checkValid() throws IllegalStateException
     {
         checkThat(getVerb())
-                .usingException(ex -> new IllegalStateException("missing HTTP Verb"))
+                .throwing(ex -> new IllegalStateException("missing HTTP Verb"))
                 .is(notNull());
 
         checkThat(getUrl())
-                .usingException(ex -> new IllegalStateException("missing URL"))
+                .throwing(ex -> new IllegalStateException("missing URL"))
                 .is(notNull());
 
     }
