@@ -15,10 +15,12 @@
  */
 package tech.sirwellington.alchemy.http.exceptions;
 
-import tech.sirwellington.alchemy.http.HttpResponse;
+import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpRequest;
+import tech.sirwellington.alchemy.http.HttpResponse;
 
 /**
+ * Parent to all Exceptions thrown by {@link AlchemyHttp}.
  *
  * @author SirWellington
  */
