@@ -22,6 +22,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
+import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
@@ -31,7 +33,6 @@ import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
- *
  *
  * @see #newBuilder()
  * @see AlchemyHttpBuilder
@@ -45,10 +46,32 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 public interface AlchemyHttp
 {
 
-    AlchemyHttp setDefaultHeader(String key, String value);
+    /**
+     * Sets a default header on this instance. This default header will be included with every
+     * request, unless it is explicitly
+     * {@linkplain  AlchemyRequest.Step2#usingHeader(java.lang.String, java.lang.String) overriden}.
+     *
+     * @param key
+     * @param value
+     * 
+     * @return
+     */
+    AlchemyHttp setDefaultHeader(@NonEmpty String key, String value);
 
+    /**
+     * Begins a new Alchemy HTTP Request.
+     *
+     * @return
+     */
     AlchemyRequest.Step1 begin();
 
+    /**
+     * Creates a new {@link AlchemyHttp} using the default settings for the
+     * {@linkplain HttpClient Apache HTTP Client} and a
+     * {@linkplain Executors#newWorkStealingPool(int) Single-Threaded Executor} for Async requests.
+     *
+     * @return
+     */
     static AlchemyHttp newDefaultInstance()
     {
         HttpClient apacheHttpClient = HttpClientBuilder.create()
@@ -62,7 +85,16 @@ public interface AlchemyHttp
                 .build();
     }
 
-    static AlchemyHttp newInstanceWithApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
+    /**
+     * Create an instance using the {@linkplain HttpClient Apache HTTP Client} provided.
+     *
+     * @param apacheHttpClient
+     * 
+     * @return
+     * 
+     * @throws IllegalArgumentException
+     */
+    static AlchemyHttp newInstanceWithApacheHttpClient(@NonNull HttpClient apacheHttpClient) throws IllegalArgumentException
     {
         return newInstance(apacheHttpClient, MoreExecutors.newDirectExecutorService(), Collections.EMPTY_MAP);
     }
@@ -90,7 +122,7 @@ public interface AlchemyHttp
                 .usingMessage("missing ExecutorService")
                 .is(notNull());
         checkThat(defaultHeaders)
-                .usingMessage("missing default HTTP Headers")
+                .usingMessage("Default HTTP Headers cannot be null. Use an empty map instead.")
                 .is(notNull());
 
         return AlchemyHttpBuilder.newInstance()
