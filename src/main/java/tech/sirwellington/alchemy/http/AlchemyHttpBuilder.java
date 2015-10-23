@@ -22,10 +22,13 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
-import tech.sirwellington.alchemy.arguments.Arguments;
-import tech.sirwellington.alchemy.arguments.Assertions;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+import tech.sirwellington.alchemy.arguments.Arguments;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import tech.sirwellington.alchemy.arguments.Assertions;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
  *
@@ -35,9 +38,16 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 public final class AlchemyHttpBuilder
 {
 
+    @Internal
+    private final static Map<String, String> DEFAULT_HEADERS = ImmutableMap.<String, String>builder()
+            .put("Accept", "application/json, text/plain")
+            .put("User-Agent", "Alchemy HTTP")
+            .build();
+
     private HttpClient apacheHttpClient;
     private ExecutorService executor = Executors.newWorkStealingPool(1);
-    private final Map<String, String> defaultHeaders = Maps.newHashMap();
+    //Copy from DEFAULT HEADERS
+    private final Map<String, String> defaultHeaders = Maps.newHashMap(DEFAULT_HEADERS);
 
     static AlchemyHttpBuilder newInstance()
     {
@@ -46,20 +56,18 @@ public final class AlchemyHttpBuilder
 
     private AlchemyHttpBuilder()
     {
-        defaultHeaders.put("Accept", "application/json");
-        defaultHeaders.put("User-Agent", "Mozilla");
     }
 
     public AlchemyHttpBuilder usingApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
     {
-        Arguments.checkThat(apacheHttpClient).is(Assertions.notNull());
+        checkThat(apacheHttpClient).is(Assertions.notNull());
         this.apacheHttpClient = apacheHttpClient;
         return this;
     }
 
     public AlchemyHttpBuilder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
     {
-        Arguments.checkThat(executor).is(Assertions.notNull());
+        checkThat(executor).is(Assertions.notNull());
         this.executor = executor;
         return this;
     }
@@ -79,10 +87,25 @@ public final class AlchemyHttpBuilder
 
     public AlchemyHttp build() throws IllegalStateException
     {
-        Arguments.checkThat(apacheHttpClient).throwing((tech.sirwellington.alchemy.arguments.FailedAssertionException ex) -> new IllegalStateException("missing apache HTTP Client")).is(Assertions.notNull());
-        Arguments.checkThat(executor).throwing(IllegalStateException.class).is(Assertions.notNull());
-        AlchemyHttpStateMachine stateMachine = AlchemyHttpStateMachine.Builder.newInstance().withApacheHttpClient(apacheHttpClient).withExecutorService(executor).build();
+        checkThat(apacheHttpClient)
+                .throwing(ex -> new IllegalStateException("missing apache HTTP Client"))
+                .is(notNull());
+
+        checkThat(executor)
+                .throwing(ex -> new IllegalStateException("missing Executor Service"))
+                .is(Assertions.notNull());
+
+        AlchemyHttpStateMachine stateMachine = buildTheStateMachine();
+
         return new AlchemyHttpImpl(defaultHeaders, stateMachine);
+    }
+
+    private AlchemyHttpStateMachine buildTheStateMachine()
+    {
+        return AlchemyHttpStateMachine.Builder.newInstance()
+                .withApacheHttpClient(apacheHttpClient)
+                .withExecutorService(executor)
+                .build();
     }
 
     @Internal
@@ -102,7 +125,9 @@ public final class AlchemyHttpBuilder
         @Override
         public AlchemyHttp setDefaultHeader(String key, String value)
         {
-            Arguments.checkThat(key).usingMessage("Key is empty").is(Assertions.nonEmptyString());
+            checkThat(key)
+                    .usingMessage("Key is empty")
+                    .is(nonEmptyString());
             Map<String, String> copy = ImmutableMap.copyOf(defaultHeaders);
             copy.put(key, value);
             return new AlchemyHttpImpl(copy, stateMachine);
@@ -111,7 +136,9 @@ public final class AlchemyHttpBuilder
         @Override
         public AlchemyRequest.Step1 begin()
         {
-            HttpRequest initialRequest = HttpRequest.Builder.newInstance().usingRequestHeaders(defaultHeaders).build();
+            HttpRequest initialRequest = HttpRequest.Builder.newInstance()
+                    .usingRequestHeaders(defaultHeaders)
+                    .build();
             return stateMachine.begin(initialRequest);
         }
     }
