@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Sir Wellington.
+ * Copyright 2015 SirWellington Tech.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,13 +90,13 @@ public interface AlchemyRequest
         default Step2 accept(String mediaType, String... others) throws IllegalArgumentException
         {
             checkThat(mediaType).is(nonEmptyString());
-            
+
             List<String> othersList = newArrayList(others);
             othersList.add(mediaType);
-            
+
             String accepts = Joiner.on(",")
                     .join(othersList);
-            
+
             return usingHeader("Accept", accepts);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 SirWellington.
+ * Copyright 2015 SirWellington Tech.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package tech.sirwellington.alchemy.http.exceptions;
 
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.HttpRequest;
+import tech.sirwellington.alchemy.http.HttpResponse;
 
 /**
  *

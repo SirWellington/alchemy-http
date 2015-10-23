@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Sir Wellington.
+ * Copyright 2015 SirWellington Tech.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ final class Step5Impl<ResponseType> implements AlchemyRequest.Step5<ResponseType
         checkThat(url)
                 .usingMessage("missing URL")
                 .is(notNull());
-        
+
         HttpRequest requestCopy = HttpRequest.Builder.from(request)
                 .usingUrl(url)
                 .build();
