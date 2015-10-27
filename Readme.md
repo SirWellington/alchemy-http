@@ -1,6 +1,10 @@
 Alchemy HTTP
 ==============================================
 
+<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">
+
+## [Insert Punchline]
+
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-http.svg)](https://travis-ci.org/SirWellington/alchemy-http)
 
 # Purpose
@@ -26,9 +30,9 @@ To use, simply add the following maven dependency.
 ## Release
 ```xml
 <dependency>
-	<groupId>sir.wellington.commons</groupId>
+	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.0.0</version>
+	<version>1.0</version>
 </dependency>
 ```
 ## Snapshot
@@ -39,7 +43,7 @@ To use, simply add the following maven dependency.
 	<artifactId>alchemy-arguments</artifactId>
 	<version>1.1-SNAPSHOT</version>
 </dependency>
-
+```
 
 ## JitPack
 
@@ -55,8 +59,8 @@ You can also use [JitPack.io](https://jitpack.io/#SirWellington/commons-thrift/v
 ```xml
 <dependency>
     <groupId>com.github.SirWellington</groupId>
-    <artifactId>commons-thrift</artifactId>
-    <version>v1.0.0</version>
+    <artifactId>alchemy-http</artifactId>
+    <version>[commit hash]</version>
 </dependency>
 ```
 
