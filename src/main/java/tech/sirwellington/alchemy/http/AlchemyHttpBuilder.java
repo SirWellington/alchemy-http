@@ -134,7 +134,7 @@ public final class AlchemyHttpBuilder
         }
 
         @Override
-        public AlchemyRequest.Step1 begin()
+        public AlchemyRequest.Step1 go()
         {
             HttpRequest initialRequest = HttpRequest.Builder.newInstance()
                     .usingRequestHeaders(defaultHeaders)

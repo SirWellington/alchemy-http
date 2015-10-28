@@ -63,7 +63,7 @@ public interface AlchemyHttp
      *
      * @return
      */
-    AlchemyRequest.Step1 begin();
+    AlchemyRequest.Step1 go();
 
     /**
      * Creates a new {@link AlchemyHttp} using the default settings for the
