@@ -108,39 +108,5 @@ public final class AlchemyHttpBuilder
                 .build();
     }
 
-    @Internal
-    @BuilderPattern(role = BuilderPattern.Role.PRODUCT)
-    static class AlchemyHttpImpl implements AlchemyHttp
-    {
-
-        private final Map<String, String> defaultHeaders;
-        private final AlchemyHttpStateMachine stateMachine;
-
-        AlchemyHttpImpl(Map<String, String> defaultHeaders, AlchemyHttpStateMachine stateMachine)
-        {
-            this.defaultHeaders = ImmutableMap.copyOf(defaultHeaders);
-            this.stateMachine = stateMachine;
-        }
-
-        @Override
-        public AlchemyHttp setDefaultHeader(String key, String value)
-        {
-            checkThat(key)
-                    .usingMessage("Key is empty")
-                    .is(nonEmptyString());
-            Map<String, String> copy = ImmutableMap.copyOf(defaultHeaders);
-            copy.put(key, value);
-            return new AlchemyHttpImpl(copy, stateMachine);
-        }
-
-        @Override
-        public AlchemyRequest.Step1 go()
-        {
-            HttpRequest initialRequest = HttpRequest.Builder.newInstance()
-                    .usingRequestHeaders(defaultHeaders)
-                    .build();
-            return stateMachine.begin(initialRequest);
-        }
-    }
 
 }
