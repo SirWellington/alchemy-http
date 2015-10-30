@@ -56,7 +56,7 @@ public interface AlchemyHttp
      * 
      * @return
      */
-    AlchemyHttp setDefaultHeader(@NonEmpty String key, String value);
+    AlchemyHttp usingDefaultHeader(@NonEmpty String key, String value);
 
     /**
      * Begins a new Alchemy HTTP Request.

@@ -69,4 +69,10 @@ final class Step4Impl<ResponseType> implements AlchemyRequest.Step4<ResponseType
         return stateMachine.jumpToStep5(request, classOfResponseType, onSuccessCallback);
     }
 
+    @Override
+    public String toString()
+    {
+        return "Step4Impl{" + "stateMachine=" + stateMachine + ", request=" + request + ", classOfResponseType=" + classOfResponseType + '}';
+    }
+
 }

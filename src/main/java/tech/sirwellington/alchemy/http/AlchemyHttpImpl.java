@@ -50,7 +50,7 @@ final class AlchemyHttpImpl implements AlchemyHttp
     }
 
     @Override
-    public AlchemyHttp setDefaultHeader(String key, String value)
+    public AlchemyHttp usingDefaultHeader(String key, String value)
     {
         checkThat(key)
                 .usingMessage("Key is empty")
@@ -64,7 +64,9 @@ final class AlchemyHttpImpl implements AlchemyHttp
     @Override
     public AlchemyRequest.Step1 go()
     {
-        HttpRequest initialRequest = HttpRequest.Builder.newInstance().usingRequestHeaders(defaultHeaders).build();
+        HttpRequest initialRequest = HttpRequest.Builder.newInstance()
+                .usingRequestHeaders(defaultHeaders)
+                .build();
         return stateMachine.begin(initialRequest);
     }
 

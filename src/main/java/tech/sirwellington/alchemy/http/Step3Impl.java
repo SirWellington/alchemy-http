@@ -129,4 +129,10 @@ final class Step3Impl implements AlchemyRequest.Step3
         return stateMachine.jumpToStep4(request, classOfResponseType);
     }
 
+    @Override
+    public String toString()
+    {
+        return "Step3Impl{" + "request=" + request + ", stateMachine=" + stateMachine + '}';
+    }
+
 }
