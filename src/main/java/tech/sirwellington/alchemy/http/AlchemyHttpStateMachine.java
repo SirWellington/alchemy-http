@@ -23,14 +23,17 @@ import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step1;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step2;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step3;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step4;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step5;
+import tech.sirwellington.alchemy.http.AlchemyRequest.Step6;
 
 /**
  * This is an internal state machine for managing the transitions of an Alchemy Http Request.
@@ -58,19 +61,21 @@ interface AlchemyHttpStateMachine
         return Resources.toByteArray(url);
     }
 
-    Step2 getStep2(HttpRequest request) throws IllegalArgumentException;
+    Step2 jumpToStep2(HttpRequest request) throws IllegalArgumentException;
 
-    <ResponseType> Step3<ResponseType> getStep3(HttpRequest request,
-                                                Class<ResponseType> classOfResponseType) throws IllegalArgumentException;
+    Step3 jumpToStep3(HttpRequest request) throws IllegalArgumentException;
 
-    <ResponseType> Step4<ResponseType> getStep4(HttpRequest request,
-                                                Class<ResponseType> classOfResponseType,
-                                                AlchemyRequest.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException;
+    <ResponseType> Step4<ResponseType> jumpToStep4(HttpRequest request,
+                                                   Class<ResponseType> classOfResponseType) throws IllegalArgumentException;
 
-    <ResponseType> Step5<ResponseType> getStep5(HttpRequest request,
-                                                Class<ResponseType> classOfResponseType,
-                                                AlchemyRequest.OnSuccess<ResponseType> successCallback,
-                                                AlchemyRequest.OnFailure failureCallback);
+    <ResponseType> Step5<ResponseType> jumpToStep5(HttpRequest request,
+                                                   Class<ResponseType> classOfResponseType,
+                                                   AlchemyRequest.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException;
+
+    <ResponseType> Step6<ResponseType> jumpToStep6(HttpRequest request,
+                                                   Class<ResponseType> classOfResponseType,
+                                                   AlchemyRequest.OnSuccess<ResponseType> successCallback,
+                                                   AlchemyRequest.OnFailure failureCallback);
 
     default HttpResponse executeSync(HttpRequest request) throws AlchemyHttpException
     {

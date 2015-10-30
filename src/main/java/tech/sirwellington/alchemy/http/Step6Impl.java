@@ -20,53 +20,59 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
  *
  * @author SirWellington
  */
-final class Step4Impl<ResponseType> implements AlchemyRequest.Step4<ResponseType>
+final class Step6Impl<ResponseType> implements AlchemyRequest.Step6<ResponseType>
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger(Step4Impl.class);
+    private final static Logger LOG = LoggerFactory.getLogger(Step6Impl.class);
 
     private final AlchemyHttpStateMachine stateMachine;
     private final HttpRequest request;
     private final Class<ResponseType> classOfResponseType;
+    private final AlchemyRequest.OnSuccess<ResponseType> successCallback;
+    private final AlchemyRequest.OnFailure failureCallback;
 
-    Step4Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request, Class<ResponseType> classOfResponseType)
+    Step6Impl(AlchemyHttpStateMachine stateMachine,
+              HttpRequest request,
+              Class<ResponseType> classOfResponseType,
+              AlchemyRequest.OnSuccess<ResponseType> successCallback,
+              AlchemyRequest.OnFailure failureCallback)
     {
-        checkThat(stateMachine, request, classOfResponseType)
+        checkThat(stateMachine, request, classOfResponseType, successCallback, failureCallback)
                 .are(notNull());
 
         this.stateMachine = stateMachine;
         this.request = request;
         this.classOfResponseType = classOfResponseType;
+        this.successCallback = successCallback;
+        this.failureCallback = failureCallback;
     }
 
     @Override
-    public ResponseType at(URL url) throws AlchemyHttpException
+    public void at(URL url)
     {
         checkThat(url)
-                .usingMessage("missing url")
+                .usingMessage("missing URL")
                 .is(notNull());
 
         HttpRequest requestCopy = HttpRequest.Builder.from(request)
                 .usingUrl(url)
                 .build();
 
-        return stateMachine.executeSync(requestCopy, classOfResponseType);
+        stateMachine.executeAsync(requestCopy,
+                                  classOfResponseType,
+                                  successCallback,
+                                  failureCallback);
     }
 
     @Override
-    public AlchemyRequest.Step5<ResponseType> onSuccess(AlchemyRequest.OnSuccess<ResponseType> onSuccessCallback)
+    public String toString()
     {
-        checkThat(onSuccessCallback)
-                .usingMessage("callback cannot be null")
-                .is(notNull());
-
-        return stateMachine.jumpToStep5(request, classOfResponseType, onSuccessCallback);
+        return "Step6Impl{" + "stateMachine=" + stateMachine + ", request=" + request + ", classOfResponseType=" + classOfResponseType + ", successCallback=" + successCallback + ", failureCallback=" + failureCallback + '}';
     }
 
 }

@@ -15,125 +15,77 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 /**
  *
  * @author SirWellington
  */
-class Step1Impl implements AlchemyRequest.Step1
+final class Step1Impl implements AlchemyRequest.Step1
 {
-
+    
     private final static Logger LOG = LoggerFactory.getLogger(Step1Impl.class);
-
+    
     private final AlchemyHttpStateMachine stateMachine;
-    private final JsonParser jsonParser;
-    private final Gson gson = new Gson();
     private final HttpRequest request;
-
-    private JsonElement body;
-
-    Step1Impl(AlchemyHttpStateMachine stateMachine,
-              HttpRequest request,
-              JsonParser jsonParser)
+    
+    Step1Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request)
     {
-        checkThat(stateMachine).is(notNull());
-        checkThat(request).is(notNull());
-        checkThat(jsonParser).is(notNull());
-
+        checkThat(stateMachine, request)
+                .are(notNull());
+        
         this.stateMachine = stateMachine;
         this.request = request;
-        this.jsonParser = jsonParser;
     }
-
+    
     @Override
-    public AlchemyRequest.Step1 body(String jsonBody) throws IllegalArgumentException
+    public AlchemyRequest.Step3 get()
     {
-        if (Strings.isNullOrEmpty(jsonBody))
-        {
-            this.body = JsonNull.INSTANCE;
-        }
-        else
-        {
-            try
-            {
-                this.body = gson.toJsonTree(jsonBody);
-            }
-            catch (Exception ex)
-            {
-                throw new JsonException("Failed to parse JSON Body: " + jsonBody, ex);
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public AlchemyRequest.Step1 body(Object body) throws IllegalArgumentException
-    {
-        if (body == null)
-        {
-            this.body = JsonNull.INSTANCE;
-        }
-        else
-        {
-            try
-            {
-                this.body = gson.toJsonTree(body);
-            }
-            catch (Exception ex)
-            {
-                LOG.error("Could not convert {} to JSON", body, ex);
-                throw new AlchemyHttpException("Could not convert to JSON", ex);
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public AlchemyRequest.Step2 get() throws AlchemyHttpException
-    {
-        return customVerb(HttpVerb.get());
-    }
-
-    @Override
-    public AlchemyRequest.Step2 post() throws AlchemyHttpException
-    {
-        return customVerb(HttpVerb.post());
-    }
-
-    @Override
-    public AlchemyRequest.Step2 put() throws AlchemyHttpException
-    {
-        return customVerb(HttpVerb.put());
-    }
-
-    @Override
-    public AlchemyRequest.Step2 delete() throws AlchemyHttpException
-    {
-        return customVerb(HttpVerb.delete());
-    }
-
-    @Override
-    public AlchemyRequest.Step2 customVerb(HttpVerb verb) throws AlchemyHttpException
-    {
-        checkThat(verb).is(notNull());
-
         HttpRequest newRequest = HttpRequest.Builder.from(this.request)
-                .usingBody(body)
-                .usingVerb(verb)
+                .usingVerb(HttpVerb.get())
                 .build();
-
-        return stateMachine.getStep2(newRequest);
+        
+        return stateMachine.jumpToStep3(newRequest);
     }
-
+    
+    @Override
+    public AlchemyRequest.Step2 post()
+    {
+        HttpRequest newRequest = HttpRequest.Builder.from(this.request)
+                .usingVerb(HttpVerb.post())
+                .build();
+        
+        return stateMachine.jumpToStep2(newRequest);
+    }
+    
+    @Override
+    public AlchemyRequest.Step2 put()
+    {
+        HttpRequest newRequest = HttpRequest.Builder.from(this.request)
+                .usingVerb(HttpVerb.put())
+                .build();
+        
+        return stateMachine.jumpToStep2(newRequest);
+    }
+    
+    @Override
+    public AlchemyRequest.Step2 delete()
+    {
+        HttpRequest newRequest = HttpRequest.Builder.from(this.request)
+                .usingVerb(HttpVerb.delete())
+                .build();
+        
+        return stateMachine.jumpToStep2(newRequest);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "Step1Impl{" + "stateMachine=" + stateMachine + ", request=" + request + '}';
+    }
+    
 }

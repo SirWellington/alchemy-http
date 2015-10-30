@@ -45,7 +45,6 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
@@ -63,7 +62,7 @@ public interface HttpVerb
     {
         Logger LOG = LoggerFactory.getLogger(HttpVerb.class);
 
-        Function<HttpRequest, HttpUriRequest> requetMapper = r ->
+        Function<HttpRequest, HttpUriRequest> requestMapper = r ->
         {
             try
             {
@@ -76,7 +75,7 @@ public interface HttpVerb
                 return null;
             }
         };
-        return new BaseVerb(requetMapper);
+        return new BaseVerb(requestMapper);
     }
 
     static HttpVerb post()
@@ -153,168 +152,5 @@ public interface HttpVerb
         return new BaseVerb(requestMapper);
     }
 
-    class BaseVerb implements HttpVerb
-    {
-
-        private final static Logger LOG = LoggerFactory.getLogger(BaseVerb.class);
-        private final Gson gson = new Gson();
-        private final Function<HttpRequest, HttpUriRequest> requestMapper;
-
-        BaseVerb(Function<HttpRequest, HttpUriRequest> requestMapper)
-        {
-            this.requestMapper = requestMapper;
-        }
-
-        @Override
-        public HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException
-        {
-            checkThat(request)
-                    .usingMessage("missing request")
-                    .is(notNull());
-
-            checkThat(apacheHttpClient)
-                    .usingMessage("missing http client")
-                    .is(notNull());
-
-            HttpUriRequest apacheRequest = requestMapper.apply(request);
-
-            if (apacheRequest == null)
-            {
-                throw new AlchemyHttpException("Could not map HttpRequest: " + request);
-            }
-
-            request.getRequestHeaders().forEach(apacheRequest::addHeader);
-
-            org.apache.http.HttpResponse apacheResponse;
-            try
-            {
-                apacheResponse = apacheHttpClient.execute(apacheRequest);
-            }
-            catch (Exception ex)
-            {
-                LOG.error("Failed to execute GET Request on {}", request, ex);
-                throw new AlchemyHttpException(ex);
-            }
-
-            JsonElement json;
-            try
-            {
-                json = extractJsonFromResponse(apacheResponse);
-            }
-            catch (JsonParseException ex)
-            {
-                LOG.error("Could not parse Response from Request {} as JSON", request, ex);
-                throw new JsonException(request, "Failed to parse Json", ex);
-            }
-            catch (Exception ex)
-            {
-                LOG.error("Could not parse Response from Request {}", request, ex);
-                throw new OperationFailedException(request, ex);
-            }
-
-            HttpResponse response = HttpResponse.Builder.newInstance()
-                    .withResponse(json)
-                    .withStatusCode(apacheResponse.getStatusLine().getStatusCode())
-                    .withResponseHeaders(extractHeadersFrom(apacheResponse))
-                    .build();
-
-            return response;
-
-        }
-
-        private JsonElement extractJsonFromResponse(org.apache.http.HttpResponse apacheResponse)
-        {
-
-            HttpEntity entity = apacheResponse.getEntity();
-            String contentType = entity.getContentType().getValue();
-
-            checkThat(contentType).is(validContentType);
-
-            String entityString = null;
-            try
-            {
-
-                try (InputStream istream = entity.getContent();)
-                {
-                    byte[] bytes = ByteStreams.toByteArray(istream);
-                    entityString = new String(bytes, UTF_8);
-                }
-            }
-            catch (FailedAssertionException ex)
-            {
-                throw new AlchemyHttpException("Unexpected Content Type", ex);
-            }
-            catch (Exception ex)
-            {
-                LOG.error("Failed to read entity from request", ex);
-                throw new AlchemyHttpException("Failed to read response from server", ex);
-            }
-            finally
-            {
-                if (entity != null)
-                {
-                    try
-                    {
-                        EntityUtils.consume(entity);
-                    }
-                    catch (IOException ex)
-                    {
-                        LOG.error("Failed to finish consuming HTTP Entity", ex);
-                    }
-                }
-            }
-
-            if (Strings.isNullOrEmpty(entityString))
-            {
-                return JsonNull.INSTANCE;
-            }
-            else
-            {
-                if (contentType.contains("application/json"))
-                {
-                    return gson.fromJson(entityString, JsonElement.class);
-                }
-                else
-                {
-                    return gson.toJsonTree(entityString);
-                }
-            }
-
-        }
-        private final AlchemyAssertion<String> validContentType = contentType ->
-        {
-
-            checkThat(contentType)
-                    .usingMessage("missing Content-Type")
-                    .is(nonEmptyString());
-
-            if (contentType.contains("application/json"))
-            {
-                return;
-            }
-
-            if (contentType.contains("text/plain"))
-            {
-                return;
-            }
-
-            throw new FailedAssertionException("Not a valid HTTP content Type: " + contentType);
-
-        };
-
-        private Map<String, String> extractHeadersFrom(org.apache.http.HttpResponse apacheResponse)
-        {
-            return Arrays.asList(apacheResponse.getAllHeaders())
-                    .stream()
-                    .collect(Collectors.toMap(Header::getName, Header::getValue));
-        }
-
-        @Override
-        public String toString()
-        {
-            return "BaseVerb{" + "requestMapper=" + requestMapper + '}';
-        }
-
-    }
 
 }

@@ -21,14 +21,18 @@ import com.google.gson.JsonElement;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
+import org.inferred.freebuilder.FreeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.Mutable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
 
@@ -161,6 +165,7 @@ public interface HttpRequest
 
         public Builder usingQueryParams(Map<String, String> queryParams) throws IllegalArgumentException
         {
+            checkThat(queryParams).is(nonEmptyMap());
             this.queryParams.clear();
             this.queryParams.putAll(queryParams);
             return this;

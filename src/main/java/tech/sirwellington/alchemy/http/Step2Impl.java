@@ -16,119 +16,107 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import java.net.URL;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
-import static tech.sirwellington.alchemy.arguments.Assertions.not;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.http.exceptions.JsonException;
+
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
  *
  * @author SirWellington
  */
-class Step2Impl implements AlchemyRequest.Step2
+final class Step2Impl implements AlchemyRequest.Step2
 {
-
+    
     private final static Logger LOG = LoggerFactory.getLogger(Step2Impl.class);
-
-    private HttpRequest request;
-
+    
+    private final HttpRequest request;
     private final AlchemyHttpStateMachine stateMachine;
-
-    Step2Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request)
+    private final Gson gson;
+    
+    Step2Impl(HttpRequest request, AlchemyHttpStateMachine stateMachine, Gson gson)
     {
-        checkThat(request).is(notNull());
-        checkThat(stateMachine).is(notNull());
-        this.stateMachine = stateMachine;
+        checkThat(request, stateMachine, gson)
+                .are(notNull());
+        
         this.request = request;
+        this.stateMachine = stateMachine;
+        this.gson = gson;
     }
-
+    
     @Override
-    public AlchemyRequest.Step2 usingHeader(String key, String value) throws IllegalArgumentException
+    public AlchemyRequest.Step3 nothing()
     {
-        checkThat(key).usingMessage("missing key").is(nonEmptyString());
-        //Value of an HTTP Header can be empty ?
-        value = Strings.nullToEmpty(value);
-
-        Map<String, String> requestHeaders = Maps.newHashMap(request.getRequestHeaders());
-        requestHeaders.put(key, value);
-
-        this.request = HttpRequest.Builder.from(request)
-                .usingRequestHeaders(requestHeaders)
+        return stateMachine.jumpToStep3(request);
+    }
+    
+    @Override
+    public AlchemyRequest.Step3 body(String jsonBody) throws IllegalArgumentException
+    {
+        JsonElement body;
+        
+        if (Strings.isNullOrEmpty(jsonBody))
+        {
+            body = JsonNull.INSTANCE;
+        }
+        else
+        {
+            try
+            {
+                body = gson.toJsonTree(jsonBody);
+            }
+            catch (Exception ex)
+            {
+                throw new JsonException("Failed to parse JSON Body: " + jsonBody, ex);
+            }
+        }
+        
+        HttpRequest newRequest = HttpRequest.Builder.from(request)
+                .usingBody(body)
                 .build();
-
-        return this;
+        
+        return stateMachine.jumpToStep3(newRequest);
     }
-
+    
     @Override
-    public AlchemyRequest.Step2 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
+    public AlchemyRequest.Step3 body(Object body) throws IllegalArgumentException
     {
-        checkThat(maxNumberOfTimes).is(greaterThanOrEqualTo(1));
-        //TODO:
-        //Not doing anything with this yet.
-        return this;
-    }
-
-    @Override
-    public HttpResponse at(URL url) throws AlchemyHttpException
-    {
-        //Ready to do a sync request
-        HttpRequest requestCopy = HttpRequest.Builder.from(request)
-                .usingUrl(url)
+        JsonElement jsonBody;
+        
+        if (body == null)
+        {
+            jsonBody = JsonNull.INSTANCE;
+        }
+        else
+        {
+            try
+            {
+                jsonBody = gson.toJsonTree(body);
+            }
+            catch (Exception ex)
+            {
+                LOG.error("Could not convert {} to JSON", body, ex);
+                throw new AlchemyHttpException("Could not convert to JSON", ex);
+            }
+        }
+        
+        HttpRequest newRequest = HttpRequest.Builder.from(request)
+                .usingBody(jsonBody)
                 .build();
-
-        return stateMachine.executeSync(requestCopy);
+        
+        return stateMachine.jumpToStep3(newRequest);
     }
-
+    
     @Override
-    public AlchemyRequest.Step4<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccessCallback)
+    public String toString()
     {
-
-        checkThat(onSuccessCallback)
-                .usingMessage("callback cannot be null")
-                .is(notNull());
-
-        return stateMachine.getStep4(request, HttpResponse.class, onSuccessCallback);
+        return "Step2Impl{" + "request=" + request + ", stateMachine=" + stateMachine + '}';
     }
-
-    @Override
-    public <ResponseType> AlchemyRequest.Step3<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException
-    {
-        checkThat(classOfResponseType)
-                .usingMessage("missing class of response type")
-                .is(notNull())
-                .usingMessage("cannot expect Void")
-                .is(not(sameInstance(Void.class)));
-
-        return stateMachine.getStep3(request, classOfResponseType);
-    }
-
-    @Override
-    public AlchemyRequest.Step2 usingQueryParam(String name, String value) throws IllegalArgumentException
-    {
-        checkThat(name)
-                .usingMessage("missing name")
-                .is(nonEmptyString());
-
-        checkThat(value)
-                .usingMessage("missing value")
-                .is(nonEmptyString());
-
-        Map<String, String> queryParams = Maps.newHashMap(request.getQueryParams());
-        queryParams.put(name, value);
-
-        request = HttpRequest.Builder.from(request)
-                .usingQueryParams(queryParams)
-                .build();
-
-        return this;
-    }
-
+    
 }

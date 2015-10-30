@@ -16,17 +16,20 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.base.Joiner;
+
 import static com.google.common.collect.Lists.newArrayList;
+
 import com.google.common.io.Resources;
-import com.google.gson.JsonObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
@@ -41,7 +44,7 @@ public interface AlchemyRequest
     interface Step1
     {
 
-        default byte[] download(URL url) throws AlchemyHttpException
+        default byte[] download(URL url) throws IllegalArgumentException, AlchemyHttpException
         {
             checkThat(url)
                     .throwing(ex -> new AlchemyHttpException("missing url"))
@@ -56,38 +59,33 @@ public interface AlchemyRequest
             }
         }
 
-        default Step1 bodyWithJsonObjectKeyValue(String key, String value) throws IllegalArgumentException
-        {
-            checkThat(key).usingMessage("missing key").is(nonEmptyString());
-            JsonObject object = new JsonObject();
-            object.addProperty(key, value);
-            return body(object);
-        }
+        Step3 get();
 
-        Step1 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
+        Step2 post();
 
-        Step1 body(@NonNull Object body) throws IllegalArgumentException;
+        Step2 put();
 
-        Step2 get() throws AlchemyHttpException;
-
-        Step2 post() throws AlchemyHttpException;
-
-        Step2 put() throws AlchemyHttpException;
-
-        Step2 delete() throws AlchemyHttpException;
-
-        Step2 customVerb(@NonNull HttpVerb verb) throws AlchemyHttpException;
+        Step2 delete();
 
     }
 
     interface Step2
     {
+        Step3 nothing();
+        
+        Step3 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
 
-        Step2 usingHeader(String key, String value) throws IllegalArgumentException;
+        Step3 body(@NonNull Object pojo) throws IllegalArgumentException;
+    }
 
-        Step2 usingQueryParam(String name, String value) throws IllegalArgumentException;
+    interface Step3
+    {
 
-        default Step2 accept(String mediaType, String... others) throws IllegalArgumentException
+        Step3 usingHeader(String key, String value) throws IllegalArgumentException;
+
+        Step3 usingQueryParam(String name, String value) throws IllegalArgumentException;
+
+        default Step3 accept(String mediaType, String... others) throws IllegalArgumentException
         {
             checkThat(mediaType).is(nonEmptyString());
 
@@ -100,21 +98,21 @@ public interface AlchemyRequest
             return usingHeader("Accept", accepts);
         }
 
-        default Step2 usingQueryParam(String name, Number value) throws IllegalArgumentException
+        default Step3 usingQueryParam(String name, Number value) throws IllegalArgumentException
         {
             return usingHeader(name, String.valueOf(value));
         }
 
-        default Step2 usingQueryParam(String name, boolean value) throws IllegalArgumentException
+        default Step3 usingQueryParam(String name, boolean value) throws IllegalArgumentException
         {
             return usingHeader(name, String.valueOf(value));
         }
 
-        Step2 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
+        Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
 
-        default Step2 followRedirects()
+        default Step3 followRedirects()
         {
-            return followRedirects(10);
+            return followRedirects(5);
         }
 
         HttpResponse at(URL url) throws AlchemyHttpException;
@@ -124,12 +122,12 @@ public interface AlchemyRequest
             return at(new URL(url));
         }
 
-        Step4<HttpResponse> onSuccess(OnSuccess<HttpResponse> onSuccessCallback);
+        Step5<HttpResponse> onSuccess(OnSuccess<HttpResponse> onSuccessCallback);
 
-        <ResponseType> Step3<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException;
+        <ResponseType> Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException;
     }
 
-    interface Step3<ResponseType>
+    interface Step4<ResponseType>
     {
 
         ResponseType at(URL url) throws AlchemyHttpException;
@@ -139,16 +137,16 @@ public interface AlchemyRequest
             return at(new URL(url));
         }
 
-        Step4<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
-    }
-
-    interface Step4<ResponseType>
-    {
-
-        Step5<ResponseType> onFailure(OnFailure onFailureCallback);
+        Step5<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
 
     interface Step5<ResponseType>
+    {
+
+        Step6<ResponseType> onFailure(OnFailure onFailureCallback);
+    }
+
+    interface Step6<ResponseType>
     {
 
         void at(URL url);

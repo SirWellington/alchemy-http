@@ -49,7 +49,7 @@ public interface AlchemyHttp
     /**
      * Sets a default header on this instance. This default header will be included with every
      * request, unless it is explicitly
-     * {@linkplain  AlchemyRequest.Step2#usingHeader(java.lang.String, java.lang.String) overriden}.
+     * {@linkplain  AlchemyRequest.Step3#usingHeader(java.lang.String, java.lang.String)  } 
      *
      * @param key
      * @param value

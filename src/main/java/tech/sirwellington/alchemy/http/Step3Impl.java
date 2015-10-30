@@ -15,59 +15,118 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import java.net.URL;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
  *
  * @author SirWellington
  */
-class Step3Impl<ResponseType> implements AlchemyRequest.Step3<ResponseType>
+final class Step3Impl implements AlchemyRequest.Step3
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Step3Impl.class);
 
-    private final AlchemyHttpStateMachine stateMachine;
-    private final HttpRequest request;
-    private final Class<ResponseType> classOfResponseType;
+    private HttpRequest request;
 
-    public Step3Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request, Class<ResponseType> classOfResponseType)
+    private final AlchemyHttpStateMachine stateMachine;
+
+    Step3Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request)
     {
-        checkThat(stateMachine).is(notNull());
-        checkThat(request).is(notNull());
-        checkThat(classOfResponseType).is(notNull());
+        checkThat(stateMachine, request)
+                .are(notNull());
 
         this.stateMachine = stateMachine;
         this.request = request;
-        this.classOfResponseType = classOfResponseType;
     }
 
     @Override
-    public ResponseType at(URL url) throws AlchemyHttpException
+    public AlchemyRequest.Step3 usingHeader(String key, String value) throws IllegalArgumentException
     {
-        checkThat(url)
-                .usingMessage("missing url")
-                .is(notNull());
+        checkThat(key)
+                .usingMessage("missing key")
+                .is(nonEmptyString());
+        //Value of an HTTP Header can be empty ?
+        value = Strings.nullToEmpty(value);
 
+        Map<String, String> requestHeaders = Maps.newHashMap(request.getRequestHeaders());
+        requestHeaders.put(key, value);
+
+        this.request = HttpRequest.Builder.from(request)
+                .usingRequestHeaders(requestHeaders)
+                .build();
+
+        return this;
+    }
+
+    @Override
+    public AlchemyRequest.Step3 usingQueryParam(String name, String value) throws IllegalArgumentException
+    {
+        checkThat(name, value)
+                .usingMessage("missing name or value")
+                .are(nonEmptyString());
+
+        Map<String, String> queryParams = Maps.newHashMap(request.getQueryParams());
+        queryParams.put(name, value);
+
+        request = HttpRequest.Builder.from(request)
+                .usingQueryParams(queryParams)
+                .build();
+
+        return this;
+    }
+
+    @Override
+    public AlchemyRequest.Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException
+    {
+        checkThat(maxNumberOfTimes).is(greaterThanOrEqualTo(1));
+        //TODO:
+        //Not doing anything with this yet.
+        return this;
+    }
+
+    @Override
+    public HttpResponse at(URL url) throws AlchemyHttpException
+    {
+        //Ready to do a sync request
         HttpRequest requestCopy = HttpRequest.Builder.from(request)
                 .usingUrl(url)
                 .build();
 
-        return stateMachine.executeSync(requestCopy, classOfResponseType);
+        return stateMachine.executeSync(requestCopy);
     }
 
     @Override
-    public AlchemyRequest.Step4<ResponseType> onSuccess(AlchemyRequest.OnSuccess<ResponseType> onSuccessCallback)
+    public AlchemyRequest.Step5<HttpResponse> onSuccess(AlchemyRequest.OnSuccess<HttpResponse> onSuccessCallback)
     {
         checkThat(onSuccessCallback)
                 .usingMessage("callback cannot be null")
                 .is(notNull());
 
-        return stateMachine.getStep4(request, classOfResponseType, onSuccessCallback);
+        return stateMachine.jumpToStep5(request, HttpResponse.class, onSuccessCallback);
+    }
+
+    @Override
+    public <ResponseType> AlchemyRequest.Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException
+    {
+        checkThat(classOfResponseType)
+                .usingMessage("missing class of response type")
+                .is(notNull())
+                .usingMessage("cannot expect Void")
+                .is(not(sameInstance(Void.class)));
+
+        return stateMachine.jumpToStep4(request, classOfResponseType);
     }
 
 }

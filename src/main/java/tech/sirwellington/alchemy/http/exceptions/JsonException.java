@@ -21,7 +21,7 @@ import tech.sirwellington.alchemy.http.HttpResponse;
 
 /**
  * Thrown when an error occurs trying to parse JSON, or unwrap JSON into a
- * {@linkplain AlchemyRequest.Step2#expecting(java.lang.Class) POJO}.
+ * {@linkplain AlchemyRequest.Step3#expecting(java.lang.Class) POJO}.
  *
  * @author SirWellington
  */
