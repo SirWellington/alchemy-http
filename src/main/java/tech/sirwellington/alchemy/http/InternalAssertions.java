@@ -19,11 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.arguments.Assertions;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.lessThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
@@ -36,12 +39,12 @@ import static tech.sirwellington.alchemy.arguments.Assertions.stringThatStartsWi
 @Internal
 final class InternalAssertions
 {
-    
+
     private InternalAssertions() throws IllegalAccessException
     {
         throw new IllegalAccessException("cannot instantiate class");
     }
-    
+
     private final static Logger LOG = LoggerFactory.getLogger(InternalAssertions.class);
 
     /*
@@ -56,11 +59,11 @@ final class InternalAssertions
     static final <Response> AlchemyAssertion<Class<Response>> validResponseClass()
     {
         AlchemyAssertion<Class<Response>> notNull = Assertions.<Class<Response>>notNull();
-        
+
         return notNull
                 .and(not(sameInstance(Void.class)));
     }
-    
+
     static final AlchemyAssertion<HttpRequest> requestReady()
     {
         return request ->
@@ -68,13 +71,35 @@ final class InternalAssertions
             checkThat(request.getVerb())
                     .usingMessage("Request missing HTTP Verb")
                     .is(notNull());
-            
+
             checkThat(request.getUrl())
                     .usingMessage("Request missing URL")
                     .is(notNull());
-            
+
             checkThat(request.getUrl().getProtocol())
                     .is(stringThatStartsWith("http"));
+        };
+    }
+
+    static final AlchemyAssertion<String> validContentType()
+    {
+        return contentType ->
+        {
+            checkThat(contentType)
+                    .usingMessage("missing Content-Type")
+                    .is(nonEmptyString());
+
+            if (contentType.contains("application/json"))
+            {
+                return;
+            }
+            
+            if (contentType.contains("text/plain"))
+            {
+                return;
+            }
+            
+            throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
         };
     }
 }

@@ -105,6 +105,7 @@ interface AlchemyHttpStateMachine
         Builder withExecutorService(ExecutorService executor) throws IllegalArgumentException
         {
             checkThat(executor).is(notNull());
+            
             this.executor = executor;
             return this;
         }
@@ -112,6 +113,7 @@ interface AlchemyHttpStateMachine
         Builder withApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
         {
             checkThat(apacheHttpClient).is(notNull());
+            
             this.apacheHttpClient = apacheHttpClient;
             return this;
         }

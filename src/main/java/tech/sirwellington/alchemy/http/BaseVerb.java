@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.http.Header;
@@ -45,6 +46,7 @@ import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.http.InternalAssertions.validContentType;
 
 /**
  *
@@ -61,6 +63,7 @@ final class BaseVerb implements HttpVerb
     BaseVerb(Function<HttpRequest, HttpUriRequest> requestMapper)
     {
         checkThat(requestMapper).is(notNull());
+        
         this.requestMapper = requestMapper;
     }
 
@@ -121,7 +124,7 @@ final class BaseVerb implements HttpVerb
         String contentType = entity.getContentType().getValue();
         checkThat(contentType)
                 .throwing(JsonException.class)
-                .is(validContentType);
+                .is(validContentType());
 
         String responseString = null;
         try
@@ -170,20 +173,6 @@ final class BaseVerb implements HttpVerb
         }
     }
 
-    private final AlchemyAssertion<String> validContentType = (java.lang.String contentType) ->
-    {
-        Arguments.checkThat(contentType).usingMessage("missing Content-Type").is(Assertions.nonEmptyString());
-        if (contentType.contains("application/json"))
-        {
-            return;
-        }
-        if (contentType.contains("text/plain"))
-        {
-            return;
-        }
-        throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
-    };
-
     private Map<String, String> extractHeadersFrom(org.apache.http.HttpResponse apacheResponse)
     {
         return Arrays.asList(apacheResponse.getAllHeaders())
@@ -194,7 +183,38 @@ final class BaseVerb implements HttpVerb
     @Override
     public String toString()
     {
-        return "BaseVerb{" + "gson=" + gson + ", requestMapper=" + requestMapper + ", validContentType=" + validContentType + '}';
+        return "BaseVerb{" + "gson=" + gson + ", requestMapper=" + requestMapper + '}';
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.requestMapper);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        
+        final BaseVerb other = (BaseVerb) obj;
+        
+        if (!Objects.equals(this.requestMapper, other.requestMapper))
+        {
+            return false;
+        }
+        
+        return true;
     }
 
 }
