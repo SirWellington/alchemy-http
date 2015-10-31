@@ -45,6 +45,7 @@ import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.InternalAssertions.validContentType;
 
@@ -58,13 +59,18 @@ final class BaseVerb implements HttpVerb
     private final static Logger LOG = LoggerFactory.getLogger(BaseVerb.class);
 
     private final Gson gson = new Gson();
-    private final Function<HttpRequest, HttpUriRequest> requestMapper;
+    private final AlchemyRequestMapper requestMapper;
 
-    BaseVerb(Function<HttpRequest, HttpUriRequest> requestMapper)
+    BaseVerb(AlchemyRequestMapper requestMapper)
     {
         checkThat(requestMapper).is(notNull());
-        
+
         this.requestMapper = requestMapper;
+    }
+
+    static BaseVerb using(AlchemyRequestMapper requestMapper)
+    {
+        return new BaseVerb(requestMapper);
     }
 
     @Override
@@ -74,7 +80,7 @@ final class BaseVerb implements HttpVerb
                 .usingMessage("null arguments")
                 .are(notNull());
 
-        HttpUriRequest apacheRequest = requestMapper.apply(request);
+        HttpUriRequest apacheRequest = requestMapper.convertToApacheRequest(request);
 
         checkThat(apacheRequest)
                 .throwing(ex -> new AlchemyHttpException("Could not map HttpRequest: " + request))
@@ -110,16 +116,23 @@ final class BaseVerb implements HttpVerb
             throw new OperationFailedException(request, ex);
         }
 
-        HttpResponse response = HttpResponse.Builder.newInstance().withResponse(json).withStatusCode(apacheResponse.getStatusLine().getStatusCode()).withResponseHeaders(extractHeadersFrom(apacheResponse)).build();
+        HttpResponse response = HttpResponse.Builder.newInstance()
+                .withResponse(json)
+                .withStatusCode(apacheResponse.getStatusLine().getStatusCode())
+                .withResponseHeaders(extractHeadersFrom(apacheResponse))
+                .build();
+        
         return response;
     }
 
     private JsonElement extractJsonFromResponse(org.apache.http.HttpResponse apacheResponse) throws JsonException
     {
+        if (apacheResponse == null || apacheResponse.getEntity() == null)
+        {
+            return JsonNull.INSTANCE;
+        }
+
         HttpEntity entity = apacheResponse.getEntity();
-        checkThat(entity)
-                .usingMessage("Apache Response missing entity")
-                .is(notNull());
 
         String contentType = entity.getContentType().getValue();
         checkThat(contentType)
@@ -178,43 +191,6 @@ final class BaseVerb implements HttpVerb
         return Arrays.asList(apacheResponse.getAllHeaders())
                 .stream()
                 .collect(Collectors.toMap(Header::getName, Header::getValue));
-    }
-
-    @Override
-    public String toString()
-    {
-        return "BaseVerb{" + "gson=" + gson + ", requestMapper=" + requestMapper + '}';
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.requestMapper);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
-            return false;
-        }
-        
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        
-        final BaseVerb other = (BaseVerb) obj;
-        
-        if (!Objects.equals(this.requestMapper, other.requestMapper))
-        {
-            return false;
-        }
-        
-        return true;
     }
 
 }
