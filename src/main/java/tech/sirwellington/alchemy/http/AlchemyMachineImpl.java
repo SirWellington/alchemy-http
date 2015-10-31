@@ -17,20 +17,22 @@ package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
+import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
 
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
+
+import static tech.sirwellington.alchemy.http.InternalAssertions.requestReady;
+import static tech.sirwellington.alchemy.http.InternalAssertions.validResponseClass;
 
 /**
  *
@@ -55,18 +57,11 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         this.async = async;
     }
 
-    private <ResponseType> void checkClass(Class<ResponseType> classOfResponseType)
-    {
-        checkThat(classOfResponseType)
-                .is(notNull())
-                .usingMessage("expected class cannot be Void")
-                .is(not(sameInstance(Void.class)));
-    }
-
     @Override
     public AlchemyRequest.Step1 begin(HttpRequest initialRequest) throws IllegalArgumentException
     {
         checkThat(initialRequest).is(notNull());
+
         HttpRequest requestCopy = HttpRequest.copyOf(initialRequest);
         LOG.debug("Beginning HTTP request {}", requestCopy);
         return new Step1Impl(this, requestCopy);
@@ -75,6 +70,8 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     @Override
     public AlchemyRequest.Step2 jumpToStep2(HttpRequest request) throws IllegalArgumentException
     {
+        checkThat(request).is(notNull());
+
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step2Impl(requestCopy, this, gson);
     }
@@ -82,32 +79,48 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     @Override
     public AlchemyRequest.Step3 jumpToStep3(HttpRequest request) throws IllegalArgumentException
     {
+        checkThat(request).is(notNull());
+
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step3Impl(this, requestCopy);
     }
 
     @Override
-    public <ResponseType> AlchemyRequest.Step4<ResponseType> jumpToStep4(HttpRequest request, Class<ResponseType> classOfResponseType) throws IllegalArgumentException
+    public <ResponseType> AlchemyRequest.Step4<ResponseType> jumpToStep4(HttpRequest request,
+                                                                         Class<ResponseType> classOfResponseType) throws IllegalArgumentException
     {
-        checkClass(classOfResponseType);
+        checkThat(classOfResponseType)
+                .is(validResponseClass());
+
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step4Impl<>(this, requestCopy, classOfResponseType);
     }
 
     @Override
-    public <ResponseType> AlchemyRequest.Step5<ResponseType> jumpToStep5(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequest.OnSuccess<ResponseType> successCallback) throws IllegalArgumentException
+    public <ResponseType> AlchemyRequest.Step5<ResponseType> jumpToStep5(HttpRequest request,
+                                                                         Class<ResponseType> classOfResponseType,
+                                                                         OnSuccess<ResponseType> successCallback) throws IllegalArgumentException
     {
-        checkClass(classOfResponseType);
-        checkThat(successCallback).is(notNull());
+        checkThat(classOfResponseType)
+                .is(validResponseClass());
+
+        checkThat(request, successCallback)
+                .are(notNull());
+
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step5Impl<>(this, requestCopy, classOfResponseType, successCallback);
     }
 
     @Override
-    public <ResponseType> AlchemyRequest.Step6<ResponseType> jumpToStep6(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequest.OnSuccess<ResponseType> successCallback, AlchemyRequest.OnFailure failureCallback)
+    public <ResponseType> AlchemyRequest.Step6<ResponseType> jumpToStep6(HttpRequest request,
+                                                                         Class<ResponseType> classOfResponseType,
+                                                                         OnSuccess<ResponseType> successCallback,
+                                                                         OnFailure failureCallback)
     {
-        checkClass(classOfResponseType);
-        checkThat(successCallback, failureCallback)
+        checkThat(classOfResponseType)
+                .is(validResponseClass());
+
+        checkThat(request, successCallback, failureCallback)
                 .are(notNull());
 
         HttpRequest requestCopy = HttpRequest.copyOf(request);
@@ -119,11 +132,17 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         LOG.debug("Executing synchronous HTTP Request {}", request);
 
-        request.checkValid();
-        checkClass(classOfResponseType);
-        checkThat(request).is(notNull());
+        checkThat(classOfResponseType)
+                .is(validResponseClass());
+        
+        checkThat(request)
+                .is(requestReady());
 
-        checkThat(apacheHttpClient).is(notNull());
+        checkThat(request).
+                is(notNull());
+
+        checkThat(apacheHttpClient)
+                .is(notNull());
 
         HttpVerb verb = request.getVerb();
         checkThat(verb)

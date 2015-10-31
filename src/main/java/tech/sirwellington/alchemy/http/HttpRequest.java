@@ -101,18 +101,6 @@ public interface HttpRequest
 
     }
 
-    default void checkValid() throws IllegalStateException
-    {
-        checkThat(getVerb())
-                .throwing(ex -> new IllegalStateException("missing HTTP Verb"))
-                .is(notNull());
-
-        checkThat(getUrl())
-                .throwing(ex -> new IllegalStateException("missing URL"))
-                .is(notNull());
-
-    }
-
     static HttpRequest copyOf(HttpRequest other)
     {
         return Builder.from(other).build();

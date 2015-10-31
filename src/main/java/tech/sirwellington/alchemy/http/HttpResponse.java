@@ -23,15 +23,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import jdk.nashorn.internal.ir.annotations.Immutable;
+
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyMap;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.Assertions.positiveInteger;
+
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
+import static tech.sirwellington.alchemy.http.InternalAssertions.validHttpStatusCode;
 
 /**
  *
@@ -103,15 +106,14 @@ public interface HttpResponse
         public Builder withStatusCode(int statusCode) throws IllegalArgumentException
         {
             //TODO: Also add check that status code is in the HTTP Range
-            checkThat(statusCode).is(positiveInteger());
+            checkThat(statusCode).is(validHttpStatusCode);
             this.statusCode = statusCode;
             return this;
         }
 
         public Builder withResponseHeaders(Map<String, String> responseHeaders) throws IllegalArgumentException
         {
-            //TODO: An empty map of Headers is probably ok
-            checkThat(responseHeaders).is(nonEmptyMap());
+            checkThat(responseHeaders).is(notNull());
             this.responseHeaders = responseHeaders;
             return this;
         }
@@ -207,7 +209,6 @@ public interface HttpResponse
             @Override
             public boolean equals(Object obj)
             {
-                //TODO: Add implementation that checks against interface, not implementation
                 if (obj == null)
                 {
                     return false;
