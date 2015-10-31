@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.http;
 
 import com.google.common.io.Resources;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
@@ -121,7 +122,7 @@ interface AlchemyHttpStateMachine
                     .throwing(ex -> new IllegalStateException("missing Apache HTTP Client"))
                     .is(notNull());
 
-            return new AlchemyMachineImpl(apacheHttpClient, executor);
+            return new AlchemyMachineImpl(apacheHttpClient, executor, new Gson());
         }
     }
 
