@@ -24,7 +24,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.Mock;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.*;
 import static org.mockito.Answers.RETURNS_SMART_NULLS;
 import static org.mockito.Mockito.verify;
@@ -40,92 +42,98 @@ import static tech.sirwellington.alchemy.http.VerbAssertions.assertPutRequestMad
 @RunWith(MockitoJUnitRunner.class)
 public class Step1ImplTest
 {
-    
+
     @Mock(answer = RETURNS_SMART_NULLS)
     private AlchemyHttpStateMachine stateMachine;
-    
+
     private HttpRequest request;
-    
+
     @Captor
     ArgumentCaptor<HttpRequest> requestCaptor;
-    
+
     private Step1Impl instance;
-    
+
     @Before
     public void setUp()
     {
         request = HttpRequest.Builder
                 .newInstance()
                 .build();
-        
+
         instance = new Step1Impl(stateMachine, request);
     }
-    
+
     @Test
     public void testGet() throws Exception
     {
         System.out.println("testGet");
-        
+
         instance.get();
-        
+
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
-        
+
         HttpRequest requestMade = requestCaptor.getValue();
-        assertThat(requestMade, notNullValue());
+        assertRequestMade(requestMade);
         assertGetRequestMade(requestMade.getVerb());
     }
-    
+
     @Test
     public void testPost() throws Exception
     {
         System.out.println("testPost");
-        
+
         instance.post();
-        
+
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
-        
+
         HttpRequest requestMade = requestCaptor.getValue();
-        assertThat(requestMade, notNullValue());
+        assertRequestMade(requestMade);
         assertPostRequestMade(requestMade.getVerb());
     }
-    
+
     @Test
     public void testPut() throws Exception
     {
         System.out.println("testPut");
-        
+
         instance.put();
-        
+
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
-        
+
         HttpRequest requestMade = requestCaptor.getValue();
-        assertThat(requestMade, notNullValue());
+        assertRequestMade(requestMade);
         assertPutRequestMade(requestMade.getVerb());
     }
-    
+
     @Test
     public void testDelete() throws Exception
     {
         System.out.println("testDelete");
-        
+
         instance.delete();
-        
+
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
-        
+
         HttpRequest requestMade = requestCaptor.getValue();
-        assertThat(requestMade, notNullValue());
+        assertRequestMade(requestMade);
         assertDeleteRequestMade(requestMade.getVerb());
     }
-    
+
     @Test
     public void testToString()
     {
         System.out.println("testToString");
-        
+
         String toString = instance.toString();
         assertThat(toString, containsString(request.toString()));
         assertThat(toString, containsString(stateMachine.toString()));
-        
+
     }
-    
+
+    private void assertRequestMade(HttpRequest requestMade)
+    {
+        assertThat(requestMade, notNullValue());
+        assertThat(requestMade, not(sameInstance(request)));
+    }
+
 }
