@@ -41,61 +41,61 @@ import static tech.sirwellington.alchemy.http.InternalAssertions.validResponseCl
 @Internal
 final class AlchemyMachineImpl implements AlchemyHttpStateMachine
 {
-
+    
     private final static Logger LOG = LoggerFactory.getLogger(AlchemyMachineImpl.class);
-
+    
     private final HttpClient apacheHttpClient;
     private final ExecutorService async;
     private final Gson gson = new Gson();
-
+    
     AlchemyMachineImpl(HttpClient apacheHttpClient, ExecutorService async)
     {
         checkThat(apacheHttpClient, async)
                 .are(notNull());
-
+        
         this.apacheHttpClient = apacheHttpClient;
         this.async = async;
     }
-
+    
     @Override
     public AlchemyRequest.Step1 begin(HttpRequest initialRequest) throws IllegalArgumentException
     {
         checkThat(initialRequest).is(notNull());
-
+        
         HttpRequest requestCopy = HttpRequest.copyOf(initialRequest);
         LOG.debug("Beginning HTTP request {}", requestCopy);
         return new Step1Impl(this, requestCopy);
     }
-
+    
     @Override
     public AlchemyRequest.Step2 jumpToStep2(HttpRequest request) throws IllegalArgumentException
     {
         checkThat(request).is(notNull());
-
+        
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step2Impl(requestCopy, this, gson);
     }
-
+    
     @Override
     public AlchemyRequest.Step3 jumpToStep3(HttpRequest request) throws IllegalArgumentException
     {
         checkThat(request).is(notNull());
-
+        
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step3Impl(this, requestCopy);
     }
-
+    
     @Override
     public <ResponseType> AlchemyRequest.Step4<ResponseType> jumpToStep4(HttpRequest request,
                                                                          Class<ResponseType> classOfResponseType) throws IllegalArgumentException
     {
         checkThat(classOfResponseType)
                 .is(validResponseClass());
-
+        
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step4Impl<>(this, requestCopy, classOfResponseType);
     }
-
+    
     @Override
     public <ResponseType> AlchemyRequest.Step5<ResponseType> jumpToStep5(HttpRequest request,
                                                                          Class<ResponseType> classOfResponseType,
@@ -103,14 +103,14 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         checkThat(classOfResponseType)
                 .is(validResponseClass());
-
+        
         checkThat(request, successCallback)
                 .are(notNull());
-
+        
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step5Impl<>(this, requestCopy, classOfResponseType, successCallback);
     }
-
+    
     @Override
     public <ResponseType> AlchemyRequest.Step6<ResponseType> jumpToStep6(HttpRequest request,
                                                                          Class<ResponseType> classOfResponseType,
@@ -119,36 +119,36 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         checkThat(classOfResponseType)
                 .is(validResponseClass());
-
+        
         checkThat(request, successCallback, failureCallback)
                 .are(notNull());
-
+        
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step6Impl<>(this, requestCopy, classOfResponseType, successCallback, failureCallback);
     }
-
+    
     @Override
     public <ResponseType> ResponseType executeSync(HttpRequest request, Class<ResponseType> classOfResponseType)
     {
         LOG.debug("Executing synchronous HTTP Request {}", request);
-
+        
         checkThat(classOfResponseType)
                 .is(validResponseClass());
         
         checkThat(request)
                 .is(requestReady());
-
+        
         checkThat(request).
                 is(notNull());
-
+        
         checkThat(apacheHttpClient)
                 .is(notNull());
-
+        
         HttpVerb verb = request.getVerb();
         checkThat(verb)
                 .throwing(ex -> new IllegalStateException("Request missing verb: " + request)).
                 is(notNull());
-
+        
         HttpResponse response = null;
         try
         {
@@ -164,20 +164,20 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             LOG.error("Failed to execute verb {} on request {}", verb, request, ex);
             throw new AlchemyHttpException(request, ex);
         }
-
+        
         if (response == null)
         {
             LOG.error("HTTP Verb {} returned null response", verb);
             throw new AlchemyHttpException(request, "HTTP Verb returned null response");
         }
-
+        
         LOG.debug("HTTP Request {} successfully executed: {}", request, response);
-
+        
         if (!response.isOk())
         {
             throw new AlchemyHttpException(request, response, "Http Response not OK. Status Code: " + response.statusCode());
         }
-
+        
         if (classOfResponseType == HttpResponse.class)
         {
             return (ResponseType) response;
@@ -199,12 +199,24 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             }
         }
     }
-
+    
     @Override
-    public <ResponseType> void executeAsync(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequest.OnSuccess<ResponseType> successCallback, AlchemyRequest.OnFailure failureCallback)
+    public <ResponseType> void executeAsync(HttpRequest request,
+                                            Class<ResponseType> classOfResponseType,
+                                            OnSuccess<ResponseType> successCallback,
+                                            OnFailure failureCallback)
     {
         LOG.debug("Executing Async HTTP Request {}", request);
-        request.checkValid();
+        checkThat(request)
+                .is(notNull())
+                .is(requestReady());
+        
+        checkThat(classOfResponseType)
+                .is(validResponseClass());
+        
+        checkThat(successCallback, failureCallback)
+                .are(notNull());
+        
         ResponseType response;
         try
         {
@@ -233,11 +245,11 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             failureCallback.handleError(new AlchemyHttpException(message, ex));
         }
     }
-
+    
     @Override
     public String toString()
     {
         return "AlchemyMachineImpl{" + "apacheHttpClient=" + apacheHttpClient + ", async=" + async + '}';
     }
-
+    
 }
