@@ -25,6 +25,7 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
@@ -33,90 +34,88 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
  */
 final class Step2Impl implements AlchemyRequest.Step2
 {
-    
+
     private final static Logger LOG = LoggerFactory.getLogger(Step2Impl.class);
-    
+
     private final HttpRequest request;
     private final AlchemyHttpStateMachine stateMachine;
     private final Gson gson;
-    
+
     Step2Impl(HttpRequest request, AlchemyHttpStateMachine stateMachine, Gson gson)
     {
         checkThat(request, stateMachine, gson)
                 .are(notNull());
-        
+
         this.request = request;
         this.stateMachine = stateMachine;
         this.gson = gson;
     }
-    
+
     @Override
     public AlchemyRequest.Step3 nothing()
     {
-        return stateMachine.jumpToStep3(request);
+        HttpRequest newRequest = HttpRequest.Builder.from(request)
+                .usingBody(JsonNull.INSTANCE)
+                .build();
+
+        return stateMachine.jumpToStep3(newRequest);
     }
-    
+
     @Override
     public AlchemyRequest.Step3 body(String jsonBody) throws IllegalArgumentException
     {
+        checkThat(jsonBody)
+                .usingMessage("use 'nothing()' for empty body")
+                .is(nonEmptyString());
+
         JsonElement body;
-        
-        if (Strings.isNullOrEmpty(jsonBody))
+
+        try
         {
-            body = JsonNull.INSTANCE;
+            body = gson.fromJson(jsonBody, JsonElement.class);
         }
-        else
+        catch (Exception ex)
         {
-            try
-            {
-                body = gson.toJsonTree(jsonBody);
-            }
-            catch (Exception ex)
-            {
-                throw new JsonException("Failed to parse JSON Body: " + jsonBody, ex);
-            }
+            throw new JsonException("Failed to parse JSON Body: " + jsonBody, ex);
         }
-        
+
         HttpRequest newRequest = HttpRequest.Builder.from(request)
                 .usingBody(body)
                 .build();
-        
+
         return stateMachine.jumpToStep3(newRequest);
     }
-    
+
     @Override
-    public AlchemyRequest.Step3 body(Object body) throws IllegalArgumentException
+    public AlchemyRequest.Step3 body(Object pojo) throws IllegalArgumentException
     {
+        checkThat(pojo)
+                .usingMessage("use 'nothing() for empty body")
+                .is(notNull());
+
         JsonElement jsonBody;
-        
-        if (body == null)
+
+        try
         {
-            jsonBody = JsonNull.INSTANCE;
+            jsonBody = gson.toJsonTree(pojo);
         }
-        else
+        catch (Exception ex)
         {
-            try
-            {
-                jsonBody = gson.toJsonTree(body);
-            }
-            catch (Exception ex)
-            {
-                LOG.error("Could not convert {} to JSON", body, ex);
-                throw new AlchemyHttpException("Could not convert to JSON", ex);
-            }
+            LOG.error("Could not convert {} to JSON", pojo, ex);
+            throw new AlchemyHttpException("Could not convert to JSON", ex);
         }
-        
+
         HttpRequest newRequest = HttpRequest.Builder.from(request)
                 .usingBody(jsonBody)
                 .build();
-        
+
         return stateMachine.jumpToStep3(newRequest);
     }
-    
+
     @Override
     public String toString()
     {
         return "Step2Impl{" + "request=" + request + ", stateMachine=" + stateMachine + '}';
     }
-    
+
 }

@@ -34,6 +34,7 @@ import static tech.sirwellington.alchemy.http.VerbAssertions.assertDeleteRequest
 import static tech.sirwellington.alchemy.http.VerbAssertions.assertGetRequestMade;
 import static tech.sirwellington.alchemy.http.VerbAssertions.assertPostRequestMade;
 import static tech.sirwellington.alchemy.http.VerbAssertions.assertPutRequestMade;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -61,6 +62,16 @@ public class Step1ImplTest
                 .build();
 
         instance = new Step1Impl(stateMachine, request);
+    }
+
+    @Test
+    public void testConstructor()
+    {
+        System.out.println("testConstructor");
+
+        assertThrows(() -> new Step1Impl(null, request));
+        assertThrows(() -> new Step1Impl(stateMachine, null));
+
     }
 
     @Test
