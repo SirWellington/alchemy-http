@@ -16,14 +16,16 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 
@@ -38,12 +40,14 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  *
  * @author SirWellington
  */
-class Generators
+@Internal
+@NonInstantiable
+public class Generators
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Generators.class);
 
-    static AlchemyGenerator<URL> validUrls()
+    public static AlchemyGenerator<URL> validUrls()
     {
         return () ->
         {
@@ -62,13 +66,32 @@ class Generators
         };
     }
 
-    static AlchemyGenerator<JsonObject> jsonObjects()
+    public static AlchemyGenerator<JsonElement> jsonElements()
+    {
+        return () ->
+        {
+            int random = one(integers(1, 5));
+            switch (random)
+            {
+                case 1:
+                    return jsonObjects().get();
+                case 2:
+                    return jsonArrays().get();
+                case 3:
+                    return jsonNull().get();
+                default:
+                    return jsonPrimitives().get();
+            }
+        };
+    }
+
+    public static AlchemyGenerator<JsonObject> jsonObjects()
     {
         return () ->
         {
             JsonObject object = new JsonObject();
 
-            int elements = one(integers(1, 10));
+            int elements = one(integers(10, 50));
 
             for (int i = 0; i < elements; ++i)
             {
@@ -77,11 +100,8 @@ class Generators
                 int random = one(integers(1, 3));
                 switch (random)
                 {
-                    case 1:
-                        object.add(key, one(jsonPrimitives()));
-                        break;
                     case 2:
-                        object.add(key, one(jsonNull()));
+                        object.add(key, one(jsonPrimitives()));
                         break;
                     default:
                         object.add(key, one(jsonArrays()));
@@ -95,12 +115,12 @@ class Generators
 
     }
 
-    static AlchemyGenerator<JsonArray> jsonArrays()
+    public static AlchemyGenerator<JsonArray> jsonArrays()
     {
         return () ->
         {
 
-            int arraySize = one(integers(50, 100));
+            int arraySize = one(integers(50, 1000));
             JsonArray array = new JsonArray();
 
             for (int i = 0; i < arraySize; ++i)
@@ -112,7 +132,7 @@ class Generators
         };
     }
 
-    static AlchemyGenerator<JsonPrimitive> jsonPrimitives()
+    public static AlchemyGenerator<JsonPrimitive> jsonPrimitives()
     {
         return () ->
         {
@@ -131,7 +151,7 @@ class Generators
         };
     }
 
-    static AlchemyGenerator<JsonNull> jsonNull()
+    public static AlchemyGenerator<JsonNull> jsonNull()
 
     {
         return () -> JsonNull.INSTANCE;

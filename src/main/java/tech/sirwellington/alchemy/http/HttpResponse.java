@@ -23,17 +23,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import jdk.nashorn.internal.ir.annotations.Immutable;
-
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.Assertions.positiveInteger;
-
-import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validHttpStatusCode;
 
 /**
@@ -95,8 +92,8 @@ public interface HttpResponse
 
         private int statusCode = - 100;
         private Map<String, String> responseHeaders = Collections.EMPTY_MAP;
-        private final Gson gson = new Gson();
-        private JsonElement response;
+        private  Gson gson = new Gson();
+        private JsonElement responseBody;
 
         public static Builder newInstance()
         {
@@ -107,6 +104,7 @@ public interface HttpResponse
         {
             //TODO: Also add check that status code is in the HTTP Range
             checkThat(statusCode).is(validHttpStatusCode());
+            
             this.statusCode = statusCode;
             return this;
         }
@@ -114,6 +112,7 @@ public interface HttpResponse
         public Builder withResponseHeaders(Map<String, String> responseHeaders) throws IllegalArgumentException
         {
             checkThat(responseHeaders).is(notNull());
+             
             this.responseHeaders = responseHeaders;
             return this;
         }
@@ -121,7 +120,16 @@ public interface HttpResponse
         public Builder withResponse(JsonElement json) throws IllegalArgumentException
         {
             checkThat(json).is(notNull());
-            this.response = json;
+            
+            this.responseBody = json;
+            return this;
+        }
+        
+        public Builder usingGson(Gson gson) throws IllegalArgumentException
+        {
+            checkThat(gson).is(notNull());
+            
+            this.gson = gson;
             return this;
         }
 
@@ -129,9 +137,9 @@ public interface HttpResponse
         {
             checkThat(statusCode)
                     .throwing(ex -> new IllegalStateException("No status code supplied"))
-                    .is(positiveInteger());
+                    .is(validHttpStatusCode());
 
-            return new Impl(statusCode, responseHeaders, gson, response);
+            return new Impl(statusCode, responseHeaders, gson, responseBody);
         }
 
         @Immutable

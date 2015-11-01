@@ -19,22 +19,23 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.http.HttpRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
@@ -56,7 +57,9 @@ final class BaseVerb implements HttpVerb
 
     private final static Logger LOG = LoggerFactory.getLogger(BaseVerb.class);
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .create();
+
     private final AlchemyRequestMapper requestMapper;
 
     BaseVerb(AlchemyRequestMapper requestMapper)
@@ -98,6 +101,10 @@ final class BaseVerb implements HttpVerb
             throw new AlchemyHttpException(ex);
         }
 
+        checkThat(apacheResponse)
+                .throwing(ex -> new AlchemyHttpException(request, "Missing Apache Client Response"))
+                .is(notNull());
+
         JsonElement json;
         try
         {
@@ -118,14 +125,15 @@ final class BaseVerb implements HttpVerb
                 .withResponse(json)
                 .withStatusCode(apacheResponse.getStatusLine().getStatusCode())
                 .withResponseHeaders(extractHeadersFrom(apacheResponse))
+                .usingGson(gson)
                 .build();
-        
+
         return response;
     }
 
-    private JsonElement extractJsonFromResponse(org.apache.http.HttpResponse apacheResponse) throws JsonException
+    private JsonElement extractJsonFromResponse(@NonNull org.apache.http.HttpResponse apacheResponse) throws JsonException, JsonParseException
     {
-        if (apacheResponse == null || apacheResponse.getEntity() == null)
+        if (apacheResponse.getEntity() == null)
         {
             return JsonNull.INSTANCE;
         }
@@ -138,13 +146,10 @@ final class BaseVerb implements HttpVerb
                 .is(validContentType());
 
         String responseString = null;
-        try
+        try (final InputStream istream = entity.getContent())
         {
-            try (final InputStream istream = entity.getContent())
-            {
-                byte[] rawBytes = ByteStreams.toByteArray(istream);
-                responseString = new String(rawBytes, Charsets.UTF_8);
-            }
+            byte[] rawBytes = ByteStreams.toByteArray(istream);
+            responseString = new String(rawBytes, Charsets.UTF_8);
         }
         catch (FailedAssertionException ex)
         {
@@ -155,17 +160,6 @@ final class BaseVerb implements HttpVerb
             LOG.error("Failed to read entity from request", ex);
             throw new AlchemyHttpException("Failed to read response from server", ex);
         }
-        finally
-        {
-            try
-            {
-                EntityUtils.consume(entity);
-            }
-            catch (IOException ex)
-            {
-                LOG.error("Failed to finish consuming HTTP Entity", ex);
-            }
-        }
 
         if (Strings.isNullOrEmpty(responseString))
         {
@@ -173,19 +167,17 @@ final class BaseVerb implements HttpVerb
         }
         else
         {
-            if (contentType.contains("application/json"))
-            {
-                return gson.fromJson(responseString, JsonElement.class);
-            }
-            else
-            {
-                return gson.toJsonTree(responseString);
-            }
+            return gson.fromJson(responseString, JsonElement.class);
         }
     }
 
     private Map<String, String> extractHeadersFrom(org.apache.http.HttpResponse apacheResponse)
     {
+        if (apacheResponse.getAllHeaders() == null)
+        {
+            return Collections.emptyMap();
+        }
+
         return Arrays.asList(apacheResponse.getAllHeaders())
                 .stream()
                 .collect(Collectors.toMap(Header::getName, Header::getValue));
