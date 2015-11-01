@@ -72,6 +72,10 @@ final class InternalAssertions
     {
         return request ->
         {
+            checkThat(request)
+                    .usingMessage("Request missing")
+                    .is(notNull());
+            
             checkThat(request.getVerb())
                     .usingMessage("Request missing HTTP Verb")
                     .is(notNull());
