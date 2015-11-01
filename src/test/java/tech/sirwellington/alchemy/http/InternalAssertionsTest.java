@@ -34,6 +34,7 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -47,6 +48,13 @@ public class InternalAssertionsTest
     @Before
     public void setUp()
     {
+    }
+
+    @Test
+    public void testConstructor()
+    {
+        assertThrows(() -> InternalAssertions.class.newInstance())
+                .isInstanceOf(IllegalAccessException.class);
     }
 
     @Test
@@ -94,7 +102,7 @@ public class InternalAssertionsTest
     {
         AlchemyAssertion<HttpRequest> instance = InternalAssertions.requestReady();
 
-        URL url = new URL("http://" + one(alphabeticString()));
+        URL url = one(validUrls());
         HttpVerb verb = mock(HttpVerb.class);
 
         HttpRequest request = mock(HttpRequest.class);
@@ -113,7 +121,7 @@ public class InternalAssertionsTest
         assertThrows(() -> instance.check(null))
                 .isInstanceOf(FailedAssertionException.class);
 
-        URL url = new URL("http://" + one(alphabeticString()));
+        URL url = one(validUrls());
         HttpVerb verb = mock(HttpVerb.class);
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUrl()).thenReturn(url);

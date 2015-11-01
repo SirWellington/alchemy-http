@@ -121,7 +121,7 @@ public interface AlchemyRequest
         default HttpResponse at(String url) throws IllegalArgumentException, AlchemyHttpException, MalformedURLException
         {
             checkThat(url).is(nonEmptyString());
-            
+
             return at(new URL(url));
         }
 
@@ -133,10 +133,12 @@ public interface AlchemyRequest
     interface Step4<ResponseType>
     {
 
-        ResponseType at(URL url) throws AlchemyHttpException;
+        ResponseType at(URL url) throws IllegalArgumentException, AlchemyHttpException;
 
         default ResponseType at(String url) throws AlchemyHttpException, MalformedURLException
         {
+            checkThat(url).is(nonEmptyString());
+
             return at(new URL(url));
         }
 
@@ -154,8 +156,10 @@ public interface AlchemyRequest
 
         void at(URL url);
 
-        default void at(String url) throws MalformedURLException
+        default void at(String url) throws IllegalArgumentException, MalformedURLException
         {
+            checkThat(url).is(nonEmptyString());
+
             at(new URL(url));
         }
 

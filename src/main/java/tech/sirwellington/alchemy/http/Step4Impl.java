@@ -52,11 +52,11 @@ final class Step4Impl<ResponseType> implements AlchemyRequest.Step4<ResponseType
                 .usingMessage("missing url")
                 .is(notNull());
 
-        HttpRequest requestCopy = HttpRequest.Builder.from(request)
+        HttpRequest newRequest = HttpRequest.Builder.from(request)
                 .usingUrl(url)
                 .build();
 
-        return stateMachine.executeSync(requestCopy, classOfResponseType);
+        return stateMachine.executeSync(newRequest, classOfResponseType);
     }
 
     @Override

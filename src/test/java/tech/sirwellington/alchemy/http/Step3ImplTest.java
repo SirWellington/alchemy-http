@@ -17,11 +17,9 @@ package tech.sirwellington.alchemy.http;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 import org.inferred.freebuilder.shaded.com.google.common.collect.Maps;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -41,12 +39,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.BooleanGenerators.booleans;
-import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -75,8 +73,7 @@ public class Step3ImplTest
     @Before
     public void setUp() throws MalformedURLException
     {
-        String link = "http://" + one(alphabeticString());
-        url = new URL(link);
+        url = one(validUrls());
 
         request = HttpRequest.Builder.newInstance()
                 .usingUrl(url)

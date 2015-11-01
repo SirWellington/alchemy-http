@@ -16,13 +16,16 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
+import tech.sirwellington.alchemy.generator.StringGenerators;
 
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.BooleanGenerators.booleans;
@@ -30,16 +33,34 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveDoubles;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 
 /**
  *
  * @author SirWellington
  */
-class JsonGenerators
+class Generators
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger(JsonGenerators.class);
+    private final static Logger LOG = LoggerFactory.getLogger(Generators.class);
+
+    static AlchemyGenerator<URL> validUrls()
+    {
+        return () ->
+        {
+            AlchemyGenerator<String> protocols = StringGenerators.stringsFromFixedList("https://", "http://");
+            String protocol = one(protocols);
+            String uri = protocol + one(alphabeticString());
+
+            try
+            {
+                return new URL(uri);
+            }
+            catch (MalformedURLException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
 
     static AlchemyGenerator<JsonObject> jsonObjects()
     {
