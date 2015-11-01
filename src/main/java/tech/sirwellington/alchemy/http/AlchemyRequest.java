@@ -40,14 +40,14 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
  */
 public interface AlchemyRequest
 {
-
+    
     interface Step1
     {
-
+        
         default byte[] download(URL url) throws IllegalArgumentException, AlchemyHttpException
         {
             checkThat(url)
-                    .throwing(ex -> new AlchemyHttpException("missing url"))
+                    .usingMessage("missing URL")
                     .is(notNull());
             try
             {
@@ -58,131 +58,131 @@ public interface AlchemyRequest
                 throw new AlchemyHttpException("Could not download from URL" + url, ex);
             }
         }
-
+        
         Step3 get();
-
+        
         Step2 post();
-
+        
         Step2 put();
-
+        
         Step2 delete();
-
+        
     }
-
+    
     interface Step2
     {
-
+        
         Step3 nothing();
-
+        
         Step3 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
-
+        
         Step3 body(@NonNull Object pojo) throws IllegalArgumentException;
     }
-
+    
     interface Step3
     {
-
+        
         Step3 usingHeader(String key, String value) throws IllegalArgumentException;
-
+        
         Step3 usingQueryParam(String name, String value) throws IllegalArgumentException;
-
+        
         default Step3 accept(String mediaType, String... others) throws IllegalArgumentException
         {
             checkThat(mediaType).is(nonEmptyString());
-
+            
             List<String> othersList = newArrayList(others);
             othersList.add(mediaType);
-
+            
             String accepts = Joiner.on(",")
                     .join(othersList);
-
+            
             return usingHeader("Accept", accepts);
         }
-
+        
         default Step3 usingQueryParam(String name, Number value) throws IllegalArgumentException
         {
             return usingQueryParam(name, String.valueOf(value));
         }
-
+        
         default Step3 usingQueryParam(String name, boolean value) throws IllegalArgumentException
         {
             return usingQueryParam(name, String.valueOf(value));
         }
-
+        
         Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
-
+        
         default Step3 followRedirects()
         {
             return followRedirects(5);
         }
-
+        
         HttpResponse at(URL url) throws AlchemyHttpException;
-
+        
         default HttpResponse at(String url) throws IllegalArgumentException, AlchemyHttpException, MalformedURLException
         {
             checkThat(url).is(nonEmptyString());
-
+            
             return at(new URL(url));
         }
-
+        
         Step5<HttpResponse> onSuccess(OnSuccess<HttpResponse> onSuccessCallback);
-
+        
         <ResponseType> Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException;
     }
-
+    
     interface Step4<ResponseType>
     {
-
+        
         ResponseType at(URL url) throws IllegalArgumentException, AlchemyHttpException;
-
+        
         default ResponseType at(String url) throws AlchemyHttpException, MalformedURLException
         {
             checkThat(url).is(nonEmptyString());
-
+            
             return at(new URL(url));
         }
-
+        
         Step5<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
-
+    
     interface Step5<ResponseType>
     {
-
+        
         Step6<ResponseType> onFailure(OnFailure onFailureCallback);
     }
-
+    
     interface Step6<ResponseType>
     {
-
+        
         void at(URL url);
-
+        
         default void at(String url) throws IllegalArgumentException, MalformedURLException
         {
             checkThat(url).is(nonEmptyString());
-
+            
             at(new URL(url));
         }
-
+        
     }
-
+    
     interface OnSuccess<ResponseType>
     {
-
+        
         void processResponse(ResponseType response);
-
+        
         OnSuccess NO_OP = response ->
         {
         };
     }
-
+    
     interface OnFailure
     {
-
+        
         OnFailure NO_OP = ex ->
         {
-
+            
         };
-
+        
         void handleError(AlchemyHttpException ex);
     }
 }

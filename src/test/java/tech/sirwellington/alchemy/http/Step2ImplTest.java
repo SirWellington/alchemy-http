@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import java.util.Objects;
+import org.inferred.freebuilder.shaded.com.google.common.base.Strings;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,21 +46,21 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
 @RunWith(MockitoJUnitRunner.class)
 public class Step2ImplTest
 {
-
+    
     @Mock
     private AlchemyHttpStateMachine stateMachine;
-
+    
     private HttpRequest request;
-
+    
     @Captor
     private ArgumentCaptor<HttpRequest> requestCaptor;
-
+    
     private JsonElement expectedBody;
-
+    
     private Gson gson;
-
+    
     private Step2Impl instance;
-
+    
     @Before
     public void setUp()
     {
@@ -67,85 +68,85 @@ public class Step2ImplTest
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
-
+        
         request = HttpRequest.Builder.newInstance().build();
-
+        
         instance = new Step2Impl(request, stateMachine, gson);
-
+        
         expectedBody = one(jsonObjects());
     }
-
+    
     @Test
     public void testNothing()
     {
         instance.nothing();
-
+        
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
-
+        
         expectedBody = JsonNull.INSTANCE;
         HttpRequest requestMade = requestCaptor.getValue();
         verifyRequestMade(requestMade);
     }
-
+    
     @Test
     public void testStringBody()
     {
         String stringBody = gson.toJson(expectedBody);
         instance.body(stringBody);
-
+        
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
-
+        
         HttpRequest requestMade = requestCaptor.getValue();
         verifyRequestMade(requestMade);
     }
-
+    
     @Test
     public void testStringBodyWhenEmpty()
     {
         assertThrows(() -> instance.body(""))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
+    
     @Test
     public void testObjectBody()
     {
-
+        
         Pojo pojo = new Pojo();
-
+        
         instance.body(pojo);
-
+        
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
-
+        
         expectedBody = gson.toJsonTree(pojo);
         HttpRequest requestMade = requestCaptor.getValue();
         verifyRequestMade(requestMade);
     }
-
+    
     @Test
     public void testObjectBodyWhenNull()
     {
         assertThrows(() -> instance.body(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
+    
     private void verifyRequestMade(HttpRequest requestMade)
     {
         assertThat(requestMade, notNullValue());
         assertThat(requestMade.getBody(), is(expectedBody));
     }
-
+    
     static class Pojo
     {
-
+        
         private String name = one(alphabeticString());
         private int age = one(integers(1, 100));
         private String lastName = one(alphabeticString());
         private String address = one(alphabeticString());
-
+        
         public Pojo()
         {
         }
-
+        
         @Override
         public int hashCode()
         {
@@ -156,7 +157,7 @@ public class Step2ImplTest
             hash = 97 * hash + Objects.hashCode(this.address);
             return hash;
         }
-
+        
         @Override
         public boolean equals(Object obj)
         {
@@ -187,6 +188,13 @@ public class Step2ImplTest
             }
             return true;
         }
-
+        
+    }
+    
+    @Test
+    public void testToString()
+    {
+        String toString = instance.toString();
+        assertThat(Strings.isNullOrEmpty(toString), is(false));
     }
 }

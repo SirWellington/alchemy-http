@@ -25,7 +25,7 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
  *
  * @author SirWellington
  */
-class Step5Impl<ResponseType> implements AlchemyRequest.Step5<ResponseType>
+final class Step5Impl<ResponseType> implements AlchemyRequest.Step5<ResponseType>
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Step5Impl.class);
