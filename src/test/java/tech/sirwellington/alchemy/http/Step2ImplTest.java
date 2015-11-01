@@ -19,23 +19,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import java.util.Objects;
 import org.inferred.freebuilder.shaded.com.google.common.base.Strings;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -111,7 +108,7 @@ public class Step2ImplTest
     public void testObjectBody()
     {
         
-        Pojo pojo = new Pojo();
+        TestPojo pojo = TestPojo.generate();
         
         instance.body(pojo);
         
@@ -133,62 +130,6 @@ public class Step2ImplTest
     {
         assertThat(requestMade, notNullValue());
         assertThat(requestMade.getBody(), is(expectedBody));
-    }
-    
-    static class Pojo
-    {
-        
-        private String name = one(alphabeticString());
-        private int age = one(integers(1, 100));
-        private String lastName = one(alphabeticString());
-        private String address = one(alphabeticString());
-        
-        public Pojo()
-        {
-        }
-        
-        @Override
-        public int hashCode()
-        {
-            int hash = 5;
-            hash = 97 * hash + Objects.hashCode(this.name);
-            hash = 97 * hash + this.age;
-            hash = 97 * hash + Objects.hashCode(this.lastName);
-            hash = 97 * hash + Objects.hashCode(this.address);
-            return hash;
-        }
-        
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            if (getClass() != obj.getClass())
-            {
-                return false;
-            }
-            final Pojo other = (Pojo) obj;
-            if (!Objects.equals(this.name, other.name))
-            {
-                return false;
-            }
-            if (this.age != other.age)
-            {
-                return false;
-            }
-            if (!Objects.equals(this.lastName, other.lastName))
-            {
-                return false;
-            }
-            if (!Objects.equals(this.address, other.address))
-            {
-                return false;
-            }
-            return true;
-        }
-        
     }
     
     @Test

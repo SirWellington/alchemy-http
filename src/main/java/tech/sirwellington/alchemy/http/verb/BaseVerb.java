@@ -122,7 +122,7 @@ final class BaseVerb implements HttpVerb
         }
 
         HttpResponse response = HttpResponse.Builder.newInstance()
-                .withResponse(json)
+                .withResponseBody(json)
                 .withStatusCode(apacheResponse.getStatusLine().getStatusCode())
                 .withResponseHeaders(extractHeadersFrom(apacheResponse))
                 .usingGson(gson)

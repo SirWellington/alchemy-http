@@ -16,15 +16,14 @@
 package tech.sirwellington.alchemy.http;
 
 import java.net.URL;
-import java.util.Date;
 import org.inferred.freebuilder.shaded.com.google.common.base.Strings;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step4;
 
@@ -60,12 +59,16 @@ public class Step4ImplTest
     @Mock
     private OnSuccess onSuccess;
 
+    private Class<TestPojo> responseClass;
+
     private Step4 instance;
 
     @Before
     public void setUp()
     {
-        instance = new Step4Impl(stateMachine, request, Pojo.class);
+        responseClass = TestPojo.class;
+
+        instance = new Step4Impl(stateMachine, request, responseClass);
         verifyZeroInteractions(stateMachine);
     }
 
@@ -96,7 +99,7 @@ public class Step4ImplTest
 
         instance.at(url);
 
-        verify(stateMachine).executeSync(requestCaptor.capture(), eq(Pojo.class));
+        verify(stateMachine).executeSync(requestCaptor.capture(), eq(responseClass));
 
         HttpRequest requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
@@ -113,24 +116,13 @@ public class Step4ImplTest
 
         instance.onSuccess(onSuccess);
 
-        verify(stateMachine).jumpToStep5(request, Pojo.class, onSuccess);
+        verify(stateMachine).jumpToStep5(request, responseClass, onSuccess);
     }
 
     @Test
     public void testToString()
     {
         assertThat(Strings.isNullOrEmpty(instance.toString()), is(false));
-    }
-    
-
-    static class Pojo
-    {
-
-        private String firstName;
-        private String lastName;
-        private Date birthday;
-        private String address;
-        private int age;
     }
 
 }
