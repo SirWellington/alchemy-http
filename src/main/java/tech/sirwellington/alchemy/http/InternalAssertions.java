@@ -47,11 +47,15 @@ final class InternalAssertions
 
     private final static Logger LOG = LoggerFactory.getLogger(InternalAssertions.class);
 
-    /*
-     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-     */
-    static final AlchemyAssertion<Integer> validHttpStatusCode = greaterThanOrEqualTo(100)
-            .and(lessThanOrEqualTo(505));
+    static final AlchemyAssertion<Integer> validHttpStatusCode()
+    {
+        /*
+         * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+         */
+
+        return greaterThanOrEqualTo(100)
+                .and(lessThanOrEqualTo(505));
+    }
 
     /*
      * TODO: Add check to see if the class structure is that of a POJO.
@@ -93,12 +97,12 @@ final class InternalAssertions
             {
                 return;
             }
-            
+
             if (contentType.contains("text/plain"))
             {
                 return;
             }
-            
+
             throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
         };
     }

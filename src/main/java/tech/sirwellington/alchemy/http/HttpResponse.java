@@ -106,7 +106,7 @@ public interface HttpResponse
         public Builder withStatusCode(int statusCode) throws IllegalArgumentException
         {
             //TODO: Also add check that status code is in the HTTP Range
-            checkThat(statusCode).is(validHttpStatusCode);
+            checkThat(statusCode).is(validHttpStatusCode());
             this.statusCode = statusCode;
             return this;
         }
