@@ -71,8 +71,9 @@ public interface AlchemyRequest
 
     interface Step2
     {
+
         Step3 nothing();
-        
+
         Step3 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
 
         Step3 body(@NonNull Object pojo) throws IllegalArgumentException;
@@ -100,12 +101,12 @@ public interface AlchemyRequest
 
         default Step3 usingQueryParam(String name, Number value) throws IllegalArgumentException
         {
-            return usingHeader(name, String.valueOf(value));
+            return usingQueryParam(name, String.valueOf(value));
         }
 
         default Step3 usingQueryParam(String name, boolean value) throws IllegalArgumentException
         {
-            return usingHeader(name, String.valueOf(value));
+            return usingQueryParam(name, String.valueOf(value));
         }
 
         Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
@@ -117,8 +118,10 @@ public interface AlchemyRequest
 
         HttpResponse at(URL url) throws AlchemyHttpException;
 
-        default HttpResponse at(String url) throws AlchemyHttpException, MalformedURLException
+        default HttpResponse at(String url) throws IllegalArgumentException, AlchemyHttpException, MalformedURLException
         {
+            checkThat(url).is(nonEmptyString());
+            
             return at(new URL(url));
         }
 

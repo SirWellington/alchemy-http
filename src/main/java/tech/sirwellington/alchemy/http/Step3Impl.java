@@ -21,13 +21,17 @@ import java.net.URL;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
+
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+
+import static tech.sirwellington.alchemy.http.InternalAssertions.validResponseClass;
 
 /**
  *
@@ -57,10 +61,18 @@ final class Step3Impl implements AlchemyRequest.Step3
         checkThat(key)
                 .usingMessage("missing key")
                 .is(nonEmptyString());
+
         //Value of an HTTP Header can be empty ?
         value = Strings.nullToEmpty(value);
 
-        Map<String, String> requestHeaders = Maps.newHashMap(request.getRequestHeaders());
+        Map<String, String> requestHeaders = Maps.newHashMap();
+
+        //Keep existing headers
+        if (request.getRequestHeaders() != null)
+        {
+            requestHeaders.putAll(request.getRequestHeaders());
+        }
+
         requestHeaders.put(key, value);
 
         this.request = HttpRequest.Builder.from(request)
@@ -77,7 +89,14 @@ final class Step3Impl implements AlchemyRequest.Step3
                 .usingMessage("missing name or value")
                 .are(nonEmptyString());
 
-        Map<String, String> queryParams = Maps.newHashMap(request.getQueryParams());
+        Map<String, String> queryParams = Maps.newHashMap();
+
+        //Keep existing Query Params
+        if (request.getQueryParams() != null)
+        {
+            queryParams.putAll(request.getQueryParams());
+        }
+
         queryParams.put(name, value);
 
         request = HttpRequest.Builder.from(request)
@@ -99,11 +118,14 @@ final class Step3Impl implements AlchemyRequest.Step3
     @Override
     public HttpResponse at(URL url) throws AlchemyHttpException
     {
+        checkThat(url).is(notNull());
+
         //Ready to do a sync request
         HttpRequest requestCopy = HttpRequest.Builder.from(request)
                 .usingUrl(url)
                 .build();
 
+        //Tell the Step Machine to perform a Sync Request
         return stateMachine.executeSync(requestCopy);
     }
 
@@ -121,10 +143,7 @@ final class Step3Impl implements AlchemyRequest.Step3
     public <ResponseType> AlchemyRequest.Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException
     {
         checkThat(classOfResponseType)
-                .usingMessage("missing class of response type")
-                .is(notNull())
-                .usingMessage("cannot expect Void")
-                .is(not(sameInstance(Void.class)));
+                .is(validResponseClass());
 
         return stateMachine.jumpToStep4(request, classOfResponseType);
     }

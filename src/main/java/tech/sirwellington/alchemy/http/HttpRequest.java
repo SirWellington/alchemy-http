@@ -146,6 +146,7 @@ public interface HttpRequest
         public Builder usingRequestHeaders(Map<String, String> requestHeaders) throws IllegalArgumentException
         {
             checkThat(requestHeaders).is(nonEmptyMap());
+
             this.requestHeaders.clear();
             this.requestHeaders.putAll(requestHeaders);
             return this;
@@ -154,6 +155,7 @@ public interface HttpRequest
         public Builder usingQueryParams(Map<String, String> queryParams) throws IllegalArgumentException
         {
             checkThat(queryParams).is(nonEmptyMap());
+
             this.queryParams.clear();
             this.queryParams.putAll(queryParams);
             return this;
@@ -162,12 +164,17 @@ public interface HttpRequest
         public Builder usingUrl(URL url) throws IllegalArgumentException
         {
             checkThat(url).is(notNull());
+
             this.url = url;
             return this;
         }
 
         public Builder usingBody(JsonElement body)
         {
+            checkThat(body)
+                    .usingMessage("Use JsonNull instead of null")
+                    .is(notNull());
+            
             this.body = body;
             return this;
         }
@@ -175,6 +182,7 @@ public interface HttpRequest
         public Builder usingVerb(HttpVerb verb) throws IllegalArgumentException
         {
             checkThat(verb).usingMessage("missing verb").is(notNull());
+            
             this.verb = verb;
             return this;
         }
