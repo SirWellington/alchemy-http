@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.http.verb;
+package tech.sirwellington.alchemy.http;
 
+import tech.sirwellington.alchemy.http.HttpVerb;
+import tech.sirwellington.alchemy.http.AlchemyRequestMapper;
+import tech.sirwellington.alchemy.http.BaseVerb;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;

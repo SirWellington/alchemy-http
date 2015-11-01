@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.http.verb;
+package tech.sirwellington.alchemy.http;
 
 import org.apache.http.client.HttpClient;
-import tech.sirwellington.alchemy.http.HttpRequest;
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**

@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

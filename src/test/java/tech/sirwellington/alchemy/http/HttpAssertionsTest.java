@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.Before;
@@ -27,8 +26,8 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
@@ -149,6 +148,39 @@ public class HttpAssertionsTest
         assertThrows(() -> instance.check(request))
                 .isInstanceOf(FailedAssertionException.class);
 
+    }
+
+    @Test
+    public void testValidContentType()
+    {
+        AlchemyAssertion<String> instance = HttpAssertions.validContentType();
+        assertThat(instance, notNullValue());
+
+        AlchemyGenerator<String> validTypes = StringGenerators.stringsFromFixedList("application/json", "text/plain");
+
+        String contentType = one(validTypes);
+
+        instance.check(contentType);
+        instance.check(contentType + one(alphabeticString()));
+    }
+
+    @Test
+    public void testValidContentTypeEdgeCases()
+    {
+        AlchemyAssertion<String> instance = HttpAssertions.validContentType();
+
+        //Edge cases
+        assertThrows(() -> instance.check(null))
+                .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(""))
+                .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(one(alphabeticString())))
+                .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(one(hexadecimalString(10))))
+                .isInstanceOf(FailedAssertionException.class);
     }
 
 }

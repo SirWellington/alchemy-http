@@ -19,10 +19,12 @@ import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Assertions;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.lessThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
@@ -81,6 +83,28 @@ final class HttpAssertions
 
             checkThat(request.getUrl().getProtocol())
                     .is(stringThatStartsWith("http"));
+        };
+    }
+
+    static final AlchemyAssertion<String> validContentType()
+    {
+        return contentType ->
+        {
+            checkThat(contentType)
+                    .usingMessage("missing Content-Type")
+                    .is(nonEmptyString());
+
+            if (contentType.contains("application/json"))
+            {
+                return;
+            }
+
+            if (contentType.contains("text/plain"))
+            {
+                return;
+            }
+
+            throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
         };
     }
 

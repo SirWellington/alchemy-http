@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.http.verb;
+package tech.sirwellington.alchemy.http;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -24,7 +24,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
-import tech.sirwellington.alchemy.http.HttpRequest;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static com.google.common.base.Charsets.UTF_8;

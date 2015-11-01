@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.http.verb;
+package tech.sirwellington.alchemy.http;
 
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 
 /**
  *
@@ -37,25 +32,5 @@ final class VerbAssertions
         throw new IllegalAccessException("cannot instantiate");
     }
 
-    static final AlchemyAssertion<String> validContentType()
-    {
-        return contentType ->
-        {
-            checkThat(contentType)
-                    .usingMessage("missing Content-Type")
-                    .is(nonEmptyString());
-
-            if (contentType.contains("application/json"))
-            {
-                return;
-            }
-
-            if (contentType.contains("text/plain"))
-            {
-                return;
-            }
-
-            throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
-        };
-    }
+    
 }

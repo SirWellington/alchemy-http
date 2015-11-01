@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;

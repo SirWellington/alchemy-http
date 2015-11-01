@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import org.apache.http.client.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
