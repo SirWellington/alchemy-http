@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import java.util.concurrent.ExecutorService;
@@ -31,8 +32,8 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
-import static tech.sirwellington.alchemy.http.InternalAssertions.requestReady;
-import static tech.sirwellington.alchemy.http.InternalAssertions.validResponseClass;
+import static tech.sirwellington.alchemy.http.HttpAssertions.requestReady;
+import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
 /**
  *

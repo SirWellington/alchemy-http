@@ -37,15 +37,15 @@ import static tech.sirwellington.alchemy.arguments.Assertions.stringThatStartsWi
  * @author SirWellington
  */
 @Internal
-final class InternalAssertions
+final class HttpAssertions
 {
 
-    private InternalAssertions() throws IllegalAccessException
+    private HttpAssertions() throws IllegalAccessException
     {
         throw new IllegalAccessException("cannot instantiate class");
     }
 
-    private final static Logger LOG = LoggerFactory.getLogger(InternalAssertions.class);
+    private final static Logger LOG = LoggerFactory.getLogger(HttpAssertions.class);
 
     static final AlchemyAssertion<Integer> validHttpStatusCode()
     {
@@ -75,7 +75,7 @@ final class InternalAssertions
             checkThat(request)
                     .usingMessage("Request missing")
                     .is(notNull());
-            
+
             checkThat(request.getVerb())
                     .usingMessage("Request missing HTTP Verb")
                     .is(notNull());
@@ -89,25 +89,4 @@ final class InternalAssertions
         };
     }
 
-    static final AlchemyAssertion<String> validContentType()
-    {
-        return contentType ->
-        {
-            checkThat(contentType)
-                    .usingMessage("missing Content-Type")
-                    .is(nonEmptyString());
-
-            if (contentType.contains("application/json"))
-            {
-                return;
-            }
-
-            if (contentType.contains("text/plain"))
-            {
-                return;
-            }
-
-            throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
-        };
-    }
 }

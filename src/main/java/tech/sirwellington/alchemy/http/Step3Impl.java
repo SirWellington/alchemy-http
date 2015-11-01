@@ -31,7 +31,7 @@ import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
 
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
-import static tech.sirwellington.alchemy.http.InternalAssertions.validResponseClass;
+import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
 /**
  *

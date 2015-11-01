@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.Before;
@@ -42,7 +43,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  * @author SirWellington
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InternalAssertionsTest
+public class HttpAssertionsTest
 {
 
     @Before
@@ -53,14 +54,14 @@ public class InternalAssertionsTest
     @Test
     public void testConstructor()
     {
-        assertThrows(() -> InternalAssertions.class.newInstance())
+        assertThrows(() -> HttpAssertions.class.newInstance())
                 .isInstanceOf(IllegalAccessException.class);
     }
 
     @Test
     public void testValidHttpStatusCode()
     {
-        AlchemyAssertion<Integer> instance = InternalAssertions.validHttpStatusCode();
+        AlchemyAssertion<Integer> instance = HttpAssertions.validHttpStatusCode();
         assertThat(instance, notNullValue());
 
         int statusCode = one(integers(200, 500));
@@ -80,19 +81,19 @@ public class InternalAssertionsTest
     public void testValidResponseClass()
     {
         //Check Object
-        AlchemyAssertion<Class<Object>> instanceOne = InternalAssertions.validResponseClass();
+        AlchemyAssertion<Class<Object>> instanceOne = HttpAssertions.validResponseClass();
         assertThat(instanceOne, notNullValue());
         instanceOne.check(Object.class);
 
         //Check String
-        AlchemyAssertion<Class<String>> instanceTwo = InternalAssertions.validResponseClass();
+        AlchemyAssertion<Class<String>> instanceTwo = HttpAssertions.validResponseClass();
         instanceTwo.check(String.class);
 
         //Edge Cases
         assertThrows(() -> instanceOne.check(null))
                 .isInstanceOf(FailedAssertionException.class);
 
-        AlchemyAssertion<Class<Void>> instanceThree = InternalAssertions.validResponseClass();
+        AlchemyAssertion<Class<Void>> instanceThree = HttpAssertions.validResponseClass();
         assertThrows(() -> instanceThree.check(Void.class))
                 .isInstanceOf(FailedAssertionException.class);
     }
@@ -100,7 +101,7 @@ public class InternalAssertionsTest
     @Test
     public void testRequestReady() throws MalformedURLException
     {
-        AlchemyAssertion<HttpRequest> instance = InternalAssertions.requestReady();
+        AlchemyAssertion<HttpRequest> instance = HttpAssertions.requestReady();
 
         URL url = one(validUrls());
         HttpVerb verb = mock(HttpVerb.class);
@@ -115,7 +116,7 @@ public class InternalAssertionsTest
     @Test
     public void testRequestReadyEdgeCases() throws MalformedURLException
     {
-        AlchemyAssertion<HttpRequest> instance = InternalAssertions.requestReady();
+        AlchemyAssertion<HttpRequest> instance = HttpAssertions.requestReady();
 
         //Edge cases
         assertThrows(() -> instance.check(null))
@@ -150,36 +151,4 @@ public class InternalAssertionsTest
 
     }
 
-    @Test
-    public void testValidContentType()
-    {
-        AlchemyAssertion<String> instance = InternalAssertions.validContentType();
-        assertThat(instance, notNullValue());
-
-        AlchemyGenerator<String> validTypes = StringGenerators.stringsFromFixedList("application/json", "text/plain");
-
-        String contentType = one(validTypes);
-
-        instance.check(contentType);
-        instance.check(contentType + one(alphabeticString()));
-    }
-
-    @Test
-    public void testValidContentTypeEdgeCases()
-    {
-        AlchemyAssertion<String> instance = InternalAssertions.validContentType();
-
-        //Edge cases
-        assertThrows(() -> instance.check(null))
-                .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(""))
-                .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(one(alphabeticString())))
-                .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(one(hexadecimalString(10))))
-                .isInstanceOf(FailedAssertionException.class);
-    }
 }

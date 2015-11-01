@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.http;
+package tech.sirwellington.alchemy.http.verb;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -36,23 +34,23 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.Arguments;
-import tech.sirwellington.alchemy.arguments.Assertions;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+import tech.sirwellington.alchemy.http.HttpRequest;
+import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import static tech.sirwellington.alchemy.http.InternalAssertions.validContentType;
+import static tech.sirwellington.alchemy.http.verb.VerbAssertions.validContentType;
 
 /**
  *
  * @author SirWellington
  */
+@Internal
 final class BaseVerb implements HttpVerb
 {
 

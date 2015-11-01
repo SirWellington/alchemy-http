@@ -15,6 +15,7 @@
  */ 
 package tech.sirwellington.alchemy.http;
 
+import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.http.ProtocolVersion;
