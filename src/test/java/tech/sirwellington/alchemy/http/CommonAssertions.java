@@ -15,7 +15,6 @@
  */ 
 package tech.sirwellington.alchemy.http;
 
-import tech.sirwellington.alchemy.http.verb.HttpVerb;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.http.ProtocolVersion;
@@ -30,6 +29,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.http.verb.HttpVerb;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -43,16 +43,12 @@ import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 
-/**
- *
- * @author SirWellington
- */
 
 
-class VerbAssertions
+class CommonAssertions
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger(VerbAssertions.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CommonAssertions.class);
 
     static void assertGetRequestMade(HttpVerb verb) throws Exception
     {

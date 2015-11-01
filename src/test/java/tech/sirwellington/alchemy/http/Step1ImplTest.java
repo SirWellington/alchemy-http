@@ -24,24 +24,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Answers.RETURNS_SMART_NULLS;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.BinaryGenerators.binary;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertDeleteRequestMade;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertGetRequestMade;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertPostRequestMade;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertPutRequestMade;
+import static tech.sirwellington.alchemy.http.CommonAssertions.assertDeleteRequestMade;
+import static tech.sirwellington.alchemy.http.CommonAssertions.assertGetRequestMade;
+import static tech.sirwellington.alchemy.http.CommonAssertions.assertPostRequestMade;
+import static tech.sirwellington.alchemy.http.CommonAssertions.assertPutRequestMade;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**

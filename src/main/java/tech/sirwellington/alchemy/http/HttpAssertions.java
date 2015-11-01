@@ -15,18 +15,14 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.arguments.Assertions;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.lessThanOrEqualTo;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
@@ -37,15 +33,14 @@ import static tech.sirwellington.alchemy.arguments.Assertions.stringThatStartsWi
  * @author SirWellington
  */
 @Internal
+@NonInstantiable
 final class HttpAssertions
 {
 
     private HttpAssertions() throws IllegalAccessException
     {
-        throw new IllegalAccessException("cannot instantiate class");
+        throw new IllegalAccessException("cannot instantiate");
     }
-
-    private final static Logger LOG = LoggerFactory.getLogger(HttpAssertions.class);
 
     static final AlchemyAssertion<Integer> validHttpStatusCode()
     {
