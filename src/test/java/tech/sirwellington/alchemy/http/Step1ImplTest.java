@@ -15,6 +15,10 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,12 +28,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.Mock;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.*;
 import static org.mockito.Answers.RETURNS_SMART_NULLS;
 import static org.mockito.Mockito.verify;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.BinaryGenerators.binary;
+import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.VerbAssertions.assertDeleteRequestMade;
 import static tech.sirwellington.alchemy.http.VerbAssertions.assertGetRequestMade;
 import static tech.sirwellington.alchemy.http.VerbAssertions.assertPostRequestMade;
@@ -128,6 +136,20 @@ public class Step1ImplTest
         HttpRequest requestMade = requestCaptor.getValue();
         assertRequestMade(requestMade);
         assertDeleteRequestMade(requestMade.getVerb());
+    }
+
+    @Test
+    public void testDownload() throws IOException
+    {
+        byte[] bytes = one(binary(100_000));
+        String filename = one(hexadecimalString(10));
+        File tempFile = File.createTempFile(filename, ".txt");
+        Files.write(bytes, tempFile);
+
+        URL url = tempFile.toURI().toURL();
+        
+        byte[] download = instance.download(url);
+        assertThat(download, is(bytes));
     }
 
     @Test
