@@ -42,7 +42,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
 public class HttpResponseBuilderTest
 {
     
-    private final Gson gson = new Gson();
+    private final Gson gson = Constants.getDefaultGson();
     
     private TestResponse response;
     private JsonElement responseBody;

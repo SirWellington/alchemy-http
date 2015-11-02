@@ -15,12 +15,8 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.io.Resources;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.Gson;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
@@ -47,19 +43,12 @@ interface AlchemyHttpStateMachine
     default Step1 begin()
     {
         HttpRequest request = HttpRequest.Builder.newInstance()
-                .usingRequestHeaders(Collections.EMPTY_MAP)
                 .build();
 
         return begin(request);
     }
 
     Step1 begin(HttpRequest initialRequest);
-
-    default byte[] downloadAt(URL url) throws IOException, IllegalArgumentException
-    {
-        checkThat(url).is(notNull());
-        return Resources.toByteArray(url);
-    }
 
     Step2 jumpToStep2(HttpRequest request) throws IllegalArgumentException;
 
@@ -95,24 +84,25 @@ interface AlchemyHttpStateMachine
 
         private HttpClient apacheHttpClient;
         private ExecutorService executor = MoreExecutors.newDirectExecutorService();
+        private final Gson gson = Constants.getDefaultGson();
 
         static Builder newInstance()
         {
             return new Builder();
         }
 
-        Builder withExecutorService(ExecutorService executor) throws IllegalArgumentException
+        Builder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
         {
             checkThat(executor).is(notNull());
-            
+
             this.executor = executor;
             return this;
         }
 
-        Builder withApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
+        Builder usingApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
         {
             checkThat(apacheHttpClient).is(notNull());
-            
+
             this.apacheHttpClient = apacheHttpClient;
             return this;
         }
@@ -123,7 +113,7 @@ interface AlchemyHttpStateMachine
                     .throwing(ex -> new IllegalStateException("missing Apache HTTP Client"))
                     .is(notNull());
 
-            return new AlchemyMachineImpl(apacheHttpClient, executor, new Gson());
+            return new AlchemyMachineImpl(apacheHttpClient, executor, gson);
         }
     }
 

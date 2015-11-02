@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,9 +41,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
 public class HttpResponseTest
 {
 
-    private final Gson gson = new GsonBuilder()
-            .setDateFormat(Constants.DATE_FORMAT)
-            .create();
+    private final Gson gson = Constants.getDefaultGson();
 
     private TestResponse first;
     private TestResponse second;

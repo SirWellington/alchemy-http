@@ -15,9 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import tech.sirwellington.alchemy.http.HttpVerb;
-import tech.sirwellington.alchemy.http.AlchemyRequestMapper;
-import tech.sirwellington.alchemy.http.BaseVerb;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -40,8 +37,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import tech.sirwellington.alchemy.http.HttpRequest;
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
@@ -94,6 +89,8 @@ public class BaseVerbTest
     private Map<String, String> responseHeaders;
 
     private HttpVerb instance;
+
+    private Gson gson = Constants.getDefaultGson();
 
     @Before
     public void setUp() throws IOException
@@ -257,7 +254,6 @@ public class BaseVerbTest
     public void testPerformance()
     {
         JsonParser parser = new JsonParser();
-        Gson gson = new Gson();
 
         System.out.println("performance test");
         String body = one(jsonObjects()).toString();
@@ -295,22 +291,20 @@ public class BaseVerbTest
         System.out.printf("Gson took %dms accross %d runs\n", time, iterations);
 
     }
-    
+
     @Test
     public void compareGsonMethods()
     {
         responseBody = one(jsonObjects());
-        
-        Gson gson = new Gson();
-        
+
         String text = responseBody.toString();
-        
+
         JsonElement fromJson = gson.fromJson(text, JsonElement.class);
         JsonElement toJsonTree = gson.toJsonTree(text);
-        
+
         boolean equals = fromJson.equals(toJsonTree);
         System.out.println("Equal? " + equals);
-        
+
     }
 
     private static long time(Runnable task)

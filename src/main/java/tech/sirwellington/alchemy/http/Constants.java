@@ -16,6 +16,8 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.Map;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
@@ -37,4 +39,11 @@ final class Constants
             .put("User-Agent", "Alchemy HTTP")
             .put("Content-Type", "application/json")
             .build();
+    
+    static Gson getDefaultGson()
+    {
+        return new GsonBuilder()
+                .setDateFormat(DATE_FORMAT)
+                .create();
+    }
 }

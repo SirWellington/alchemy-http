@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import org.inferred.freebuilder.shaded.com.google.common.base.Strings;
@@ -54,17 +53,13 @@ public class Step2ImplTest
     
     private JsonElement expectedBody;
     
-    private Gson gson;
+    private final Gson gson = Constants.getDefaultGson();
     
     private Step2Impl instance;
     
     @Before
     public void setUp()
     {
-        gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .serializeNulls()
-                .create();
         
         request = HttpRequest.Builder.newInstance().build();
         

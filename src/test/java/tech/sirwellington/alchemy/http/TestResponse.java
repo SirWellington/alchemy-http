@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
- 
 package tech.sirwellington.alchemy.http;
-
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -29,12 +26,13 @@ import tech.sirwellington.alchemy.generator.NumberGenerators;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
-class TestResponse implements HttpResponse 
+class TestResponse implements HttpResponse
 {
+
     int statusCode = AlchemyGenerator.one(NumberGenerators.integers(200, 500));
     Map<String, String> responseHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticString(), StringGenerators.alphabeticString(), 10);
     JsonElement responseBody = AlchemyGenerator.one(Generators.jsonElements());
-    private Gson gson = new Gson();
+    private final Gson gson = Constants.getDefaultGson();
 
     TestResponse()
     {

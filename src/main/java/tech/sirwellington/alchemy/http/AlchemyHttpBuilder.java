@@ -115,8 +115,8 @@ public final class AlchemyHttpBuilder
     private AlchemyHttpStateMachine buildTheStateMachine()
     {
         return AlchemyHttpStateMachine.Builder.newInstance()
-                .withApacheHttpClient(apacheHttpClient)
-                .withExecutorService(executor)
+                .usingApacheHttpClient(apacheHttpClient)
+                .usingExecutorService(executor)
                 .build();
     }
 
