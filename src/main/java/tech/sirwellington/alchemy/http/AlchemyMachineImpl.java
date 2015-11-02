@@ -24,13 +24,11 @@ import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
-
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.HttpAssertions.requestReady;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
@@ -136,12 +134,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
                 .is(notNull())
                 .is(requestReady());
 
-        checkThat(apacheHttpClient).is(notNull());
-
         HttpVerb verb = request.getVerb();
-        checkThat(verb)
-                .throwing(ex -> new IllegalStateException("Request missing verb: " + request)).
-                is(notNull());
 
         HttpResponse response = null;
         try

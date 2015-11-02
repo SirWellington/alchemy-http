@@ -28,12 +28,18 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -56,6 +62,8 @@ public class AlchemyMachineImplTest
     @Mock
     private HttpRequest request;
 
+    private TestRequest validRequest = new TestRequest();
+
     @Mock
     private OnSuccess<TestPojo> onSuccess;
 
@@ -67,6 +75,14 @@ public class AlchemyMachineImplTest
 
     private final Class<TestPojo> responseClass = TestPojo.class;
 
+    private TestPojo pojo;
+
+    @Mock
+    private HttpVerb verb;
+
+    @Mock
+    private HttpResponse response;
+
     @Before
     public void setUp()
     {
@@ -75,6 +91,23 @@ public class AlchemyMachineImplTest
 
         instance = new AlchemyMachineImpl(apacheClient, executorService, gson);
         verifyZeroInteractions(apacheClient, executorService);
+
+        setupVerb();
+        setupResponseBody();
+    }
+
+    private void setupResponseBody()
+    {
+        pojo = TestPojo.generate();
+    }
+
+    private void setupVerb()
+    {
+        when(verb.execute(apacheClient, validRequest))
+                .thenReturn(response);
+
+        validRequest.verb = this.verb;
+
     }
 
     @Test
@@ -198,6 +231,58 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteSync()
     {
+        when(response.isOk())
+                .thenReturn(true);
+
+        HttpResponse result = instance.executeSync(validRequest);
+
+        assertThat(result, is(response));
+    }
+
+    @Test
+    public void testExecuteSyncWithCustomClass()
+    {
+        when(response.as(responseClass)).thenReturn(pojo);
+        when(response.isOk()).thenReturn(true);
+        
+        TestPojo result = instance.executeSync(validRequest, responseClass);
+        assertThat(result, is(pojo));
+    }
+
+    @Test
+    public void testExecuteSyncWhenVerbFails()
+    {
+
+        when(verb.execute(apacheClient, validRequest))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(() -> instance.executeSync(validRequest))
+                .isInstanceOf(AlchemyHttpException.class);
+
+        //Reset and do another assertion
+        reset(verb);
+
+        when(verb.execute(apacheClient, validRequest))
+                .thenThrow(new AlchemyHttpException(validRequest));
+
+        assertThrows(() -> instance.executeSync(validRequest))
+                .isInstanceOf(AlchemyHttpException.class);
+    }
+
+    @Test
+    public void testExecuteSyncEdgeCases()
+    {
+        assertThrows(() -> instance.executeSync(null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> instance.executeSync(null, null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> instance.executeSync(request, Void.class))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> instance.executeSync(validRequest, Void.class))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -208,6 +293,8 @@ public class AlchemyMachineImplTest
     @Test
     public void testToString()
     {
+        String toString = instance.toString();
+        assertThat(toString, not(isEmptyOrNullString()));
     }
 
 }
