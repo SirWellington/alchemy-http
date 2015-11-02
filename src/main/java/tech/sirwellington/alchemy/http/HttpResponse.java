@@ -235,9 +235,9 @@ public interface HttpResponse
                     T instance = gson.fromJson(responseBody, classOfT);
                     return instance;
                 }
-                catch (RuntimeException ex)
+                catch (Exception ex)
                 {
-                    throw new JsonParseException("Failed to parse json to class: " + classOfT, ex);
+                    throw new JsonException("Failed to parse json to class: " + classOfT, ex);
                 }
             }
             

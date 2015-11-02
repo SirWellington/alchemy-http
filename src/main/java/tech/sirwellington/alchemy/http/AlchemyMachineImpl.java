@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
@@ -25,7 +24,6 @@ import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
@@ -176,14 +174,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         else
         {
             LOG.trace("Attempting to parse response {} as {}", response, classOfResponseType);
-            try
-            {
-                return response.as(classOfResponseType);
-            }
-            catch (JsonParseException ex)
-            {
-                throw new JsonException(request, response, "Failed to marshal JSON into class of type: " + classOfResponseType, ex);
-            }
+            return response.as(classOfResponseType);
         }
     }
 
@@ -217,6 +208,12 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
                 checkThat(response)
                         .throwing(ex -> new IllegalStateException("Received unexpected null response"))
                         .is(notNull());
+            }
+            catch (AlchemyHttpException ex)
+            {
+                LOG.trace("Async request failed", ex);
+                failureCallback.handleError(ex);
+                return;
             }
             catch (Exception ex)
             {
