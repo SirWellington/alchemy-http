@@ -44,10 +44,10 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 
 
 
-class CommonAssertions
+class VerbAssertions
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CommonAssertions.class);
+    private final static Logger LOG = LoggerFactory.getLogger(VerbAssertions.class);
 
     static void assertGetRequestMade(HttpVerb verb) throws Exception
     {

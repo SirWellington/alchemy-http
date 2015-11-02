@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -37,11 +36,10 @@ import static org.mockito.Answers.RETURNS_SMART_NULLS;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.BinaryGenerators.binary;
-import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.http.CommonAssertions.assertDeleteRequestMade;
-import static tech.sirwellington.alchemy.http.CommonAssertions.assertGetRequestMade;
-import static tech.sirwellington.alchemy.http.CommonAssertions.assertPostRequestMade;
-import static tech.sirwellington.alchemy.http.CommonAssertions.assertPutRequestMade;
+import static tech.sirwellington.alchemy.http.VerbAssertions.assertDeleteRequestMade;
+import static tech.sirwellington.alchemy.http.VerbAssertions.assertGetRequestMade;
+import static tech.sirwellington.alchemy.http.VerbAssertions.assertPostRequestMade;
+import static tech.sirwellington.alchemy.http.VerbAssertions.assertPutRequestMade;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -142,9 +140,7 @@ public class Step1ImplTest
     public void testDownload() throws IOException
     {
         byte[] bytes = one(binary(100_000));
-        String filename = one(hexadecimalString(10));
-        File tempFile = File.createTempFile(filename, ".txt");
-        Files.write(bytes, tempFile);
+        File tempFile = TestFile.writeToTempFile(bytes);
 
         URL url = tempFile.toURI().toURL();
         

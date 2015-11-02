@@ -16,21 +16,18 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.base.Joiner;
-
-import static com.google.common.collect.Lists.newArrayList;
-
 import com.google.common.io.Resources;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.util.Set;
+import org.inferred.freebuilder.shaded.com.google.common.collect.Sets;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
  *
@@ -90,11 +87,18 @@ public interface AlchemyRequest
         {
             checkThat(mediaType).is(nonEmptyString());
             
-            List<String> othersList = newArrayList(others);
-            othersList.add(mediaType);
+            Set<String> contentTypes = Sets.newLinkedHashSet();
+            contentTypes.add(mediaType);
+            if(others != null && others.length > 0)
+            {
+                for(String element : others)
+                {
+                    contentTypes.add(element);
+                }
+            }
             
             String accepts = Joiner.on(",")
-                    .join(othersList);
+                    .join(contentTypes);
             
             return usingHeader("Accept", accepts);
         }

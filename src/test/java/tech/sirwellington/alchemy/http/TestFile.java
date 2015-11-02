@@ -15,22 +15,29 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import tech.sirwellington.alchemy.annotations.access.Internal;
-import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 
 /**
  *
  * @author SirWellington
  */
-@Internal
-@NonInstantiable
-final class VerbAssertions
+class TestFile
 {
 
-    private VerbAssertions() throws IllegalAccessException
-    {
-        throw new IllegalAccessException("cannot instantiate");
-    }
+    private final static Logger LOG = LoggerFactory.getLogger(TestFile.class);
 
-    
+    static File writeToTempFile(byte[] binary) throws IOException
+    {
+        String filename = one(alphabeticString(10));
+        File tempFile = File.createTempFile(filename, ".txt");
+        Files.write(binary, tempFile);
+        return tempFile;
+    }
 }

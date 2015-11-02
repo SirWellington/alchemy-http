@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -149,4 +150,10 @@ public class AlchemyHttpImplTest
         assertThrows(() -> result.clear());
     }
 
+    @Test
+    public void testToString()
+    {
+        String toString = instance.toString();
+        assertThat(toString, not(isEmptyOrNullString()));
+    }
 }
