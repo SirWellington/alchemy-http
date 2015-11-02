@@ -21,20 +21,17 @@ import com.google.gson.JsonElement;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
-import org.inferred.freebuilder.FreeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyMap;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.Mutable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyMap;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
  *
@@ -174,7 +171,7 @@ public interface HttpRequest
             checkThat(body)
                     .usingMessage("Use JsonNull instead of null")
                     .is(notNull());
-            
+
             this.body = body;
             return this;
         }
@@ -182,7 +179,7 @@ public interface HttpRequest
         public Builder usingVerb(HttpVerb verb) throws IllegalArgumentException
         {
             checkThat(verb).usingMessage("missing verb").is(notNull());
-            
+
             this.verb = verb;
             return this;
         }

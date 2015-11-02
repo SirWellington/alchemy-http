@@ -21,16 +21,12 @@ import java.net.URL;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
-import static tech.sirwellington.alchemy.arguments.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
-
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-
 import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
 /**
