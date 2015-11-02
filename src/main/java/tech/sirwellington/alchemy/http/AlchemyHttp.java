@@ -28,6 +28,7 @@ import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
+
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
@@ -49,14 +50,23 @@ public interface AlchemyHttp
     /**
      * Sets a default header on this instance. This default header will be included with every
      * request, unless it is explicitly
-     * {@linkplain  AlchemyRequest.Step3#usingHeader(java.lang.String, java.lang.String)  } 
+     * {@linkplain  AlchemyRequest.Step3#usingHeader(java.lang.String, java.lang.String)
+     * }
      *
      * @param key
      * @param value
-     * 
+     *
      * @return
      */
     AlchemyHttp usingDefaultHeader(@NonEmpty String key, String value);
+
+    /**
+     * Get the Default Headers used by this instance.
+     *
+     * @return Headers, never {@code null}.
+     */
+    @NonNull
+    Map<String, String> getDefaultHeaders();
 
     /**
      * Begins a new Alchemy HTTP Request.
@@ -89,9 +99,9 @@ public interface AlchemyHttp
      * Create an instance using the {@linkplain HttpClient Apache HTTP Client} provided.
      *
      * @param apacheHttpClient
-     * 
+     *
      * @return
-     * 
+     *
      * @throws IllegalArgumentException
      */
     static AlchemyHttp newInstanceWithApacheHttpClient(@NonNull HttpClient apacheHttpClient) throws IllegalArgumentException

@@ -24,10 +24,9 @@ import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
-import tech.sirwellington.alchemy.arguments.Arguments;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import tech.sirwellington.alchemy.arguments.Assertions;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
+
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
@@ -42,10 +41,12 @@ public final class AlchemyHttpBuilder
     private final static Map<String, String> DEFAULT_HEADERS = ImmutableMap.<String, String>builder()
             .put("Accept", "application/json, text/plain")
             .put("User-Agent", "Alchemy HTTP")
+            .put("Content-Type", "application/json")
             .build();
 
     private HttpClient apacheHttpClient;
-    private ExecutorService executor = Executors.newWorkStealingPool(1);
+    private ExecutorService executor = MoreExecutors.newDirectExecutorService();
+
     //Copy from DEFAULT HEADERS
     private final Map<String, String> defaultHeaders = Maps.newHashMap(DEFAULT_HEADERS);
 
@@ -54,32 +55,50 @@ public final class AlchemyHttpBuilder
         return new AlchemyHttpBuilder();
     }
 
-    private AlchemyHttpBuilder()
+    AlchemyHttpBuilder()
     {
     }
 
     public AlchemyHttpBuilder usingApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
     {
         checkThat(apacheHttpClient).is(Assertions.notNull());
+
         this.apacheHttpClient = apacheHttpClient;
         return this;
     }
 
+    /**
+     * Directly sets the Executor Service to use for Asynchronous Requests. Asynchronous requests
+     * only happen when the
+     * {@linkplain  AlchemyRequest.Step4#onSuccess(tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess) Callback}
+     * is set on the Request.
+     *
+     * @param executor
+     * @return
+     * @throws IllegalArgumentException
+     */
     public AlchemyHttpBuilder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
     {
         checkThat(executor).is(Assertions.notNull());
+
         this.executor = executor;
         return this;
     }
 
-    public AlchemyHttpBuilder withoutAsyncThread()
+    public AlchemyHttpBuilder enableAsyncCallbacks()
+    {
+        return usingExecutorService(Executors.newSingleThreadExecutor());
+    }
+
+    public AlchemyHttpBuilder disableAsyncCallbacks()
     {
         return usingExecutorService(MoreExecutors.newDirectExecutorService());
     }
 
     public AlchemyHttpBuilder usingDefaultHeaders(Map<String, String> defaultHeaders) throws IllegalArgumentException
     {
-        Arguments.checkThat(defaultHeaders).is(Assertions.notNull());
+        checkThat(defaultHeaders).is(Assertions.notNull());
+
         this.defaultHeaders.clear();
         this.defaultHeaders.putAll(defaultHeaders);
         return this;
@@ -107,6 +126,5 @@ public final class AlchemyHttpBuilder
                 .withExecutorService(executor)
                 .build();
     }
-
 
 }

@@ -24,17 +24,16 @@ import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
-
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step1;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step2;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step3;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step4;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step5;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step6;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
  * This is an internal state machine for managing the transitions of an Alchemy Http Request.

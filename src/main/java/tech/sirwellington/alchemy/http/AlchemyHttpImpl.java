@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
- 
 package tech.sirwellington.alchemy.http;
-
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.inferred.freebuilder.shaded.com.google.common.collect.Maps;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
+import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
@@ -33,10 +32,12 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
  *
  * @author SirWellington
  */
-@Internal 
+@Internal
 @BuilderPattern(role = PRODUCT)
-final class AlchemyHttpImpl implements AlchemyHttp 
+@ThreadSafe
+final class AlchemyHttpImpl implements AlchemyHttp
 {
+    @Immutable
     private final Map<String, String> defaultHeaders;
     private final AlchemyHttpStateMachine stateMachine;
 
@@ -44,7 +45,7 @@ final class AlchemyHttpImpl implements AlchemyHttp
     {
         checkThat(defaultHeaders, stateMachine)
                 .are(notNull());
-        
+
         this.defaultHeaders = ImmutableMap.copyOf(defaultHeaders);
         this.stateMachine = stateMachine;
     }
@@ -55,7 +56,7 @@ final class AlchemyHttpImpl implements AlchemyHttp
         checkThat(key)
                 .usingMessage("Key is empty")
                 .is(nonEmptyString());
-        
+
         Map<String, String> copy = Maps.newHashMap(defaultHeaders);
         copy.put(key, value);
         return new AlchemyHttpImpl(copy, stateMachine);
@@ -68,6 +69,19 @@ final class AlchemyHttpImpl implements AlchemyHttp
                 .usingRequestHeaders(defaultHeaders)
                 .build();
         return stateMachine.begin(initialRequest);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "AlchemyHttp{" + "defaultHeaders=" + defaultHeaders + ", stateMachine=" + stateMachine + '}';
+    }
+
+    @Override
+    public Map<String, String> getDefaultHeaders()
+    {
+        //Already immutable
+        return defaultHeaders;
     }
 
 }

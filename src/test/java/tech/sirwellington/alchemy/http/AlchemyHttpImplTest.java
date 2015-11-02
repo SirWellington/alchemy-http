@@ -139,5 +139,14 @@ public class AlchemyHttpImplTest
         AlchemyRequest.Step1 result = instance.go();
         verify(stateMachine).begin(any(HttpRequest.class));
     }
+    
+    @Test
+    public void testGetDefaultHeaders()
+    {
+        Map<String, String> result = instance.getDefaultHeaders();
+        assertThat(result, is(defaultHeaders));
+        
+        assertThrows(() -> result.clear());
+    }
 
 }
