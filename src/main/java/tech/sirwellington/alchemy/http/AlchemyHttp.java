@@ -15,8 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.util.concurrent.MoreExecutors;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,8 +47,7 @@ public interface AlchemyHttp
 
     /**
      * Sets a default header on this instance. This default header will be included with every
-     * request, unless it is explicitly
-     * {@linkplain  AlchemyRequest.Step3#usingHeader(java.lang.String, java.lang.String)
+     * request, unless it is explicitly null     {@linkplain  AlchemyRequest.Step3#usingHeader(java.lang.String, java.lang.String)
      * }
      *
      * @param key
@@ -86,13 +83,7 @@ public interface AlchemyHttp
     {
         HttpClient apacheHttpClient = HttpClientBuilder.create()
                 .build();
-
-        ExecutorService executor = Executors.newWorkStealingPool(1);
-
-        return AlchemyHttpBuilder.newInstance()
-                .usingApacheHttpClient(apacheHttpClient)
-                .usingExecutorService(executor)
-                .build();
+        return newInstanceWithApacheHttpClient(apacheHttpClient);
     }
 
     /**
@@ -106,7 +97,9 @@ public interface AlchemyHttp
      */
     static AlchemyHttp newInstanceWithApacheHttpClient(@NonNull HttpClient apacheHttpClient) throws IllegalArgumentException
     {
-        return newInstance(apacheHttpClient, MoreExecutors.newDirectExecutorService(), Collections.EMPTY_MAP);
+        return AlchemyHttpBuilder.newInstance()
+                .usingApacheHttpClient(apacheHttpClient)
+                .build();
     }
 
     /**

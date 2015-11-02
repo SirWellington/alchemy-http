@@ -15,19 +15,18 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
-import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 import tech.sirwellington.alchemy.arguments.Assertions;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
 
 /**
  *
@@ -37,12 +36,6 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 public final class AlchemyHttpBuilder
 {
 
-    @Internal
-    private final static Map<String, String> DEFAULT_HEADERS = ImmutableMap.<String, String>builder()
-            .put("Accept", "application/json, text/plain")
-            .put("User-Agent", "Alchemy HTTP")
-            .put("Content-Type", "application/json")
-            .build();
 
     private HttpClient apacheHttpClient;
     private ExecutorService executor = MoreExecutors.newDirectExecutorService();

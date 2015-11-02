@@ -15,6 +15,8 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 
@@ -26,5 +28,13 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 @Internal
 final class Constants
 {
+
     static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    @Internal
+    final static Map<String, String> DEFAULT_HEADERS = ImmutableMap.<String, String>builder()
+            .put("Accept", "application/json, text/plain")
+            .put("User-Agent", "Alchemy HTTP")
+            .put("Content-Type", "application/json")
+            .build();
 }
