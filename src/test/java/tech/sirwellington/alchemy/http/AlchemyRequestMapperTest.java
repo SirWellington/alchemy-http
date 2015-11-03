@@ -19,13 +19,17 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +47,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.http.Generators.jsonElements;
 import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
@@ -57,20 +63,26 @@ public class AlchemyRequestMapperTest
 
     private AlchemyRequestMapper instance;
     private URL url;
+    private URL expandedUrl;
 
     @Mock
     private HttpRequest request;
 
     private JsonElement body;
 
+    private Map<String, String> queryParams;
+
     @Before
-    public void setUp()
+    public void setUp() throws Exception
     {
-        url = one(validUrls());
         body = one(jsonElements());
+        queryParams = mapOf(alphabeticString(), alphabeticString(), 10);
+        url = one(validUrls());
+        expandedUrl = expandUrl();
 
         when(request.getUrl()).thenReturn(url);
         when(request.getBody()).thenReturn(body);
+        when(request.getQueryParams()).thenReturn(queryParams);
     }
 
     @Test
@@ -97,6 +109,18 @@ public class AlchemyRequestMapperTest
                 .thenThrow(new RuntimeException());
         assertThrows(() -> instance.convertToApacheRequest(request))
                 .isInstanceOf(AlchemyHttpException.class);
+    }
+
+    @Test
+    public void testGetExpandsURL() throws Exception
+    {
+        instance = AlchemyRequestMapper.GET;
+
+        when(request.hasQueryParams())
+                .thenReturn(true);
+
+        HttpUriRequest result = instance.convertToApacheRequest(request);
+        assertThat(result.getURI(), is(expandedUrl.toURI()));
     }
 
     @Test
@@ -140,6 +164,18 @@ public class AlchemyRequestMapperTest
     }
 
     @Test
+    public void testPostExpandsURL() throws Exception
+    {
+        instance = AlchemyRequestMapper.POST;
+
+        when(request.hasQueryParams())
+                .thenReturn(Boolean.TRUE);
+
+        HttpUriRequest result = instance.convertToApacheRequest(request);
+        assertThat(result.getURI(), is(expandedUrl.toURI()));
+    }
+
+    @Test
     public void testPut() throws Exception
     {
         instance = AlchemyRequestMapper.PUT;
@@ -177,6 +213,18 @@ public class AlchemyRequestMapperTest
 
         HttpPut put = (HttpPut) result;
         assertEntity(put.getEntity());
+    }
+
+    @Test
+    public void testPutExpandsURL() throws Exception
+    {
+        instance = AlchemyRequestMapper.PUT;
+
+        when(request.hasQueryParams())
+                .thenReturn(Boolean.TRUE);
+
+        HttpUriRequest result = instance.convertToApacheRequest(request);
+        assertThat(result.getURI(), is(expandedUrl.toURI()));
     }
 
     @Test
@@ -220,6 +268,18 @@ public class AlchemyRequestMapperTest
         assertEntity(delete.getEntity());
     }
 
+    @Test
+    public void testDeleteExpandsURL() throws Exception
+    {
+        instance = AlchemyRequestMapper.DELETE;
+        
+        when(request.hasQueryParams())
+                .thenReturn(Boolean.TRUE);
+        
+        HttpUriRequest result = instance.convertToApacheRequest(request);
+        assertThat(result.getURI(), is(expandedUrl.toURI()));
+    }
+
     private void assertEntity(HttpEntity entity) throws IOException
     {
         assertThat(entity, notNullValue());
@@ -246,6 +306,30 @@ public class AlchemyRequestMapperTest
 
         HttpEntity result = delete.getEntity();
         assertThat(result, is(entity));
+    }
+
+    @Test
+    public void testExpandUrlFromRequest() throws Exception
+    {
+        //When no queryparams
+        URL result = AlchemyRequestMapper.expandUrlFromRequest(request);
+        assertThat(result, is(url));
+
+        //When there are query params
+        when(request.hasQueryParams())
+                .thenReturn(true);
+        result = AlchemyRequestMapper.expandUrlFromRequest(request);
+        assertThat(result, is(expandedUrl));
+
+    }
+
+    private URL expandUrl() throws URISyntaxException, MalformedURLException
+    {
+        URIBuilder builder = new URIBuilder(url.toURI());
+
+        queryParams.forEach(builder::addParameter);
+
+        return builder.build().toURL();
     }
 
 }

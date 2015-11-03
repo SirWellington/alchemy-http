@@ -96,7 +96,7 @@ final class BaseVerb implements HttpVerb
         }
         catch (Exception ex)
         {
-            LOG.error("Failed to execute GET Request on {}", request, ex);
+            LOG.error("Failed to execute GET Request on {}", apacheRequest.getURI(), ex);
             throw new AlchemyHttpException(ex);
         }
         

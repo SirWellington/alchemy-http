@@ -88,7 +88,7 @@ public class AlchemyMachineImplTest
     private HttpResponse response;
 
     @Before
-    public void setUp()
+    public void setUp() throws Exception
     {
         gson = Constants.getDefaultGson();
         request = new TestRequest();

@@ -15,7 +15,10 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -23,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
@@ -44,13 +48,34 @@ interface AlchemyRequestMapper
 
     HttpUriRequest convertToApacheRequest(@NonNull HttpRequest alchemyRequest) throws AlchemyHttpException;
 
+    @Internal
+    static URL expandUrlFromRequest(@NonNull HttpRequest request) throws URISyntaxException, MalformedURLException
+    {
+        checkThat(request).is(notNullAndHasURL());
+
+        if (!request.hasQueryParams())
+        {
+            return request.getUrl();
+        }
+        else
+        {
+            URI uri = request.getUrl().toURI();
+            URIBuilder uriBuilder = new URIBuilder(uri);
+
+            request.getQueryParams().forEach(uriBuilder::addParameter);
+
+            return uriBuilder.build().toURL();
+        }
+    }
+
     static final AlchemyRequestMapper GET = r ->
     {
         checkThat(r).is(notNullAndHasURL());
 
         try
         {
-            HttpGet get = new HttpGet(r.getUrl().toURI());
+            URL url = expandUrlFromRequest(r);
+            HttpGet get = new HttpGet(url.toURI());
             return get;
         }
         catch (Exception ex)
@@ -65,7 +90,8 @@ interface AlchemyRequestMapper
 
         try
         {
-            HttpPost post = new HttpPost(r.getUrl().toURI());
+            URL url = expandUrlFromRequest(r);
+            HttpPost post = new HttpPost(url.toURI());
 
             if (r.hasBody())
             {
@@ -87,7 +113,8 @@ interface AlchemyRequestMapper
 
         try
         {
-            HttpPut put = new HttpPut(r.getUrl().toURI());
+            URL url = expandUrlFromRequest(r);
+            HttpPut put = new HttpPut(url.toURI());
 
             if (r.hasBody())
             {
@@ -109,10 +136,11 @@ interface AlchemyRequestMapper
 
         try
         {
+            URL url = expandUrlFromRequest(r);
             if (r.hasBody())
             {
                 //Custom Delete that allows a Body in the request
-                HttpDeleteWithBody delete = new HttpDeleteWithBody(r.getUrl().toURI());
+                HttpDeleteWithBody delete = new HttpDeleteWithBody(url.toURI());
                 HttpEntity entity = new StringEntity(r.getBody().toString(), UTF_8);
                 delete.setEntity(entity);
                 return delete;
@@ -120,10 +148,8 @@ interface AlchemyRequestMapper
             else
             {
                 //The stock Apache Method
-                return new HttpDelete(r.getUrl().toURI());
-
+                return new HttpDelete(url.toURI());
             }
-
         }
         catch (Exception ex)
         {
@@ -159,7 +185,7 @@ interface AlchemyRequestMapper
         {
             super();
         }
-        
+
     }
 
 }

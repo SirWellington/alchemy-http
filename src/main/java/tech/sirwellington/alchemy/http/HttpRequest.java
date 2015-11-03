@@ -57,6 +57,12 @@ public interface HttpRequest
         return getBody() != null;
     }
 
+    default boolean hasQueryParams()
+    {
+        Map<String, String> queryParams = getQueryParams();
+        return queryParams != null && !queryParams.isEmpty();
+    }
+
     default boolean equals(HttpRequest other)
     {
         if (other == null)
@@ -132,10 +138,19 @@ public interface HttpRequest
             }
 
             builder.url = other.getUrl();
-            builder.requestHeaders = Maps.newHashMap(other.getRequestHeaders());
+
+            if (other.getRequestHeaders() != null)
+            {
+                builder.requestHeaders = Maps.newHashMap(other.getRequestHeaders());
+            }
+
+            if (other.getQueryParams() != null)
+            {
+                builder.queryParams = Maps.newHashMap(other.getQueryParams());
+            }
+
             builder.body = other.getBody();
             builder.verb = other.getVerb();
-            builder.queryParams = Maps.newHashMap(other.getQueryParams());
 
             return builder;
         }
