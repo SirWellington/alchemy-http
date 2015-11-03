@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
@@ -149,10 +148,6 @@ final class BaseVerb implements HttpVerb
         {
             byte[] rawBytes = ByteStreams.toByteArray(istream);
             responseString = new String(rawBytes, Charsets.UTF_8);
-        }
-        catch (FailedAssertionException ex)
-        {
-            throw new AlchemyHttpException("Unexpected Content Type", ex);
         }
         catch (Exception ex)
         {

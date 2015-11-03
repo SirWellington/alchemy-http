@@ -41,9 +41,11 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 import static java.lang.System.currentTimeMillis;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
@@ -216,6 +218,31 @@ public class BaseVerbTest
     }
 
     @Test
+    public void testExecuteWhenReadingEntityFails() throws IOException
+    {
+        HttpEntity badEntity = mock(HttpEntity.class);
+        when(apacheResponse.getEntity())
+                .thenReturn(badEntity);
+
+        when(badEntity.getContent())
+                .thenThrow(new IOException());
+
+        assertThrows(() -> instance.execute(apacheClient, request))
+                .isInstanceOf(AlchemyHttpException.class);
+    }
+
+    @Test
+    public void testExecuteWhenBodyIsEmpty() throws Exception
+    {
+        entity = new StringEntity("");
+        when(apacheResponse.getEntity())
+                .thenReturn(entity);
+
+        HttpResponse result = instance.execute(apacheClient, request);
+        assertThat(result.asJSON(), instanceOf(JsonNull.class));
+    }
+
+    @Test
     public void testExecuteWhenContentTypeInvalid()
     {
         List<ContentType> invalidContentTypes = Arrays.asList(ContentType.APPLICATION_ATOM_XML,
@@ -232,6 +259,17 @@ public class BaseVerbTest
 
         assertThrows(() -> instance.execute(apacheClient, request))
                 .isInstanceOf(AlchemyHttpException.class);
+    }
+
+    @Test
+    public void testExecuteWhenNoResponseHeaders() throws Exception
+    {
+        when(apacheResponse.getAllHeaders())
+                .thenReturn(null);
+        
+        HttpResponse result = instance.execute(apacheClient, request);
+        assertThat(result.responseHeaders(), notNullValue());
+        assertThat(result.responseHeaders().isEmpty(), is(true));
     }
 
     @Test
