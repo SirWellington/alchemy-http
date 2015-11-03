@@ -15,8 +15,10 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import java.net.URI;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -107,13 +109,57 @@ interface AlchemyRequestMapper
 
         try
         {
-            HttpDelete delete = new HttpDelete(r.getUrl().toURI());
-            return delete;
+            if (r.hasBody())
+            {
+                //Custom Delete that allows a Body in the request
+                HttpDeleteWithBody delete = new HttpDeleteWithBody(r.getUrl().toURI());
+                HttpEntity entity = new StringEntity(r.getBody().toString(), UTF_8);
+                delete.setEntity(entity);
+                return delete;
+            }
+            else
+            {
+                //The stock Apache Method
+                return new HttpDelete(r.getUrl().toURI());
+
+            }
+
         }
         catch (Exception ex)
         {
             throw new AlchemyHttpException(r, "Could not convert to Apache DELETE Request", ex);
         }
     };
+
+    @Internal
+    class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase
+    {
+
+        public static final String METHOD_NAME = new HttpDelete().getMethod();
+
+        @Override
+        public String getMethod()
+        {
+            return METHOD_NAME;
+        }
+
+        public HttpDeleteWithBody(final String uri)
+        {
+            super();
+            setURI(URI.create(uri));
+        }
+
+        public HttpDeleteWithBody(final URI uri)
+        {
+            super();
+            setURI(uri);
+        }
+
+        public HttpDeleteWithBody()
+        {
+            super();
+        }
+        
+    }
 
 }
