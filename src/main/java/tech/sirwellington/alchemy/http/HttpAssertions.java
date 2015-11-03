@@ -38,18 +38,18 @@ import static tech.sirwellington.alchemy.arguments.Assertions.stringThatStartsWi
 @NonInstantiable
 final class HttpAssertions
 {
-
+    
     private HttpAssertions() throws IllegalAccessException
     {
         throw new IllegalAccessException("cannot instantiate");
     }
-
+    
     static final AlchemyAssertion<Integer> validHttpStatusCode()
     {
         /*
          * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
          */
-
+        
         return greaterThanOrEqualTo(100)
                 .and(lessThanOrEqualTo(505));
     }
@@ -60,11 +60,11 @@ final class HttpAssertions
     static final <Response> AlchemyAssertion<Class<Response>> validResponseClass()
     {
         AlchemyAssertion<Class<Response>> notNull = Assertions.<Class<Response>>notNull();
-
+        
         return notNull
                 .and(not(sameInstance(Void.class)));
     }
-
+    
     static final AlchemyAssertion<HttpRequest> requestReady()
     {
         return request ->
@@ -72,20 +72,20 @@ final class HttpAssertions
             checkThat(request)
                     .usingMessage("Request missing")
                     .is(notNull());
-
+            
             checkThat(request.getVerb())
                     .usingMessage("Request missing HTTP Verb")
                     .is(notNull());
-
+            
             checkThat(request.getUrl())
                     .usingMessage("Request missing URL")
                     .is(notNull());
-
+            
             checkThat(request.getUrl().getProtocol())
                     .is(stringThatStartsWith("http"));
         };
     }
-
+    
     static final AlchemyAssertion<String> validContentType()
     {
         return contentType ->
@@ -93,19 +93,33 @@ final class HttpAssertions
             checkThat(contentType)
                     .usingMessage("missing Content-Type")
                     .is(nonEmptyString());
-
+            
             if (contentType.contains("application/json"))
             {
                 return;
             }
-
+            
             if (contentType.contains("text/plain"))
             {
                 return;
             }
-
+            
             throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
         };
     }
-
+    
+    static final AlchemyAssertion<HttpRequest> notNullAndHasURL()
+    {
+        return request ->
+        {
+            checkThat(request)
+                    .usingMessage("missing HTTP Request")
+                    .is(notNull());
+            
+            checkThat(request.getUrl())
+                    .usingMessage("missing request URL")
+                    .is(notNull());
+        };
+    }
+    
 }

@@ -27,6 +27,8 @@ import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.http.HttpAssertions.notNullAndHasURL;
 
 /**
  * {@code AlchemyRequestMappers} convert {@linkplain HttpRequest Alchemy Requests} into a
@@ -42,6 +44,8 @@ interface AlchemyRequestMapper
 
     static final AlchemyRequestMapper GET = r ->
     {
+        checkThat(r).is(notNullAndHasURL());
+
         try
         {
             HttpGet get = new HttpGet(r.getUrl().toURI());
@@ -55,6 +59,8 @@ interface AlchemyRequestMapper
 
     static final AlchemyRequestMapper POST = r ->
     {
+        checkThat(r).is(notNullAndHasURL());
+
         try
         {
             HttpPost post = new HttpPost(r.getUrl().toURI());
@@ -75,6 +81,8 @@ interface AlchemyRequestMapper
 
     static final AlchemyRequestMapper PUT = r ->
     {
+        checkThat(r).is(notNullAndHasURL());
+
         try
         {
             HttpPut put = new HttpPut(r.getUrl().toURI());
@@ -95,6 +103,8 @@ interface AlchemyRequestMapper
 
     static final AlchemyRequestMapper DELETE = r ->
     {
+        checkThat(r).is(notNullAndHasURL());
+
         try
         {
             HttpDelete delete = new HttpDelete(r.getUrl().toURI());

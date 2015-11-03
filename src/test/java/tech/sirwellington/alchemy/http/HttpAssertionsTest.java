@@ -183,4 +183,24 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
     }
 
+    @Test
+    public void testNotNullAndHasURL()
+    {
+        AlchemyAssertion<HttpRequest> instance = HttpAssertions.notNullAndHasURL();
+        assertThat(instance, notNullValue());
+
+        assertThrows(() -> instance.check(null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        //No URL
+        HttpRequest request = mock(HttpRequest.class);
+        assertThrows(() -> instance.check(request))
+                .isInstanceOf(IllegalArgumentException.class);
+        
+        URL url = one(validUrls());
+        when(request.getUrl()).thenReturn(url);
+        instance.check(request);
+        
+    }
+
 }
