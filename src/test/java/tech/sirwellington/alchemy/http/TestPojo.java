@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.http;
 
 import java.util.Date;
 import java.util.Objects;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.DateGenerators.beforeNow;
@@ -26,9 +27,11 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalS
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 
 /**
+ * This is an example POJO (Plain Old Java Object) to be used for testing purposes only.
  *
  * @author SirWellington
  */
+@Internal
 class TestPojo
 {
 

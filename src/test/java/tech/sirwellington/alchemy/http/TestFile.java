@@ -20,7 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 
@@ -28,16 +32,27 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  *
  * @author SirWellington
  */
+@Internal
+@NonInstantiable
 class TestFile
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(TestFile.class);
 
+    TestFile() throws IllegalAccessException
+    {
+        throw new IllegalAccessException("cannot instantiate");
+    }
+
     static File writeToTempFile(byte[] binary) throws IOException
     {
+        
+        checkThat(binary).is(notNull());
+        
         String filename = one(alphabeticString(10));
         File tempFile = File.createTempFile(filename, ".txt");
         Files.write(binary, tempFile);
+        LOG.debug("Wrote {} bytes to temp file at {}", binary.length, tempFile.getAbsolutePath());
         return tempFile;
     }
 }

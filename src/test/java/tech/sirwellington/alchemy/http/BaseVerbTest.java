@@ -36,9 +36,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static java.lang.System.currentTimeMillis;
 import static org.hamcrest.Matchers.instanceOf;
@@ -62,7 +64,8 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
+@Repeat(100)
 public class BaseVerbTest
 {
 
@@ -162,6 +165,7 @@ public class BaseVerbTest
     }
 
     //Edge Cases
+    @DontRepeat
     @Test
     public void testExecuteWithBadArgs()
     {
@@ -195,6 +199,7 @@ public class BaseVerbTest
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
+    @DontRepeat
     @Test
     public void testExecuteWhenResponseIsNull() throws IOException
     {
@@ -206,6 +211,7 @@ public class BaseVerbTest
 
     }
 
+    @DontRepeat
     @Test
     public void testExecuteWhenEntityIsNull()
     {
@@ -217,6 +223,7 @@ public class BaseVerbTest
         assertThat(result.asJSON(), is(JsonNull.INSTANCE));
     }
 
+    @DontRepeat
     @Test
     public void testExecuteWhenReadingEntityFails() throws IOException
     {
@@ -231,6 +238,7 @@ public class BaseVerbTest
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
+    @DontRepeat
     @Test
     public void testExecuteWhenBodyIsEmpty() throws Exception
     {
@@ -249,7 +257,9 @@ public class BaseVerbTest
                                                               ContentType.TEXT_HTML,
                                                               ContentType.TEXT_XML,
                                                               ContentType.APPLICATION_XML,
-                                                              ContentType.APPLICATION_OCTET_STREAM);
+                                                              ContentType.APPLICATION_OCTET_STREAM,
+                                                              ContentType.create(one(alphabeticString())));
+
         ContentType invalidContentType = invalidContentTypes.stream().findAny().get();
 
         entity = new StringEntity(one(strings(1000)), invalidContentType);
@@ -261,12 +271,13 @@ public class BaseVerbTest
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
+    @DontRepeat
     @Test
     public void testExecuteWhenNoResponseHeaders() throws Exception
     {
         when(apacheResponse.getAllHeaders())
                 .thenReturn(null);
-        
+
         HttpResponse result = instance.execute(apacheClient, request);
         assertThat(result.responseHeaders(), notNullValue());
         assertThat(result.responseHeaders().isEmpty(), is(true));
@@ -288,6 +299,7 @@ public class BaseVerbTest
                 .isInstanceOf(JsonException.class);
     }
 
+    @DontRepeat
     @Test
     public void testPerformance()
     {
@@ -330,6 +342,7 @@ public class BaseVerbTest
 
     }
 
+    @DontRepeat
     @Test
     public void compareGsonMethods()
     {

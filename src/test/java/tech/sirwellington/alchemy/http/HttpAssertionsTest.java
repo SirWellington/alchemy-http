@@ -43,7 +43,6 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-@Repeat(100)
 public class HttpAssertionsTest
 {
 
@@ -51,10 +50,10 @@ public class HttpAssertionsTest
     public void setUp()
     {
     }
-    
+
     public static void runTheThing()
     {
-        
+
     }
 
     @Test
@@ -64,6 +63,7 @@ public class HttpAssertionsTest
                 .isInstanceOf(IllegalAccessException.class);
     }
 
+    @Repeat
     @Test
     public void testValidHttpStatusCode()
     {
@@ -119,6 +119,7 @@ public class HttpAssertionsTest
         instance.check(request);
     }
 
+    @Repeat
     @Test
     public void testRequestReadyEdgeCases() throws MalformedURLException
     {
@@ -157,6 +158,7 @@ public class HttpAssertionsTest
 
     }
 
+    @Repeat(10)
     @Test
     public void testValidContentType()
     {

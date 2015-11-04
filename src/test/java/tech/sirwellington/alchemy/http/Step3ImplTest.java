@@ -24,11 +24,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.Mock;
-
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step3;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -51,7 +52,8 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
+@Repeat
 public class Step3ImplTest
 {
 
@@ -84,6 +86,7 @@ public class Step3ImplTest
         verifyZeroInteractions(stateMachine);
     }
 
+    @DontRepeat
     @Test
     public void testConstructor()
     {
@@ -165,6 +168,7 @@ public class Step3ImplTest
         assertThat(requestMade, not(sameInstance(request)));
     }
 
+    @DontRepeat
     @Test
     public void testUsingQueryParamEdgeCases()
     {

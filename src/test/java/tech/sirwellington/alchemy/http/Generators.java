@@ -42,12 +42,12 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  */
 @Internal
 @NonInstantiable
-public class Generators
+class Generators
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Generators.class);
 
-    public static AlchemyGenerator<URL> validUrls()
+    static AlchemyGenerator<URL> validUrls()
     {
         return () ->
         {
@@ -66,7 +66,7 @@ public class Generators
         };
     }
 
-    public static AlchemyGenerator<JsonElement> jsonElements()
+    static AlchemyGenerator<JsonElement> jsonElements()
     {
         return () ->
         {
@@ -85,7 +85,7 @@ public class Generators
         };
     }
 
-    public static AlchemyGenerator<JsonObject> jsonObjects()
+    static AlchemyGenerator<JsonObject> jsonObjects()
     {
         return () ->
         {
@@ -115,7 +115,7 @@ public class Generators
 
     }
 
-    public static AlchemyGenerator<JsonArray> jsonArrays()
+    static AlchemyGenerator<JsonArray> jsonArrays()
     {
         return () ->
         {
@@ -132,7 +132,7 @@ public class Generators
         };
     }
 
-    public static AlchemyGenerator<JsonPrimitive> jsonPrimitives()
+    static AlchemyGenerator<JsonPrimitive> jsonPrimitives()
     {
         return () ->
         {
@@ -151,7 +151,7 @@ public class Generators
         };
     }
 
-    public static AlchemyGenerator<JsonNull> jsonNull()
+    static AlchemyGenerator<JsonNull> jsonNull()
 
     {
         return () -> JsonNull.INSTANCE;

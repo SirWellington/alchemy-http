@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import org.mockito.Mockito;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.StringGenerators;
@@ -28,6 +29,7 @@ import tech.sirwellington.alchemy.generator.StringGenerators;
  *
  * @author SirWellington
  */
+@Internal
 class TestRequest implements HttpRequest
 {
 
