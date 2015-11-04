@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -46,7 +46,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
 public class Step1ImplTest
 {
 
@@ -73,8 +73,6 @@ public class Step1ImplTest
     @Test
     public void testConstructor()
     {
-        System.out.println("testConstructor");
-
         assertThrows(() -> new Step1Impl(null, request));
         assertThrows(() -> new Step1Impl(stateMachine, null));
 
@@ -83,8 +81,6 @@ public class Step1ImplTest
     @Test
     public void testGet() throws Exception
     {
-        System.out.println("testGet");
-
         instance.get();
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
@@ -97,8 +93,6 @@ public class Step1ImplTest
     @Test
     public void testPost() throws Exception
     {
-        System.out.println("testPost");
-
         instance.post();
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
@@ -111,8 +105,6 @@ public class Step1ImplTest
     @Test
     public void testPut() throws Exception
     {
-        System.out.println("testPut");
-
         instance.put();
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
@@ -125,8 +117,6 @@ public class Step1ImplTest
     @Test
     public void testDelete() throws Exception
     {
-        System.out.println("testDelete");
-
         instance.delete();
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
@@ -151,8 +141,6 @@ public class Step1ImplTest
     @Test
     public void testToString()
     {
-        System.out.println("testToString");
-
         String toString = instance.toString();
         assertThat(toString, containsString(request.toString()));
         assertThat(toString, containsString(stateMachine.toString()));

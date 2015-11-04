@@ -23,7 +23,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -43,7 +45,8 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
+@Repeat(100)
 public class AlchemyHttpImplTest
 {
 
@@ -67,6 +70,7 @@ public class AlchemyHttpImplTest
         verifyZeroInteractions(stateMachine);
     }
 
+    @DontRepeat
     @Test
     public void testConstructor()
     {

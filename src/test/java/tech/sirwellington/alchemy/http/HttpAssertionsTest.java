@@ -20,11 +20,12 @@ import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.StringGenerators;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -41,13 +42,19 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
+@Repeat(100)
 public class HttpAssertionsTest
 {
 
     @Before
     public void setUp()
     {
+    }
+    
+    public static void runTheThing()
+    {
+        
     }
 
     @Test
@@ -196,11 +203,11 @@ public class HttpAssertionsTest
         HttpRequest request = mock(HttpRequest.class);
         assertThrows(() -> instance.check(request))
                 .isInstanceOf(IllegalArgumentException.class);
-        
+
         URL url = one(validUrls());
         when(request.getUrl()).thenReturn(url);
         instance.check(request);
-        
+
     }
 
 }

@@ -24,12 +24,12 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
-import tech.sirwellington.alchemy.test.junit.ExceptionOperation;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -49,7 +49,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
 public class AlchemyMachineImplTest
 {
 
@@ -236,6 +236,7 @@ public class AlchemyMachineImplTest
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Repeat(200)
     @Test
     public void testExecuteSync()
     {
@@ -245,6 +246,7 @@ public class AlchemyMachineImplTest
         assertThat(result, is(response));
     }
 
+    @Repeat(200)
     @Test
     public void testExecuteSyncWithCustomClass()
     {
@@ -307,6 +309,7 @@ public class AlchemyMachineImplTest
         verify(response).asString();
     }
 
+    @Repeat(200)
     @Test
     public void testExecuteWhenResponseNotOk()
     {
@@ -326,12 +329,13 @@ public class AlchemyMachineImplTest
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
+    @Repeat(200)
     @Test
     public void testExecuteAsync() throws Exception
     {
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
-        
+
         verify(executorService).submit(taskCaptor.capture());
 
         Runnable task = taskCaptor.getValue();
@@ -350,45 +354,45 @@ public class AlchemyMachineImplTest
                 .thenThrow(ex);
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
-        
+
         verify(executorService).submit(taskCaptor.capture());
-        
+
         Runnable task = taskCaptor.getValue();
         assertThat(task, notNullValue());
-        
+
         task.run();
         verify(onFailure).handleError(ex);
     }
-    
+
     @Test
     public void testExecuteAsyncWhenRuntimeExceptionHappens()
     {
         when(verb.execute(apacheClient, request))
                 .thenThrow(new RuntimeException());
-        
+
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
-        
+
         verify(executorService).submit(taskCaptor.capture());
-        
+
         Runnable task = taskCaptor.getValue();
         assertThat(task, notNullValue());
-        
+
         task.run();
         verify(onFailure).handleError(any());
-        
+
     }
-    
+
     @Test
     public void testExecuteAsyncWhenOnSuccessFails()
     {
         doThrow(new RuntimeException())
                 .when(onSuccess)
                 .processResponse(pojo);
-        
+
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
-        
+
         verify(executorService).submit(taskCaptor.capture());
-        
+
         Runnable task = taskCaptor.getValue();
         assertThat(task, notNullValue());
         task.run();
@@ -420,18 +424,6 @@ public class AlchemyMachineImplTest
     {
         String toString = instance.toString();
         assertThat(toString, not(isEmptyOrNullString()));
-    }
-
-    private void assertThrowsIllegalArgument(ExceptionOperation operation)
-    {
-        assertThrows(operation)
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private void assertThrowsAlchemyHttpExcetion(ExceptionOperation operation)
-    {
-        assertThrows(operation)
-                .isInstanceOf(AlchemyHttpException.class);
     }
 
 }

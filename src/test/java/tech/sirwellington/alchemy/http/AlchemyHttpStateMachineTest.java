@@ -24,9 +24,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import tech.sirwellington.alchemy.http.AlchemyHttpStateMachine.Builder;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -41,7 +41,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
 public class AlchemyHttpStateMachineTest
 {
     

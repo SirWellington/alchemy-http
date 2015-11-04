@@ -35,9 +35,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import tech.sirwellington.alchemy.http.AlchemyRequestMapper.HttpDeleteWithBody;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.instanceOf;
@@ -57,7 +59,8 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@Repeat(100)
+@RunWith(AlchemyTestRunner.class)
 public class AlchemyRequestMapperTest
 {
 
@@ -96,7 +99,14 @@ public class AlchemyRequestMapperTest
         assertThat(result.getURI(), is(url.toURI()));
         assertThat(result, instanceOf(HttpGet.class));
 
-        //Edge cases
+    }
+
+    @Test
+    public void testGetEdgeConditions()
+    {
+        instance = AlchemyRequestMapper.GET;
+
+        //Edge conditions
         assertThrows(() -> instance.convertToApacheRequest(null))
                 .isInstanceOf(IllegalArgumentException.class);
 
@@ -133,6 +143,14 @@ public class AlchemyRequestMapperTest
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(HttpPost.class));
         assertThat(result.getURI(), is(url.toURI()));
+
+    }
+
+    @DontRepeat
+    @Test
+    public void testPostEdgeConditions()
+    {
+        instance = AlchemyRequestMapper.POST;
 
         //Edge conditions
         assertThrows(() -> instance.convertToApacheRequest(null))
@@ -186,7 +204,15 @@ public class AlchemyRequestMapperTest
         assertThat(result, instanceOf(HttpPut.class));
         assertThat(result.getURI(), is(url.toURI()));
 
+    }
+
+    @DontRepeat
+    @Test
+    public void testPutEdgeConditions()
+    {
         //Edge Conditions
+        instance = AlchemyRequestMapper.PUT;
+
         assertThrows(() -> instance.convertToApacheRequest(null))
                 .isInstanceOf(IllegalArgumentException.class);
 
@@ -238,7 +264,15 @@ public class AlchemyRequestMapperTest
         assertThat(result, instanceOf(HttpDelete.class));
         assertThat(result.getURI(), is(url.toURI()));
 
+    }
+
+    @DontRepeat
+    @Test
+    public void testDeleteEdgeConditions()
+    {
         //Edge conditions
+        instance = AlchemyRequestMapper.DELETE;
+
         assertThrows(() -> instance.convertToApacheRequest(null))
                 .isInstanceOf(IllegalArgumentException.class);
 
@@ -272,10 +306,10 @@ public class AlchemyRequestMapperTest
     public void testDeleteExpandsURL() throws Exception
     {
         instance = AlchemyRequestMapper.DELETE;
-        
+
         when(request.hasQueryParams())
                 .thenReturn(Boolean.TRUE);
-        
+
         HttpUriRequest result = instance.convertToApacheRequest(request);
         assertThat(result.getURI(), is(expandedUrl.toURI()));
     }

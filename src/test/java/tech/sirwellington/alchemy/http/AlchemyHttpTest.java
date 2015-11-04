@@ -22,7 +22,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -34,10 +35,13 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
 public class AlchemyHttpTest
 {
 
+    @Mock
+    private AlchemyHttpStateMachine stateMachine;
+    
     @Mock
     private HttpClient apacheClient;
 
@@ -54,8 +58,11 @@ public class AlchemyHttpTest
         defaultHeaders = mapOf(alphabeticString(),
                                alphabeticString(),
                                20);
+
+        instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);
     }
 
+    @Repeat(100)
     @Test
     public void testUsingDefaultHeader()
     {
@@ -126,7 +133,7 @@ public class AlchemyHttpTest
     {
         AlchemyHttpBuilder result = AlchemyHttp.newBuilder();
         assertThat(result, notNullValue());
-        
+
         AlchemyHttp client = result.usingApacheHttpClient(apacheClient)
                 .usingExecutorService(executorService)
                 .usingDefaultHeaders(defaultHeaders)
