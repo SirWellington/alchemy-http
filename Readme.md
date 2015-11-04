@@ -13,9 +13,9 @@ Why can't making a REST call in Java be as easy and fluid as it is for other lan
 
 # Requirements
 
-* JDK 8
-* Maven installation
-* Thrift Compiler installation (for compilation)
++ Java 8
++ Maven installation
+
 
 # Building
 To build, just run a `mvn clean install` to compile and install to your local maven repository
@@ -31,7 +31,7 @@ To use, simply add the following maven dependency.
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
+	<artifactId>alchemy-http</artifactId>
 	<version>1.0</version>
 </dependency>
 ```
@@ -40,41 +40,25 @@ To use, simply add the following maven dependency.
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
+	<artifactId>alchemy-http</artifactId>
 	<version>1.1-SNAPSHOT</version>
-</dependency>
-```
-
-## JitPack
-
-You can also use [JitPack.io](https://jitpack.io/#SirWellington/commons-thrift/v1.0.0).
-
-```xml
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-```
-
-```xml
-<dependency>
-    <groupId>com.github.SirWellington</groupId>
-    <artifactId>alchemy-http</artifactId>
-    <version>[commit hash]</version>
 </dependency>
 ```
 
 # Examples
 Coming soon....
 
-# License
-
-This Software is licensed under the Apache 2.0 License
-
-http://www.apache.org/licenses/LICENSE-2.0
+# Feature Requests
+Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http/issues).**
 
 # Release Notes
 
 ## 1.0
 + Added Json Conversion utilities
 + Added ThriftOperation interface for Thrift Services
+
+# License
+
+This Software is licensed under the Apache 2.0 License
+
+http://www.apache.org/licenses/LICENSE-2.0
