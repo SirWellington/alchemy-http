@@ -15,8 +15,8 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.common.base.Strings;
 import java.net.URL;
-import org.inferred.freebuilder.shaded.com.google.common.base.Strings;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

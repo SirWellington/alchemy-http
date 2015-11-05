@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -31,7 +32,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
-import org.inferred.freebuilder.shaded.com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -297,6 +297,22 @@ public class BaseVerbTest
 
         assertThrows(() -> instance.execute(apacheClient, request))
                 .isInstanceOf(JsonException.class);
+    }
+
+    @Test
+    public void testExecuteWhenEntityIsText()
+    {
+        String text = one(alphabeticString());
+        entity = new StringEntity(text, ContentType.TEXT_PLAIN);
+        when(apacheResponse.getEntity())
+                .thenReturn(entity);
+
+        HttpResponse result = instance.execute(apacheClient, request);
+        assertThat(result, notNullValue());
+        assertThat(result.asString(), is(text));
+        JsonElement asJSON = result.asJSON();
+        assertThat(asJSON.isJsonPrimitive(), is(true));
+        assertThat(asJSON.getAsJsonPrimitive().isString(), is(true));
     }
 
     @DontRepeat

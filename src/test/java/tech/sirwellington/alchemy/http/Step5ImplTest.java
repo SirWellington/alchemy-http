@@ -15,12 +15,11 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import org.inferred.freebuilder.shaded.com.google.common.base.Strings;
+import com.google.common.base.Strings;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step5;

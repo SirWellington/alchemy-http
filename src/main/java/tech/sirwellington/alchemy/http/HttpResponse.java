@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
@@ -45,50 +46,50 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 @Immutable
 public interface HttpResponse
 {
-    
+
     int statusCode();
-    
+
     default boolean isOk()
     {
         int statusCode = statusCode();
         //Valid HTTP "OK" level Status Codes
         return (statusCode >= 200 && statusCode <= 208) || statusCode == 226;
     }
-    
+
     @Nullable
     Map<String, String> responseHeaders();
-    
+
     String asString();
-    
+
     JsonElement asJSON() throws JsonException;
-    
+
     <T> T as(Class<T> classOfT) throws JsonException;
-    
+
     default boolean equals(HttpResponse other)
     {
         if (other == null)
         {
             return false;
         }
-        
+
         if (this.statusCode() != other.statusCode())
         {
             return false;
         }
-        
+
         if (!Objects.equals(this.responseHeaders(), other.responseHeaders()))
         {
             return false;
         }
-        
+
         if (!Objects.equals(this.asString(), other.asString()))
         {
             return false;
         }
-        
+
         return true;
     }
-    
+
     static Builder builder()
     {
         return Builder.newInstance();
@@ -107,69 +108,69 @@ public interface HttpResponse
         private Gson gson = new GsonBuilder()
                 .setDateFormat(Constants.DATE_FORMAT)
                 .create();
-        
+
         private JsonElement responseBody = JsonNull.INSTANCE;
-        
+
         public static Builder newInstance()
         {
             return new Builder();
         }
-        
+
         public Builder mergeFrom(HttpResponse other)
         {
             checkThat(other).is(notNull());
-            
+
             return this.withResponseBody(other.asJSON())
                     .withStatusCode(other.statusCode())
                     .withResponseHeaders(other.responseHeaders());
         }
-        
+
         public Builder withStatusCode(int statusCode) throws IllegalArgumentException
         {
             //TODO: Also add check that status code is in the HTTP Range
             checkThat(statusCode).is(validHttpStatusCode());
-            
+
             this.statusCode = statusCode;
             return this;
         }
-        
+
         public Builder withResponseHeaders(Map<String, String> responseHeaders) throws IllegalArgumentException
         {
             if (responseHeaders == null)
             {
                 responseHeaders = Collections.emptyMap();
             }
-            
+
             this.responseHeaders = responseHeaders;
             return this;
         }
-        
+
         public Builder withResponseBody(JsonElement json) throws IllegalArgumentException
         {
             checkThat(json).is(notNull());
-            
+
             this.responseBody = json;
             return this;
         }
-        
+
         public Builder usingGson(Gson gson) throws IllegalArgumentException
         {
             checkThat(gson).is(notNull());
-            
+
             this.gson = gson;
             return this;
         }
-        
+
         public HttpResponse build() throws IllegalStateException
         {
             checkThat(statusCode)
                     .throwing(ex -> new IllegalStateException("No status code supplied"))
                     .is(validHttpStatusCode());
-            
+
             checkThat(responseBody)
                     .usingMessage("missing Response Body")
                     .is(notNull());
-            
+
             return new Impl(statusCode,
                             unmodifiableMap(responseHeaders),
                             gson,
@@ -183,12 +184,12 @@ public interface HttpResponse
         @BuilderPattern(role = PRODUCT)
         private static class Impl implements HttpResponse
         {
-            
+
             private final int statusCode;
             private final Map<String, String> responseHeaders;
             private final Gson gson;
             private final JsonElement responseBody;
-            
+
             private Impl(int statusCode,
                          Map<String, String> responseHeaders,
                          Gson gson,
@@ -199,37 +200,44 @@ public interface HttpResponse
                 this.gson = gson;
                 this.responseBody = response;
             }
-            
+
             @Override
             public int statusCode()
             {
                 return statusCode;
             }
-            
+
             @Override
             public Map<String, String> responseHeaders()
             {
                 return responseHeaders;
             }
-            
+
             @Override
             public String asString()
             {
-                return responseBody.toString();
+                if (responseBody.isJsonPrimitive())
+                {
+                    return responseBody.getAsString();
+                }
+                else
+                {
+                    return responseBody.toString();
+                }
             }
-            
+
             @Override
             public JsonElement asJSON() throws JsonParseException
             {
                 JsonElement copy = gson.toJsonTree(responseBody);
                 return copy;
             }
-            
+
             @Override
             public <T> T as(Class<T> classOfT) throws JsonParseException
             {
                 checkThat(classOfT).is(validResponseClass());
-                
+
                 try
                 {
                     T instance = gson.fromJson(responseBody, classOfT);
@@ -240,7 +248,7 @@ public interface HttpResponse
                     throw new JsonException("Failed to parse json to class: " + classOfT, ex);
                 }
             }
-            
+
             @Override
             public int hashCode()
             {
@@ -250,7 +258,7 @@ public interface HttpResponse
                 hash = 41 * hash + Objects.hashCode(this.responseBody);
                 return hash;
             }
-            
+
             @Override
             public boolean equals(Object obj)
             {
@@ -262,16 +270,18 @@ public interface HttpResponse
                 {
                     return false;
                 }
-                
+
                 return this.equals((HttpResponse) obj);
             }
-            
+
             @Override
             public String toString()
             {
                 return "HttpResponse{" + "statusCode=" + statusCode + ", responseHeaders=" + responseHeaders + ", response=" + responseBody + '}';
             }
-            
+
         }
+
     }
+
 }

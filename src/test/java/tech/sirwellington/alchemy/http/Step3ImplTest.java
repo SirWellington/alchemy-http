@@ -15,10 +15,10 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.common.collect.Maps;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import org.inferred.freebuilder.shaded.com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

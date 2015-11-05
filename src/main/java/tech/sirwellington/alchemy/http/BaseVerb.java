@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.base.Charsets;
@@ -35,7 +36,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
@@ -51,43 +51,43 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.validContentType;
 @Internal
 final class BaseVerb implements HttpVerb
 {
-    
+
     private final static Logger LOG = LoggerFactory.getLogger(BaseVerb.class);
-    
+
     private final Gson gson = new GsonBuilder()
             .setDateFormat(Constants.DATE_FORMAT)
             .create();
-    
+
     private final AlchemyRequestMapper requestMapper;
-    
+
     BaseVerb(AlchemyRequestMapper requestMapper)
     {
         checkThat(requestMapper).is(notNull());
-        
+
         this.requestMapper = requestMapper;
     }
-    
+
     static BaseVerb using(AlchemyRequestMapper requestMapper)
     {
         return new BaseVerb(requestMapper);
     }
-    
+
     @Override
     public HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException
     {
         checkThat(apacheHttpClient, request)
                 .usingMessage("null arguments")
                 .are(notNull());
-        
+
         HttpUriRequest apacheRequest = requestMapper.convertToApacheRequest(request);
-        
+
         checkThat(apacheRequest)
                 .throwing(ex -> new AlchemyHttpException("Could not map HttpRequest: " + request))
                 .is(notNull());
-        
+
         request.getRequestHeaders()
                 .forEach(apacheRequest::addHeader);
-        
+
         org.apache.http.HttpResponse apacheResponse;
         try
         {
@@ -98,15 +98,15 @@ final class BaseVerb implements HttpVerb
             LOG.error("Failed to execute GET Request on {}", apacheRequest.getURI(), ex);
             throw new AlchemyHttpException(ex);
         }
-        
+
         checkThat(apacheResponse)
                 .throwing(ex -> new AlchemyHttpException(request, "Missing Apache Client Response"))
                 .is(notNull());
-        
+
         JsonElement json;
         try
         {
-            json = extractJsonFromResponse(apacheResponse);
+            json = extractJsonFromResponse(request, apacheResponse);
         }
         catch (JsonParseException ex)
         {
@@ -118,31 +118,31 @@ final class BaseVerb implements HttpVerb
             LOG.error("Could not parse Response from Request {}", request, ex);
             throw new OperationFailedException(request, ex);
         }
-        
+
         HttpResponse response = HttpResponse.Builder.newInstance()
                 .withResponseBody(json)
                 .withStatusCode(apacheResponse.getStatusLine().getStatusCode())
                 .withResponseHeaders(extractHeadersFrom(apacheResponse))
                 .usingGson(gson)
                 .build();
-        
+
         return response;
     }
-    
-    private JsonElement extractJsonFromResponse(@NonNull org.apache.http.HttpResponse apacheResponse) throws JsonException, JsonParseException
+
+    private JsonElement extractJsonFromResponse(HttpRequest matchingRequest, org.apache.http.HttpResponse apacheResponse) throws JsonException, JsonParseException
     {
         if (apacheResponse.getEntity() == null)
         {
             return JsonNull.INSTANCE;
         }
-        
+
         HttpEntity entity = apacheResponse.getEntity();
-        
+
         String contentType = entity.getContentType().getValue();
         checkThat(contentType)
                 .throwing(JsonException.class)
                 .is(validContentType());
-        
+
         String responseString = null;
         try (final InputStream istream = entity.getContent())
         {
@@ -152,29 +152,36 @@ final class BaseVerb implements HttpVerb
         catch (Exception ex)
         {
             LOG.error("Failed to read entity from request", ex);
-            throw new AlchemyHttpException("Failed to read response from server", ex);
+            throw new AlchemyHttpException(matchingRequest, "Failed to read response from server", ex);
         }
-        
+
         if (Strings.isNullOrEmpty(responseString))
         {
             return JsonNull.INSTANCE;
         }
         else
         {
-            return gson.fromJson(responseString, JsonElement.class);
+            if (contentType.contains("application/json"))
+            {
+                return gson.fromJson(responseString, JsonElement.class);
+            }
+            else
+            {
+                return gson.toJsonTree(responseString);
+            }
         }
     }
-    
+
     private Map<String, String> extractHeadersFrom(org.apache.http.HttpResponse apacheResponse)
     {
         if (apacheResponse.getAllHeaders() == null)
         {
             return Collections.emptyMap();
         }
-        
+
         return Arrays.asList(apacheResponse.getAllHeaders())
                 .stream()
                 .collect(Collectors.toMap(Header::getName, Header::getValue));
     }
-    
+
 }

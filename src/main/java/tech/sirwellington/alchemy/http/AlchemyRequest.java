@@ -16,11 +16,11 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
-import org.inferred.freebuilder.shaded.com.google.common.collect.Sets;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;

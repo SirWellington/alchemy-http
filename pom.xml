@@ -96,13 +96,6 @@
             <artifactId>alchemy-arguments</artifactId>
             <version>1.2-SNAPSHOT</version>
         </dependency>
-        
-        <dependency>
-            <groupId>org.inferred</groupId>
-            <artifactId>freebuilder</artifactId>
-            <version>1.3.1</version>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-generator</artifactId>
