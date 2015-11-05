@@ -3,22 +3,159 @@ Alchemy HTTP
 
 <img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">
 
-## [Insert Punchline]
+## "REST without the MESS"
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-http.svg)](https://travis-ci.org/SirWellington/alchemy-http)
 
 # Purpose
 Why can't making a REST call in Java be as easy and fluid as it is for other languages?
 
+Making REST calls in other languages is **FAR SIMPLER!**
 
-# Requirements
+### Javascript
+In JavaScript:
 
-+ Java 8
-+ Maven installation
+```javascript
+$.ajax({
+	   url: "http://aroma.coffee/placeOrder",
+	   type: 'POST',
+	   data: { "size": "large",
+	   		"type": "black",
+	   		"amount": 3
+		}
+   }).then(function(data) {
+	  var orderNumber = data.orderNumber;
+   });
+```
+
+### Ruby
+In Ruby:
+
+```ruby
+uri = URI('http://aroma.coffee/orders?orderNumber=99')
+Net::HTTP.get(uri) # => String
+```
+### Java
+Meanwhile, back in Java land...
+```java
+
+HttpClient apacheHttp = //Good luck figuring out how to create me
+
+//Create the JSON Object, line by line...
+JsonObject orderRequest = new JsonObject();
+orderRequest.put("size", "large");
+orderRequest.put("type", "black");
+orderRequest.put("amount", 3);
+
+//Set up the request method
+HttpPost post = new HttpPost("http://aroma.coffee/orders");
+Entity body = new StringEntity(orderRequest.toString(), "application/json");
+post.setEntity(body);
+
+//Execute the actual request
+HttpResponse apacheResponse;
+try
+{
+	apacheResponse = apacheHttp.execute(post);
+}
+catch(Exception ex)
+{
+	LOG.error("Oh god!", ex);
+	throw new OperationFailedException(ex);
+}
+
+//Check the Response Code
+if(apacheResponse.getStatusLine().getStatusCode() != 200)
+{
+	LOG.error("The Service didn't like our response");
+	throw new OperationFailedException();
+}
+
+//Read the entity response
+String responseString = null;
+try (final InputStream istream = entity.getContent())
+{
+ 	byte[] rawBytes = ByteStreams.toByteArray(istream);
+	responseString = new String(rawBytes, Charsets.UTF_8);
+}
+ catch (Exception ex)
+{
+	LOG.error("Failed to read entity from request", ex);
+  	throw new AlchemyHttpException("Failed to read response from server", ex);
+}
+
+//Then you gotta parse the string
 
 
-# Building
-To build, just run a `mvn clean install` to compile and install to your local maven repository
+```
+All that *just to get some JSON data*!
+Come on Java! No wonder they hate us.
+We can do better than that.
+
+## The Alchemy Way
+```java
+//MyPojo
+OrderRequest request = OrderRequest.builder()
+	.withSize("large")
+	.withType("black")
+	.withAmount(3)
+	.build();
+
+AlchemyHttp http = AlchemyHttp.newDefaultInstance();
+
+Coffee myCoffee = http.go()
+					  .post()
+					  .body(request)
+					  .expecting(Coffee.class)
+					  .at("http://aroma.coffee/orders");
+//Wait...that's it?
+```
+**That's it!**
+
+### The Async Way
+
+There may be times when you don't care to wait for an immediate response from the service. An Async response would actually make a lot more sense.
+
+> Just show me the damn code!
+
+```java
+http.go()
+	.post()
+	.body(request)
+	.expecting(Coffee.class)
+	.onSuccess(c -> LOG.error("What took you so long to get my cofee!: {}", c))
+	.onFailure(ex -> LOG.error("What can I do without coffee?", ex))
+	.at("http://aroma.coffee/orders");
+```
+#### Another way
+To be fair Java Lamdas aren't as clean as `Blocks` in other languages.
+It's often better to things somewhere else.
+
+```java
+class BaristaService
+{
+	private AlchemyHttp http;
+
+	@Override
+	public void serveCustomer(Customer customer)
+	{
+		http.go()
+			.get()
+			.expecting(Coffee.class)
+			.onSuccess(coffee -> customer.accept(coffee))
+			.onFailure(this::handleOrderIssue)
+			.at("http://aroma.coffee/orders");
+	}
+
+	private void handleOrderIssue(AlchemyException ex)
+	{
+		HttpResponse response = ex.getResponse();
+		LOG.error("What happened to our Coffee Machine? {} | {}" , response, response.statusCode());
+		Map<String,String> responseHeaders = response.responseHeaders();
+	}
+}
+
+```
 
 
 # Download
@@ -44,9 +181,19 @@ To use, simply add the following maven dependency.
 	<version>1.1-SNAPSHOT</version>
 </dependency>
 ```
+# [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
 
-# Examples
-Coming soon....
+
+
+# Requirements
+
++ Java 8
++ Maven installation
+
+
+# Building
+To build, just run a `mvn clean install` to compile and install to your local maven repository
+
 
 # Feature Requests
 Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http/issues).**
