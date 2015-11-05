@@ -49,6 +49,8 @@ orderRequest.put("amount", 3);
 
 //Set up the request method
 HttpPost post = new HttpPost("http://aroma.coffee/orders");
+
+//Stick the body in the body
 Entity body = new StringEntity(orderRequest.toString(), "application/json");
 post.setEntity(body);
 
@@ -72,34 +74,39 @@ if(apacheResponse.getStatusLine().getStatusCode() != 200)
 }
 
 //Read the entity response
+Entity responseEntity = apacheResponse.getEntity();
 String responseString = null;
-try (final InputStream istream = entity.getContent())
+try (final InputStream istream = responseEntity.getContent())
 {
+	//If you're lucky enough to have Guava
  	byte[] rawBytes = ByteStreams.toByteArray(istream);
 	responseString = new String(rawBytes, Charsets.UTF_8);
 }
- catch (Exception ex)
+ catch (IOException ex)
 {
 	LOG.error("Failed to read entity from request", ex);
-  	throw new AlchemyHttpException("Failed to read response from server", ex);
+  	throw new RuntimeException(ex);
 }
 
 //Then you gotta parse the string
-
+//Good luck with that one...
 
 ```
-All that *just to get some JSON data*!
+All that *just to get some damn JSON data*!
+
 Come on Java! No wonder they hate us.
 We can do better than that.
 
 ## The Alchemy Way
 ```java
 //MyPojo
-OrderRequest request = OrderRequest.builder()
-	.withSize("large")
-	.withType("black")
-	.withAmount(3)
-	.build();
+class OrderRequest
+{
+	String size = "large";
+	String type = "black";
+	int amount = 3;
+}
+OrderRequest request = new OrderRequest();
 
 AlchemyHttp http = AlchemyHttp.newDefaultInstance();
 
