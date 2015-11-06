@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +28,10 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
@@ -103,7 +108,14 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testAsString()
+    public void testBody()
+    {
+        HttpResponse instance = builder.build();
+        assertThat(instance.body(), is(first.responseBody));
+    }
+
+    @Test
+    public void testBodyAsString()
     {
         HttpResponse instance = builder.build();
         String asString = instance.bodyAsString();
@@ -112,20 +124,26 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testAsJSON()
-    {
-        HttpResponse instance = builder.build();
-        assertThat(instance.body(), is(first.responseBody));
-    }
-
-    @Test
-    public void testAs()
+    public void testBodyAs()
     {
         first.responseBody = pojoAsJson;
         HttpResponse instance = builder.mergeFrom(first).build();
 
         TestPojo result = instance.bodyAs(TestPojo.class);
         assertThat(result.equals(pojo), is(true));
+    }
+
+    @Test
+    public void testBodyAsArrayOf()
+    {
+        List<TestPojo> pojos = listOf(TestPojo::generate);
+        JsonElement jsonArray = gson.toJsonTree(pojos);
+        assertThat(jsonArray.isJsonArray(), is(true));
+        first.responseBody = jsonArray;
+        
+        HttpResponse instance = builder.mergeFrom(first).build();
+        List<TestPojo> result = instance.bodyAsArrayOf(TestPojo.class);
+        assertThat(result, is(pojos));
     }
 
     @Test
@@ -177,6 +195,12 @@ public class HttpResponseTest
         assertThat(second, not(first));
         assertThat(first.equals(second), is(false));
         assertThat(second.equals(first), is(false));
+    }
+
+    @Test
+    public void testBuilder()
+    {
+        assertThat(HttpResponse.builder(), notNullValue());
     }
 
 }

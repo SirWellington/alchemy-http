@@ -21,7 +21,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import jdk.nashorn.internal.ir.annotations.Immutable;
@@ -102,6 +105,19 @@ public interface HttpResponse
      * @throws JsonException If the {@linkplain #body() JSON Body} could not be parsed.
      */
     <T> T bodyAs(Class<T> classOfT) throws JsonException;
+
+    /**
+     * Use in cases where you expect the {@linkplain #body() Response Body} to be a JSON Array. A {@link List} is
+     * returned instead of an Array.
+     *
+     * @param <T>      The type of the POJO
+     * @param classOfT The Class of the POJO.
+     *
+     * @return A List of T, parse from the JSON Body.
+     *
+     * @throws JsonException
+     */
+    <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException;
 
     default boolean equals(HttpResponse other)
     {
@@ -280,6 +296,25 @@ public interface HttpResponse
                 {
                     T instance = gson.fromJson(responseBody, classOfT);
                     return instance;
+                }
+                catch (Exception ex)
+                {
+                    throw new JsonException("Failed to parse json to class: " + classOfT, ex);
+                }
+            }
+
+            @Override
+            public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException
+            {
+                checkThat(classOfT).is(validResponseClass());
+
+                T[] array = (T[]) Array.newInstance(classOfT, 0);
+                Class<T[]> arrayClass = (Class<T[]>) array.getClass();
+
+                try
+                {
+                    array = gson.fromJson(responseBody, arrayClass);
+                    return array == null ? Collections.emptyList() : Arrays.asList(array);
                 }
                 catch (Exception ex)
                 {
