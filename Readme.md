@@ -99,22 +99,12 @@ We can do better than that.
 
 ## The Alchemy Way
 ```java
-//MyPojo
-class OrderRequest
-{
-	String size = "large";
-	String type = "black";
-	int amount = 3;
-}
-OrderRequest request = new OrderRequest();
-
 AlchemyHttp http = AlchemyHttp.newDefaultInstance();
 
 Coffee myCoffee = http.go()
-					  .post()
-					  .body(request)
+					  .get()
 					  .expecting(Coffee.class)
-					  .at("http://aroma.coffee/orders");
+					  .at("http://aroma.coffee/orders?orderNumber=99");
 //Wait...that's it?
 ```
 **That's it!**
