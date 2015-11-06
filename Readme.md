@@ -125,7 +125,7 @@ http.go()
 	.at("http://aroma.coffee/orders");
 ```
 #### Another way
-To be fair Java Lamdas aren't as clean as `Blocks` in other languages.
+To be fair Java Lambdas aren't as clean as `Blocks` in other languages.
 It's often better to things somewhere else.
 
 ```java
@@ -156,8 +156,6 @@ class BaristaService
 
 
 # Download
-
-> This library is not yet available on Maven Central
 
 To use, simply add the following maven dependency.
 
@@ -198,8 +196,7 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 # Release Notes
 
 ## 1.0
-+ Added Json Conversion utilities
-+ Added ThriftOperation interface for Thrift Services
++ Initial Public Release
 
 # License
 
