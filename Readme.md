@@ -120,7 +120,7 @@ http.go()
 	.post()
 	.body(request)
 	.expecting(Coffee.class)
-	.onSuccess(c -> LOG.error("What took you so long to get my cofee!: {}", c))
+	.onSuccess(c -> LOG.warn("What took you so long to get my cofee! {}", c))
 	.onFailure(ex -> LOG.error("What can I do without coffee?", ex))
 	.at("http://aroma.coffee/orders");
 ```
