@@ -60,19 +60,19 @@ class TestResponse implements HttpResponse
     }
 
     @Override
-    public String asString()
+    public String bodyAsString()
     {
         return responseBody.toString();
     }
 
     @Override
-    public JsonElement asJSON() throws JsonException
+    public JsonElement body() throws JsonException
     {
         return responseBody;
     }
 
     @Override
-    public <Pojo> Pojo as(Class<Pojo> classOfPojo) throws JsonException
+    public <Pojo> Pojo bodyAs(Class<Pojo> classOfPojo) throws JsonException
     {
         return gson.fromJson(responseBody, classOfPojo);
     }

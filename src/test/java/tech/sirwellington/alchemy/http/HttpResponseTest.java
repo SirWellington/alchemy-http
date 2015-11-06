@@ -106,7 +106,7 @@ public class HttpResponseTest
     public void testAsString()
     {
         HttpResponse instance = builder.build();
-        String asString = instance.asString();
+        String asString = instance.bodyAsString();
         String expected = first.responseBody.toString();
         assertThat(asString, is(expected));
     }
@@ -115,7 +115,7 @@ public class HttpResponseTest
     public void testAsJSON()
     {
         HttpResponse instance = builder.build();
-        assertThat(instance.asJSON(), is(first.responseBody));
+        assertThat(instance.body(), is(first.responseBody));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class HttpResponseTest
         first.responseBody = pojoAsJson;
         HttpResponse instance = builder.mergeFrom(first).build();
 
-        TestPojo result = instance.as(TestPojo.class);
+        TestPojo result = instance.bodyAs(TestPojo.class);
         assertThat(result.equals(pojo), is(true));
     }
 

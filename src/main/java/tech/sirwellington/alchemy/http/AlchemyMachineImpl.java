@@ -169,12 +169,12 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         }
         else if (classOfResponseType == String.class)
         {
-            return (ResponseType) response.asString();
+            return (ResponseType) response.bodyAsString();
         }
         else
         {
             LOG.trace("Attempting to parse response {} as {}", response, classOfResponseType);
-            return response.as(classOfResponseType);
+            return response.bodyAs(classOfResponseType);
         }
     }
 

@@ -47,8 +47,19 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 public interface HttpResponse
 {
 
+    /**
+     * @return The HTTP Status code of the request.
+     */
     int statusCode();
 
+    /**
+     * HTTP OK are 200-208 or the 226 status code.
+     *
+     * @return true if the status code is "OK", false otherwise.
+     *
+     * @see
+     * <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#2xx_Success">https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#2xx_Success</a>
+     */
     default boolean isOk()
     {
         int statusCode = statusCode();
@@ -56,14 +67,41 @@ public interface HttpResponse
         return (statusCode >= 200 && statusCode <= 208) || statusCode == 226;
     }
 
+    /**
+     * @return The response headers returned by the REST Service.
+     */
     @Nullable
     Map<String, String> responseHeaders();
 
-    String asString();
+    /**
+     * Get the Response Body as a String.
+     *
+     * @return The Response Body as a String
+     */
+    String bodyAsString();
 
-    JsonElement asJSON() throws JsonException;
+    /**
+     * Get the Response Body in JSON format.
+     *
+     * @return The JSON Response Body
+     *
+     * @throws JsonException
+     */
+    JsonElement body() throws JsonException;
 
-    <T> T as(Class<T> classOfT) throws JsonException;
+    /**
+     * Get the Response Body as a custom POJO Type. (Plain Old Java Object) Ensure that the POJO is styled in typical
+     * Java Bean/Value object style. Getters and setters are not required, although {@link Object#hashCode() }
+     * and {@link Object#equals(java.lang.Object)} is recommended for any value type.
+     *
+     * @param <T>      The type of the POJO
+     * @param classOfT The Class of the POJO.
+     *
+     * @return An instance of {@code T}, mapped from the JSON Body.
+     *
+     * @throws JsonException If the {@linkplain #body() JSON Body} could not be parsed.
+     */
+    <T> T bodyAs(Class<T> classOfT) throws JsonException;
 
     default boolean equals(HttpResponse other)
     {
@@ -82,7 +120,7 @@ public interface HttpResponse
             return false;
         }
 
-        if (!Objects.equals(this.asString(), other.asString()))
+        if (!Objects.equals(this.bodyAsString(), other.bodyAsString()))
         {
             return false;
         }
@@ -120,7 +158,7 @@ public interface HttpResponse
         {
             checkThat(other).is(notNull());
 
-            return this.withResponseBody(other.asJSON())
+            return this.withResponseBody(other.body())
                     .withStatusCode(other.statusCode())
                     .withResponseHeaders(other.responseHeaders());
         }
@@ -214,7 +252,7 @@ public interface HttpResponse
             }
 
             @Override
-            public String asString()
+            public String bodyAsString()
             {
                 if (responseBody.isJsonPrimitive())
                 {
@@ -227,14 +265,14 @@ public interface HttpResponse
             }
 
             @Override
-            public JsonElement asJSON() throws JsonParseException
+            public JsonElement body() throws JsonParseException
             {
                 JsonElement copy = gson.toJsonTree(responseBody);
                 return copy;
             }
 
             @Override
-            public <T> T as(Class<T> classOfT) throws JsonParseException
+            public <T> T bodyAs(Class<T> classOfT) throws JsonParseException
             {
                 checkThat(classOfT).is(validResponseClass());
 

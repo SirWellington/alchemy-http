@@ -159,9 +159,9 @@ public class BaseVerbTest
         assertThat(response, notNullValue());
         assertThat(response.statusCode(), is(statusLine.getStatusCode()));
         assertThat(response.isOk(), is(true));
-        assertThat(response.asJSON(), is(responseBody));
+        assertThat(response.body(), is(responseBody));
         assertThat(response.responseHeaders(), is(responseHeaders));
-        assertThat(response.asString(), is(responseBody.toString()));
+        assertThat(response.bodyAsString(), is(responseBody.toString()));
     }
 
     //Edge Cases
@@ -220,7 +220,7 @@ public class BaseVerbTest
 
         HttpResponse result = instance.execute(apacheClient, request);
         assertThat(result, notNullValue());
-        assertThat(result.asJSON(), is(JsonNull.INSTANCE));
+        assertThat(result.body(), is(JsonNull.INSTANCE));
     }
 
     @DontRepeat
@@ -247,7 +247,7 @@ public class BaseVerbTest
                 .thenReturn(entity);
 
         HttpResponse result = instance.execute(apacheClient, request);
-        assertThat(result.asJSON(), instanceOf(JsonNull.class));
+        assertThat(result.body(), instanceOf(JsonNull.class));
     }
 
     @Test
@@ -309,8 +309,8 @@ public class BaseVerbTest
 
         HttpResponse result = instance.execute(apacheClient, request);
         assertThat(result, notNullValue());
-        assertThat(result.asString(), is(text));
-        JsonElement asJSON = result.asJSON();
+        assertThat(result.bodyAsString(), is(text));
+        JsonElement asJSON = result.body();
         assertThat(asJSON.isJsonPrimitive(), is(true));
         assertThat(asJSON.getAsJsonPrimitive().isString(), is(true));
     }
