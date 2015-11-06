@@ -1,13 +1,14 @@
 Alchemy HTTP
 ==============================================
-
-<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">
+[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">](https://github.com/SirWellington/alchemy)
 
 ## "REST without the MESS"
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-http.svg)](https://travis-ci.org/SirWellington/alchemy-http)
 
 # Purpose
+Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
+
 Why can't making a REST call in Java be as easy and fluid as it is for other languages?
 
 Making REST calls in other languages is **FAR SIMPLER!**
