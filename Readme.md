@@ -151,7 +151,6 @@ class BaristaService
 		Map<String,String> responseHeaders = response.responseHeaders();
 	}
 }
-
 ```
 
 
@@ -193,6 +192,10 @@ Documentation found [here](https://developers.google.com/maps/documentation/geoc
 https://maps.googleapis.com/maps/api/place/nearbysearch/json
 
 Documentation found [here](https://developers.google.com/places/web-service/)
+
+## Mashape APIs
+
+Mashape has many great test APIs found [here](https://market.mashape.com).
 
 
 # Requirements
