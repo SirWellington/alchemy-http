@@ -36,6 +36,29 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
  *
  * To create an instance, see {@link #newDefaultInstance() }.
  *
+ * To do a Get:
+ *
+ * <pre>
+ * {@code
+ * HttpResponse response = http.go()
+ *                             .get()
+ *                             .at("http://maps.google.com/api");
+ *
+ *  GoogleQuery query = response.as(GoogleQuery.class);
+ * }
+ * </pre>
+ *
+ * To do a Post:
+ *
+ * <pre>
+ * {@code
+ * Coffee coffee = http.go()
+ *                     .post(request)
+ *                     .expecting(Coffee.class)
+ *                     .at("http://aroma.coffee/orders?orderNumber=99");
+ * }
+ * </pre>
+ *
  * @see #newBuilder()
  * @see AlchemyHttpBuilder
  * @see <a href="https://github.com/SirWellington/alchemy-http">https://github.com/SirWellington/alchemy-http</a>
@@ -120,9 +143,11 @@ public interface AlchemyHttp
         checkThat(apacheHttpClient)
                 .usingMessage("missing Apache HTTP Client")
                 .is(notNull());
+
         checkThat(executorService)
                 .usingMessage("missing ExecutorService")
                 .is(notNull());
+
         checkThat(defaultHeaders)
                 .usingMessage("Default HTTP Headers cannot be null. Use an empty map instead.")
                 .is(notNull());
