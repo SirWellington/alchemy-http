@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
+import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
+import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 import tech.sirwellington.alchemy.arguments.Assertions;
 
@@ -88,16 +90,16 @@ public final class AlchemyHttpBuilder
         return usingExecutorService(MoreExecutors.newDirectExecutorService());
     }
     
-    public AlchemyHttpBuilder usingDefaultHeaders(Map<String, String> defaultHeaders) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingDefaultHeaders(@NonNull Map<String, String> defaultHeaders) throws IllegalArgumentException
     {
-        checkThat(defaultHeaders).is(Assertions.notNull());
+        checkThat(defaultHeaders).is(notNull());
         
         this.defaultHeaders.clear();
         this.defaultHeaders.putAll(defaultHeaders);
         return this;
     }
     
-    public AlchemyHttpBuilder usingDefaultHeader(String key, String value) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingDefaultHeader(@NonEmpty String key, String value) throws IllegalArgumentException
     {
         checkThat(key)
                 .usingMessage("missing key")
