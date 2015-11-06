@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
 import java.util.Map;
@@ -33,8 +34,34 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 
 /**
  *
+ * To create an instance, see {@link #newDefaultInstance() }.
+ *
+ * To do a Get:
+ *
+ * <pre>
+ * {@code
+ * HttpResponse response = http.go()
+ *                             .get()
+ *                             .at("http://maps.google.com/api");
+ *
+ *  GoogleQuery query = response.as(GoogleQuery.class);
+ * }
+ * </pre>
+ *
+ * To do a Post:
+ *
+ * <pre>
+ * {@code
+ * Coffee coffee = http.go()
+ *                     .post(request)
+ *                     .expecting(Coffee.class)
+ *                     .at("http://aroma.coffee/orders?orderNumber=99");
+ * }
+ * </pre>
+ *
  * @see #newBuilder()
  * @see AlchemyHttpBuilder
+ * @see <a href="https://github.com/SirWellington/alchemy-http">https://github.com/SirWellington/alchemy-http</a>
  *
  * @author SirWellington
  */
@@ -46,9 +73,7 @@ public interface AlchemyHttp
 {
 
     /**
-     * Sets a default header on this instance. This default header will be included with every
-     * request, unless it is explicitly null     {@linkplain  AlchemyRequest.Step3#usingHeader(java.lang.String, java.lang.String)
-     * }
+     * Sets a default header on this instance. This default header will be included with every request.
      *
      * @param key
      * @param value
@@ -73,9 +98,8 @@ public interface AlchemyHttp
     AlchemyRequest.Step1 go();
 
     /**
-     * Creates a new {@link AlchemyHttp} using the default settings for the
-     * {@linkplain HttpClient Apache HTTP Client} and a
-     * {@linkplain Executors#newWorkStealingPool(int) Single-Threaded Executor} for Async requests.
+     * Creates a new {@link AlchemyHttp} using the default settings for the {@linkplain HttpClient Apache HTTP Client}
+     * and a {@linkplain Executors#newWorkStealingPool(int) Single-Threaded Executor} for Async requests.
      *
      * @return
      */
@@ -105,11 +129,9 @@ public interface AlchemyHttp
     /**
      * Creates a new {@link AlchemyHttp} instance.
      *
-     * @param apacheHttpClient The {@linkplain HttpClient Apache Http Client} to use when making
-     *                         requests.
+     * @param apacheHttpClient The {@linkplain HttpClient Apache Http Client} to use when making requests.
      * @param executorService  For Async requests, this {@link ExecutorService} will be used.
-     * @param defaultHeaders   Default Headers are included in every request, unless otherwise
-     *                         specified.
+     * @param defaultHeaders   Default Headers are included in every request, unless otherwise specified.
      *
      * @return
      * @throws IllegalArgumentException
@@ -121,9 +143,11 @@ public interface AlchemyHttp
         checkThat(apacheHttpClient)
                 .usingMessage("missing Apache HTTP Client")
                 .is(notNull());
+
         checkThat(executorService)
                 .usingMessage("missing ExecutorService")
                 .is(notNull());
+
         checkThat(defaultHeaders)
                 .usingMessage("Default HTTP Headers cannot be null. Use an empty map instead.")
                 .is(notNull());
@@ -136,8 +160,8 @@ public interface AlchemyHttp
     }
 
     /**
-     * Creates a new {@link AlchemyHttpBuilder} instance that allows additional customization of the
-     * {@link AlchemyHttp} instance created.
+     * Creates a new {@link AlchemyHttpBuilder} instance that allows additional customization of the {@link AlchemyHttp}
+     * instance created.
      *
      * @return
      */

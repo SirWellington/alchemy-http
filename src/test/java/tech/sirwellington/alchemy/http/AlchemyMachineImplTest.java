@@ -105,7 +105,7 @@ public class AlchemyMachineImplTest
         pojo = TestPojo.generate();
 
         when(response.isOk()).thenReturn(true);
-        when(response.as(responseClass))
+        when(response.bodyAs(responseClass))
                 .thenReturn(pojo);
     }
 
@@ -250,7 +250,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteSyncWithCustomClass()
     {
-        when(response.as(responseClass)).thenReturn(pojo);
+        when(response.bodyAs(responseClass)).thenReturn(pojo);
 
         TestPojo result = instance.executeSync(request, responseClass);
         assertThat(result, is(pojo));
@@ -306,7 +306,7 @@ public class AlchemyMachineImplTest
     public void testExecuteSyncWhenClassOfResponseTypeIsString()
     {
         instance.executeSync(request, String.class);
-        verify(response).asString();
+        verify(response).bodyAsString();
     }
 
     @Repeat(200)
@@ -322,7 +322,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteWhenCastingToResponseClassFails()
     {
-        when(response.as(responseClass))
+        when(response.bodyAs(responseClass))
                 .thenThrow(new JsonException());
 
         assertThrows(() -> instance.executeSync(request, responseClass))

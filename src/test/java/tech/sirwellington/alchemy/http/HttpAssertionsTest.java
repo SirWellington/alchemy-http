@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.Before;
@@ -35,6 +40,9 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.http.Generators.jsonArrays;
+import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
+import static tech.sirwellington.alchemy.http.Generators.jsonPrimitives;
 import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -199,16 +207,36 @@ public class HttpAssertionsTest
         assertThat(instance, notNullValue());
 
         assertThrows(() -> instance.check(null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(FailedAssertionException.class);
 
         //No URL
         HttpRequest request = mock(HttpRequest.class);
         assertThrows(() -> instance.check(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(FailedAssertionException.class);
 
         URL url = one(validUrls());
         when(request.getUrl()).thenReturn(url);
         instance.check(request);
+
+    }
+
+    @Repeat
+    @Test
+    public void testJsonArray()
+    {
+        AlchemyAssertion<JsonElement> instance = HttpAssertions.jsonArray();
+        assertThat(instance, notNullValue());
+
+        JsonArray valid = one(jsonArrays());
+        instance.check(valid);
+
+        JsonObject object = one(jsonObjects());
+        assertThrows(() -> instance.check(object))
+                .isInstanceOf(FailedAssertionException.class);
+
+        JsonPrimitive primitive = one(jsonPrimitives());
+        assertThrows(() -> instance.check(primitive))
+                .isInstanceOf(FailedAssertionException.class);
 
     }
 

@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
+import com.google.gson.JsonElement;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
@@ -38,18 +40,18 @@ import static tech.sirwellington.alchemy.arguments.Assertions.stringThatStartsWi
 @NonInstantiable
 final class HttpAssertions
 {
-    
+
     private HttpAssertions() throws IllegalAccessException
     {
         throw new IllegalAccessException("cannot instantiate");
     }
-    
-    static final AlchemyAssertion<Integer> validHttpStatusCode()
+
+    static AlchemyAssertion<Integer> validHttpStatusCode()
     {
         /*
          * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
          */
-        
+
         return greaterThanOrEqualTo(100)
                 .and(lessThanOrEqualTo(505));
     }
@@ -57,69 +59,82 @@ final class HttpAssertions
     /*
      * TODO: Add check to see if the class structure is that of a POJO.
      */
-    static final <Response> AlchemyAssertion<Class<Response>> validResponseClass()
+    static <Response> AlchemyAssertion<Class<Response>> validResponseClass()
     {
         AlchemyAssertion<Class<Response>> notNull = Assertions.<Class<Response>>notNull();
-        
+
         return notNull
                 .and(not(sameInstance(Void.class)));
     }
-    
-    static final AlchemyAssertion<HttpRequest> requestReady()
+
+    static AlchemyAssertion<HttpRequest> requestReady()
     {
         return request ->
         {
             checkThat(request)
                     .usingMessage("Request missing")
                     .is(notNull());
-            
+
             checkThat(request.getVerb())
                     .usingMessage("Request missing HTTP Verb")
                     .is(notNull());
-            
+
             checkThat(request.getUrl())
                     .usingMessage("Request missing URL")
                     .is(notNull());
-            
+
             checkThat(request.getUrl().getProtocol())
                     .is(stringThatStartsWith("http"));
         };
     }
-    
-    static final AlchemyAssertion<String> validContentType()
+
+    static AlchemyAssertion<String> validContentType()
     {
         return contentType ->
         {
             checkThat(contentType)
                     .usingMessage("missing Content-Type")
                     .is(nonEmptyString());
-            
+
             if (contentType.contains("application/json"))
             {
                 return;
             }
-            
+
             if (contentType.contains("text/plain"))
             {
                 return;
             }
-            
+
             throw new FailedAssertionException("Not a valid JSON content Type: " + contentType);
         };
     }
-    
-    static final AlchemyAssertion<HttpRequest> notNullAndHasURL()
+
+    static AlchemyAssertion<HttpRequest> notNullAndHasURL()
     {
         return request ->
         {
             checkThat(request)
                     .usingMessage("missing HTTP Request")
                     .is(notNull());
-            
+
             checkThat(request.getUrl())
                     .usingMessage("missing request URL")
                     .is(notNull());
         };
     }
-    
+
+    static AlchemyAssertion<JsonElement> jsonArray()
+    {
+        return json ->
+        {
+            checkThat(json)
+                    .is(notNull());
+
+            if (!json.isJsonArray())
+            {
+                throw new FailedAssertionException("Expecting JSON Array, instead: " + json);
+            }
+        };
+    }
 }

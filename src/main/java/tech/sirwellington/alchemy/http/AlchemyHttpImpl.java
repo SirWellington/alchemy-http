@@ -16,8 +16,8 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.util.Map;
-import org.inferred.freebuilder.shaded.com.google.common.collect.Maps;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;

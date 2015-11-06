@@ -18,6 +18,9 @@ package tech.sirwellington.alchemy.http;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
@@ -25,6 +28,9 @@ import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.NumberGenerators;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
+
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.http.HttpAssertions.jsonArray;
 
 class TestResponse implements HttpResponse
 {
@@ -60,19 +66,19 @@ class TestResponse implements HttpResponse
     }
 
     @Override
-    public String asString()
+    public String bodyAsString()
     {
         return responseBody.toString();
     }
 
     @Override
-    public JsonElement asJSON() throws JsonException
+    public JsonElement body() throws JsonException
     {
         return responseBody;
     }
 
     @Override
-    public <Pojo> Pojo as(Class<Pojo> classOfPojo) throws JsonException
+    public <Pojo> Pojo bodyAs(Class<Pojo> classOfPojo) throws JsonException
     {
         return gson.fromJson(responseBody, classOfPojo);
     }
@@ -105,6 +111,19 @@ class TestResponse implements HttpResponse
     public String toString()
     {
         return "TestResponse{" + "statusCode=" + statusCode + ", responseHeaders=" + responseHeaders + ", responseBody=" + responseBody + '}';
+    }
+    
+    @Override
+    public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException
+    {
+        checkThat(this.responseBody)
+                .is(jsonArray());
+        
+        Type type = new TypeToken<List<T>>()
+        {
+        }.getType();
+
+        return gson.fromJson(responseBody, type);
     }
 
 }
