@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
 import java.util.Collections;
@@ -30,10 +31,12 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.asString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.AlchemyHttpBuilder.newInstance;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -115,16 +118,15 @@ public class AlchemyHttpBuilderTest
     @Test
     public void testUsingDefaultHeaders()
     {
-        Map<String, String> newHeaders = mapOf(alphabeticString(),
-                                               asString(smallPositiveIntegers()),
+        Map<String, String> headers = mapOf(alphabeticString(),                                               asString(smallPositiveIntegers()),
                                                100);
 
-        AlchemyHttpBuilder result = instance.usingDefaultHeaders(newHeaders);
+        AlchemyHttpBuilder result = instance.usingDefaultHeaders(headers);
         assertThat(result, notNullValue());
 
         AlchemyHttp http = result.build();
         assertThat(http, notNullValue());
-        assertThat(http.getDefaultHeaders(), is(newHeaders));
+        assertThat(http.getDefaultHeaders(), is(headers));
 
         //Edge cases
         assertThrows(() -> instance.usingDefaultHeaders(null))
@@ -132,6 +134,34 @@ public class AlchemyHttpBuilderTest
 
         //Empty headers is ok
         instance.usingDefaultHeaders(Collections.emptyMap());
+    }
+
+    @Repeat
+    @Test
+    public void testUsingDefaultHeader()
+    {
+        String key = one(alphabeticString());
+        String value = one(hexadecimalString(10));
+
+        AlchemyHttpBuilder result = instance.usingDefaultHeader(key, value);
+        assertThat(result, notNullValue());
+
+        AlchemyHttp http = result.build();
+        assertThat(http.getDefaultHeaders(), Matchers.hasEntry(key, value));
+    }
+
+    @Test
+    public void testUsingDefaultHeaderEdgeCases()
+    {
+        assertThrows(() -> instance.usingDefaultHeader(null, null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> instance.usingDefaultHeader("", null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        String key = one(alphabeticString());
+        //should be ok
+        instance.usingDefaultHeader(key, "");
     }
 
     @Repeat(100)

@@ -178,6 +178,21 @@ To use, simply add the following maven dependency.
 ```
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
 
+# Tested Against
+This library has been tested against in-house as well as production services.
+This is not a comprehensive list, but should give you some idea on compatability.
+
+## Google APIs
+
+### Geocoding
+https://maps.googleapis.com/maps/api/geocode/json
+
+Documentation found [here](https://developers.google.com/maps/documentation/geocoding/get-api-key)
+
+### Places API
+https://maps.googleapis.com/maps/api/place/nearbysearch/json
+
+Documentation found [here](https://developers.google.com/places/web-service/)
 
 
 # Requirements

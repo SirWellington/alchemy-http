@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
 import com.google.common.collect.Maps;
@@ -25,6 +26,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 import tech.sirwellington.alchemy.arguments.Assertions;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
 
@@ -35,34 +37,32 @@ import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
 @BuilderPattern(role = BuilderPattern.Role.BUILDER)
 public final class AlchemyHttpBuilder
 {
-
-
+    
     private HttpClient apacheHttpClient;
     private ExecutorService executor = MoreExecutors.newDirectExecutorService();
 
     //Copy from DEFAULT HEADERS
     private final Map<String, String> defaultHeaders = Maps.newHashMap(DEFAULT_HEADERS);
-
+    
     static AlchemyHttpBuilder newInstance()
     {
         return new AlchemyHttpBuilder();
     }
-
+    
     AlchemyHttpBuilder()
     {
     }
-
+    
     public AlchemyHttpBuilder usingApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
     {
         checkThat(apacheHttpClient).is(Assertions.notNull());
-
+        
         this.apacheHttpClient = apacheHttpClient;
         return this;
     }
 
     /**
-     * Directly sets the Executor Service to use for Asynchronous Requests. Asynchronous requests
-     * only happen when the
+     * Directly sets the Executor Service to use for Asynchronous Requests. Asynchronous requests only happen when the
      * {@linkplain  AlchemyRequest.Step4#onSuccess(tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess) Callback}
      * is set on the Request.
      *
@@ -73,45 +73,55 @@ public final class AlchemyHttpBuilder
     public AlchemyHttpBuilder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
     {
         checkThat(executor).is(Assertions.notNull());
-
+        
         this.executor = executor;
         return this;
     }
-
+    
     public AlchemyHttpBuilder enableAsyncCallbacks()
     {
         return usingExecutorService(Executors.newSingleThreadExecutor());
     }
-
+    
     public AlchemyHttpBuilder disableAsyncCallbacks()
     {
         return usingExecutorService(MoreExecutors.newDirectExecutorService());
     }
-
+    
     public AlchemyHttpBuilder usingDefaultHeaders(Map<String, String> defaultHeaders) throws IllegalArgumentException
     {
         checkThat(defaultHeaders).is(Assertions.notNull());
-
+        
         this.defaultHeaders.clear();
         this.defaultHeaders.putAll(defaultHeaders);
         return this;
     }
+    
+    public AlchemyHttpBuilder usingDefaultHeader(String key, String value) throws IllegalArgumentException
+    {
+        checkThat(key)
+                .usingMessage("missing key")
+                .is(nonEmptyString());
 
+        this.defaultHeaders.put(key, value);
+        return this;
+    }
+    
     public AlchemyHttp build() throws IllegalStateException
     {
         checkThat(apacheHttpClient)
                 .throwing(ex -> new IllegalStateException("missing apache HTTP Client"))
                 .is(notNull());
-
+        
         checkThat(executor)
                 .throwing(ex -> new IllegalStateException("missing Executor Service"))
                 .is(Assertions.notNull());
-
+        
         AlchemyHttpStateMachine stateMachine = buildTheStateMachine();
-
+        
         return new AlchemyHttpImpl(defaultHeaders, stateMachine);
     }
-
+    
     private AlchemyHttpStateMachine buildTheStateMachine()
     {
         return AlchemyHttpStateMachine.Builder.newInstance()
@@ -119,5 +129,5 @@ public final class AlchemyHttpBuilder
                 .usingExecutorService(executor)
                 .build();
     }
-
+    
 }
