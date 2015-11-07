@@ -16,7 +16,7 @@
     <url>https://github.com/SirWellington/alchemy-http</url>
     <description>
         Part of the Alchemy Collection.
-
+        REST without the MESS.
         Makes it dead-easy to call RESTful Web Services in Java.
         It is designed for interactions with APIs written in REST and JSON.
     </description>
