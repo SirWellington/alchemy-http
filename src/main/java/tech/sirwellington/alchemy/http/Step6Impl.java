@@ -18,8 +18,10 @@ package tech.sirwellington.alchemy.http;
 import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
 /**
  *
@@ -44,6 +46,9 @@ final class Step6Impl<ResponseType> implements AlchemyRequest.Step6<ResponseType
     {
         checkThat(stateMachine, request, classOfResponseType, successCallback, failureCallback)
                 .are(notNull());
+        
+        checkThat(classOfResponseType)
+                .is(validResponseClass());
 
         this.stateMachine = stateMachine;
         this.request = request;

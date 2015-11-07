@@ -35,7 +35,6 @@ import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
  *
  *
  * @author SirWellington
- *
  */
 @FluidAPIDesign
 @StepMachineDesign

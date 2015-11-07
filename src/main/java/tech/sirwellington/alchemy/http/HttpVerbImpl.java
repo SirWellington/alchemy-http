@@ -49,10 +49,10 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.validContentType;
  * @author SirWellington
  */
 @Internal
-final class BaseVerb implements HttpVerb
+final class HttpVerbImpl implements HttpVerb
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger(BaseVerb.class);
+    private final static Logger LOG = LoggerFactory.getLogger(HttpVerbImpl.class);
 
     private final Gson gson = new GsonBuilder()
             .setDateFormat(Constants.DATE_FORMAT)
@@ -60,16 +60,16 @@ final class BaseVerb implements HttpVerb
 
     private final AlchemyRequestMapper requestMapper;
 
-    BaseVerb(AlchemyRequestMapper requestMapper)
+    HttpVerbImpl(AlchemyRequestMapper requestMapper)
     {
         checkThat(requestMapper).is(notNull());
 
         this.requestMapper = requestMapper;
     }
 
-    static BaseVerb using(AlchemyRequestMapper requestMapper)
+    static HttpVerbImpl using(AlchemyRequestMapper requestMapper)
     {
-        return new BaseVerb(requestMapper);
+        return new HttpVerbImpl(requestMapper);
     }
 
     @Override
