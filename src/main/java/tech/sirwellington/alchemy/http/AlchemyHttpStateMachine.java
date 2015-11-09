@@ -29,7 +29,7 @@ import tech.sirwellington.alchemy.http.AlchemyRequest.Step6;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
  * This is an internal state machine for managing the transitions of an Alchemy Http Request.

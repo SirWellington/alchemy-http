@@ -20,17 +20,17 @@ import com.google.gson.JsonElement;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.Assertions;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
-import static tech.sirwellington.alchemy.arguments.Assertions.lessThanOrEqualTo;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
-import static tech.sirwellington.alchemy.arguments.Assertions.not;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.Assertions.sameInstance;
-import static tech.sirwellington.alchemy.arguments.Assertions.stringThatStartsWith;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.not;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.sameInstance;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.lessThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringThatStartsWith;
 
 /**
  *
