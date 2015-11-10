@@ -61,25 +61,25 @@ final class Step2Impl implements AlchemyRequest.Step2
     }
 
     @Override
-    public AlchemyRequest.Step3 body(String jsonBody) throws IllegalArgumentException
+    public AlchemyRequest.Step3 body(String jsonString) throws IllegalArgumentException
     {
-        checkThat(jsonBody)
+        checkThat(jsonString)
                 .usingMessage("use 'nothing()' for empty body")
                 .is(nonEmptyString());
 
-        JsonElement body;
+        JsonElement jsonBody;
 
         try
         {
-            body = gson.fromJson(jsonBody, JsonElement.class);
+            jsonBody = gson.fromJson(jsonString, JsonElement.class);
         }
         catch (Exception ex)
         {
-            throw new JsonException("Failed to parse JSON Body: " + jsonBody, ex);
+            throw new JsonException("Failed to parse JSON Body: " + jsonString, ex);
         }
 
         HttpRequest newRequest = HttpRequest.Builder.from(request)
-                .usingBody(body)
+                .usingBody(jsonBody)
                 .build();
 
         return stateMachine.jumpToStep3(newRequest);

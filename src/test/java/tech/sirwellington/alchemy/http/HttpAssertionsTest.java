@@ -240,4 +240,27 @@ public class HttpAssertionsTest
 
     }
 
+    @Test
+    public void testOkResponse()
+    {
+        AlchemyAssertion<HttpResponse> instance = HttpAssertions.okResponse();
+        assertThat(instance, notNullValue());
+
+        //Check with null argument
+        assertThrows(() -> instance.check(null))
+                .isInstanceOf(FailedAssertionException.class);
+
+        //Response is OK
+        HttpResponse okResponse = mock(HttpResponse.class);
+        when(okResponse.isOk()).thenReturn(true);
+        instance.check(okResponse);
+
+        //Response is NOT OK
+        HttpResponse notOkResponse = mock(HttpResponse.class);
+        when(notOkResponse.isOk()).thenReturn(false);
+        assertThrows(() -> instance.check(notOkResponse))
+                .isInstanceOf(FailedAssertionException.class);
+
+    }
+
 }

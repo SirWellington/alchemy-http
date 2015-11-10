@@ -39,7 +39,6 @@ final class Step3Impl implements AlchemyRequest.Step3
     private final static Logger LOG = LoggerFactory.getLogger(Step3Impl.class);
 
     private HttpRequest request;
-
     private final AlchemyHttpStateMachine stateMachine;
 
     Step3Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request)

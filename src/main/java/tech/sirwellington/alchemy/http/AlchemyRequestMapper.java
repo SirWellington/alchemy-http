@@ -62,40 +62,41 @@ interface AlchemyRequestMapper
             URI uri = request.getUrl().toURI();
             URIBuilder uriBuilder = new URIBuilder(uri);
 
-            request.getQueryParams().forEach(uriBuilder::addParameter);
+            request.getQueryParams()
+                    .forEach(uriBuilder::addParameter);
 
             return uriBuilder.build().toURL();
         }
     }
 
-    static final AlchemyRequestMapper GET = r ->
+    static final AlchemyRequestMapper GET = request ->
     {
-        checkThat(r).is(notNullAndHasURL());
+        checkThat(request).is(notNullAndHasURL());
 
         try
         {
-            URL url = expandUrlFromRequest(r);
+            URL url = expandUrlFromRequest(request);
             HttpGet get = new HttpGet(url.toURI());
             return get;
         }
         catch (Exception ex)
         {
-            throw new AlchemyHttpException(r, "Could not convert to Apache GET Request", ex);
+            throw new AlchemyHttpException(request, "Could not convert to Apache GET Request", ex);
         }
     };
 
-    static final AlchemyRequestMapper POST = r ->
+    static final AlchemyRequestMapper POST = request ->
     {
-        checkThat(r).is(notNullAndHasURL());
+        checkThat(request).is(notNullAndHasURL());
 
         try
         {
-            URL url = expandUrlFromRequest(r);
+            URL url = expandUrlFromRequest(request);
             HttpPost post = new HttpPost(url.toURI());
 
-            if (r.hasBody())
+            if (request.hasBody())
             {
-                HttpEntity entity = new StringEntity(r.getBody().toString(), UTF_8);
+                HttpEntity entity = new StringEntity(request.getBody().toString(), UTF_8);
                 post.setEntity(entity);
             }
 
@@ -103,22 +104,22 @@ interface AlchemyRequestMapper
         }
         catch (Exception ex)
         {
-            throw new AlchemyHttpException(r, "Could not convert to Apache POST Request", ex);
+            throw new AlchemyHttpException(request, "Could not convert to Apache POST Request", ex);
         }
     };
 
-    static final AlchemyRequestMapper PUT = r ->
+    static final AlchemyRequestMapper PUT = request ->
     {
-        checkThat(r).is(notNullAndHasURL());
+        checkThat(request).is(notNullAndHasURL());
 
         try
         {
-            URL url = expandUrlFromRequest(r);
+            URL url = expandUrlFromRequest(request);
             HttpPut put = new HttpPut(url.toURI());
 
-            if (r.hasBody())
+            if (request.hasBody())
             {
-                HttpEntity entity = new StringEntity(r.getBody().toString(), UTF_8);
+                HttpEntity entity = new StringEntity(request.getBody().toString(), UTF_8);
                 put.setEntity(entity);
             }
 
@@ -126,22 +127,22 @@ interface AlchemyRequestMapper
         }
         catch (Exception ex)
         {
-            throw new AlchemyHttpException(r, "Could not convert to Apache PUT Request", ex);
+            throw new AlchemyHttpException(request, "Could not convert to Apache PUT Request", ex);
         }
     };
 
-    static final AlchemyRequestMapper DELETE = r ->
+    static final AlchemyRequestMapper DELETE = request ->
     {
-        checkThat(r).is(notNullAndHasURL());
+        checkThat(request).is(notNullAndHasURL());
 
         try
         {
-            URL url = expandUrlFromRequest(r);
-            if (r.hasBody())
+            URL url = expandUrlFromRequest(request);
+            if (request.hasBody())
             {
                 //Custom Delete that allows a Body in the request
                 HttpDeleteWithBody delete = new HttpDeleteWithBody(url.toURI());
-                HttpEntity entity = new StringEntity(r.getBody().toString(), UTF_8);
+                HttpEntity entity = new StringEntity(request.getBody().toString(), UTF_8);
                 delete.setEntity(entity);
                 return delete;
             }
@@ -153,10 +154,13 @@ interface AlchemyRequestMapper
         }
         catch (Exception ex)
         {
-            throw new AlchemyHttpException(r, "Could not convert to Apache DELETE Request", ex);
+            throw new AlchemyHttpException(request, "Could not convert to Apache DELETE Request", ex);
         }
     };
 
+    /**
+     * The stock {@linkplain HttpDelete Apache Delete Request} does not allow a Body. This one does.
+     */
     @Internal
     class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase
     {

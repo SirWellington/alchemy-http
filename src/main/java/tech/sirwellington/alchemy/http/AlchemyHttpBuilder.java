@@ -25,7 +25,6 @@ import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
-import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
@@ -57,7 +56,7 @@ public final class AlchemyHttpBuilder
     
     public AlchemyHttpBuilder usingApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
     {
-        checkThat(apacheHttpClient).is(Assertions.notNull());
+        checkThat(apacheHttpClient).is(notNull());
         
         this.apacheHttpClient = apacheHttpClient;
         return this;
@@ -74,7 +73,7 @@ public final class AlchemyHttpBuilder
      */
     public AlchemyHttpBuilder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
     {
-        checkThat(executor).is(Assertions.notNull());
+        checkThat(executor).is(notNull());
         
         this.executor = executor;
         return this;
@@ -117,7 +116,7 @@ public final class AlchemyHttpBuilder
         
         checkThat(executor)
                 .throwing(ex -> new IllegalStateException("missing Executor Service"))
-                .is(Assertions.notNull());
+                .is(notNull());
         
         AlchemyHttpStateMachine stateMachine = buildTheStateMachine();
         

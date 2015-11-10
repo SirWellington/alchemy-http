@@ -137,4 +137,18 @@ final class HttpAssertions
             }
         };
     }
+
+    static AlchemyAssertion<HttpResponse> okResponse()
+    {
+        return response ->
+        {
+            checkThat(response)
+                    .is(notNull());
+
+            if (!response.isOk())
+            {
+                throw new FailedAssertionException("Http Response not OK. Status Code: " + response.statusCode());
+            }
+        };
+    }
 }

@@ -101,7 +101,7 @@ public interface AlchemyRequest
          *
          * @throws IllegalArgumentException
          */
-        Step3 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
+        Step3 body(@NonEmpty String jsonString) throws IllegalArgumentException;
 
         /**
          * Includes a regular Java Value Object (or POJO) as the JSON Request Body.
@@ -207,7 +207,8 @@ public interface AlchemyRequest
         }
         
     }
-    
+
+    @FunctionalInterface
     interface OnSuccess<ResponseType>
     {
         
@@ -217,7 +218,8 @@ public interface AlchemyRequest
         {
         };
     }
-    
+
+    @FunctionalInterface
     interface OnFailure
     {
         
