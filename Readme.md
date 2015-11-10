@@ -127,7 +127,7 @@ http.go()
 ```
 #### Another way
 To be fair Java Lambdas aren't as clean as `Blocks` in other languages.
-It's often better to things somewhere else.
+It's often better to things somewhere else. Try using a method reference instead, for example:
 
 ```java
 class BaristaService
@@ -180,7 +180,7 @@ To use, simply add the following maven dependency.
 
 # Tested Against
 This library has been tested against in-house as well as production services.
-This is not a comprehensive list, but should give you some idea on compatability.
+This is not a comprehensive list, but should give you some idea of compatibility.
 
 ## Google APIs
 
