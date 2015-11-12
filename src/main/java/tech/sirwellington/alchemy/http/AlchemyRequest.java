@@ -184,13 +184,22 @@ public interface AlchemyRequest
             
             return at(new URL(url));
         }
-        
+
+        /**
+         * Calling this makes the Http Request Asynchrounous. A corresponding
+         * {@linkplain Step5#onFailure(tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure) Failure Callback} is
+         * required.
+         *
+         * @param onSuccessCallback Called when the response successfully completes.
+         */
         Step5<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
     
     interface Step5<ResponseType>
     {
-        
+        /**
+         * @param onFailureCallback Called when the request could not be completed successfully.
+         */
         Step6<ResponseType> onFailure(OnFailure onFailureCallback);
     }
     
