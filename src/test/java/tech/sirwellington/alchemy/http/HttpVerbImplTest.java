@@ -95,7 +95,7 @@ public class HttpVerbImplTest
 
     private HttpVerb instance;
 
-    private Gson gson = Constants.getDefaultGson();
+    private final Gson gson = Constants.getDefaultGson();
 
     @Before
     public void setUp() throws IOException
