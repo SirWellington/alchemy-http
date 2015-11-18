@@ -26,11 +26,11 @@ import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.not;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.assertions.Assertions.sameInstance;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.sameInstanceAs;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.lessThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringThatStartsWith;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringBeginningWith;
 
 /**
  *
@@ -64,7 +64,7 @@ final class HttpAssertions
         AlchemyAssertion<Class<Response>> notNull = Assertions.<Class<Response>>notNull();
 
         return notNull
-                .and(not(sameInstance(Void.class)));
+                .and(not(sameInstanceAs(Void.class)));
     }
 
     static AlchemyAssertion<HttpRequest> requestReady()
@@ -84,7 +84,7 @@ final class HttpAssertions
                     .is(notNull());
 
             checkThat(request.getUrl().getProtocol())
-                    .is(stringThatStartsWith("http"));
+                    .is(stringBeginningWith("http"));
         };
     }
 
