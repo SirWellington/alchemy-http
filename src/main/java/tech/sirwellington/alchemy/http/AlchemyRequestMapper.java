@@ -30,9 +30,12 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.http.HttpAssertions.notNullAndHasURL;
 
@@ -42,6 +45,7 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.notNullAndHasURL;
  *
  * @author SirWellington
  */
+@StrategyPattern(role = INTERFACE)
 @Internal
 interface AlchemyRequestMapper
 {
@@ -69,6 +73,7 @@ interface AlchemyRequestMapper
         }
     }
 
+    @StrategyPattern(role = CLIENT)
     static final AlchemyRequestMapper GET = request ->
     {
         checkThat(request).is(notNullAndHasURL());
