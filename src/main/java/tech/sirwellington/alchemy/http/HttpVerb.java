@@ -16,34 +16,36 @@
 package tech.sirwellington.alchemy.http;
 
 import org.apache.http.client.HttpClient;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 /**
  *
  * @author SirWellington
  */
-public interface HttpVerb
+@Internal
+interface HttpVerb
 {
 
     HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException;
 
     static HttpVerb get()
     {
-        return BaseVerb.using(AlchemyRequestMapper.GET);
+        return HttpVerbImpl.using(AlchemyRequestMapper.GET);
     }
 
     static HttpVerb post()
     {
-        return BaseVerb.using(AlchemyRequestMapper.POST);
+        return HttpVerbImpl.using(AlchemyRequestMapper.POST);
     }
 
     static HttpVerb put()
     {
-        return BaseVerb.using(AlchemyRequestMapper.PUT);
+        return HttpVerbImpl.using(AlchemyRequestMapper.PUT);
     }
 
     static HttpVerb delete()
     {
-        return BaseVerb.using(AlchemyRequestMapper.DELETE);
+        return HttpVerbImpl.using(AlchemyRequestMapper.DELETE);
     }
 }

@@ -30,7 +30,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
  *
@@ -75,9 +75,6 @@ public interface AlchemyHttp
     /**
      * Sets a default header on this instance. This default header will be included with every request.
      *
-     * @param key
-     * @param value
-     *
      * @return
      */
     AlchemyHttp usingDefaultHeader(@NonEmpty String key, String value);
@@ -114,8 +111,6 @@ public interface AlchemyHttp
      * Create an instance using the {@linkplain HttpClient Apache HTTP Client} provided.
      *
      * @param apacheHttpClient
-     *
-     * @return
      *
      * @throws IllegalArgumentException
      */

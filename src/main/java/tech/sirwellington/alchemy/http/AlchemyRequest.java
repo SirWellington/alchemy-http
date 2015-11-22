@@ -23,25 +23,36 @@ import java.net.URL;
 import java.util.Set;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
+import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 
 /**
  *
  *
  * @author SirWellington
- *
  */
+@FluidAPIDesign
+@StepMachineDesign
 public interface AlchemyRequest
 {
     
     interface Step1
     {
-        
-        default byte[] download(URL url) throws IllegalArgumentException, AlchemyHttpException
+        /**
+         * Directly download the content served by this URL.
+         *
+         * @param url The URL to download
+         *
+         * @return The raw binary served at the URL.
+         * @throws IllegalArgumentException
+         * @throws AlchemyHttpException
+         */
+        default byte[] download(@NonNull URL url) throws IllegalArgumentException, AlchemyHttpException
         {
             checkThat(url)
                     .usingMessage("missing URL")
@@ -55,34 +66,62 @@ public interface AlchemyRequest
                 throw new AlchemyHttpException("Could not download from URL" + url, ex);
             }
         }
-        
+
+        /**
+         * Begins a GET Request.
+         */
         Step3 get();
-        
+
+        /**
+         * Begins a POST Request.
+         */
         Step2 post();
-        
+
+        /**
+         * Begins a PUT Request.
+         */
         Step2 put();
-        
+
+        /**
+         * Begins a DELETE Request.
+         */
         Step2 delete();
         
     }
     
     interface Step2
     {
-        
+        /**
+         * No body will be included in the Request.
+         */
         Step3 nothing();
-        
-        Step3 body(@NonEmpty String jsonBody) throws IllegalArgumentException;
-        
+
+        /**
+         * Includes a JSON String as the body.
+         *
+         * @throws IllegalArgumentException
+         */
+        Step3 body(@NonEmpty String jsonString) throws IllegalArgumentException;
+
+        /**
+         * Includes a regular Java Value Object (or POJO) as the JSON Request Body.
+         *
+         * @throws IllegalArgumentException
+         */
         Step3 body(@NonNull Object pojo) throws IllegalArgumentException;
     }
     
     interface Step3
     {
-        
         Step3 usingHeader(String key, String value) throws IllegalArgumentException;
-        
+
         Step3 usingQueryParam(String name, String value) throws IllegalArgumentException;
-        
+
+        /**
+         * Adds the HTTP 'Accept' Header with multiple values.
+         *
+         * @throws IllegalArgumentException
+         */
         default Step3 accept(String mediaType, String... others) throws IllegalArgumentException
         {
             checkThat(mediaType).is(nonEmptyString());
@@ -102,12 +141,12 @@ public interface AlchemyRequest
             
             return usingHeader("Accept", accepts);
         }
-        
+
         default Step3 usingQueryParam(String name, Number value) throws IllegalArgumentException
         {
             return usingQueryParam(name, String.valueOf(value));
         }
-        
+
         default Step3 usingQueryParam(String name, boolean value) throws IllegalArgumentException
         {
             return usingQueryParam(name, String.valueOf(value));
@@ -145,13 +184,22 @@ public interface AlchemyRequest
             
             return at(new URL(url));
         }
-        
+
+        /**
+         * Calling this makes the Http Request Asynchrounous. A corresponding
+         * {@linkplain Step5#onFailure(tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure) Failure Callback} is
+         * required.
+         *
+         * @param onSuccessCallback Called when the response successfully completes.
+         */
         Step5<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
     
     interface Step5<ResponseType>
     {
-        
+        /**
+         * @param onFailureCallback Called when the request could not be completed successfully.
+         */
         Step6<ResponseType> onFailure(OnFailure onFailureCallback);
     }
     
@@ -168,7 +216,8 @@ public interface AlchemyRequest
         }
         
     }
-    
+
+    @FunctionalInterface
     interface OnSuccess<ResponseType>
     {
         
@@ -178,7 +227,8 @@ public interface AlchemyRequest
         {
         };
     }
-    
+
+    @FunctionalInterface
     interface OnFailure
     {
         

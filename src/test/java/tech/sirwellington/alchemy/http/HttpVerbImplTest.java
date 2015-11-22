@@ -66,7 +66,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  */
 @RunWith(AlchemyTestRunner.class)
 @Repeat(100)
-public class BaseVerbTest
+public class HttpVerbImplTest
 {
 
     @Mock
@@ -95,12 +95,12 @@ public class BaseVerbTest
 
     private HttpVerb instance;
 
-    private Gson gson = Constants.getDefaultGson();
+    private final Gson gson = Constants.getDefaultGson();
 
     @Before
     public void setUp() throws IOException
     {
-        instance = new BaseVerb(requestMapper);
+        instance = new HttpVerbImpl(requestMapper);
         verifyZeroInteractions(requestMapper);
 
         when(requestMapper.convertToApacheRequest(request))
@@ -144,10 +144,10 @@ public class BaseVerbTest
     @Test
     public void testUsing()
     {
-        BaseVerb result = BaseVerb.using(requestMapper);
+        HttpVerbImpl result = HttpVerbImpl.using(requestMapper);
         assertThat(result, notNullValue());
 
-        assertThrows(() -> BaseVerb.using(null))
+        assertThrows(() -> HttpVerbImpl.using(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

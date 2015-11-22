@@ -36,7 +36,7 @@ import static java.util.Collections.unmodifiableMap;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validHttpStatusCode;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 

@@ -36,23 +36,26 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
 
+import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validContentType;
 
 /**
  *
  * @author SirWellington
  */
+@StrategyPattern(role = CLIENT)
 @Internal
-final class BaseVerb implements HttpVerb
+final class HttpVerbImpl implements HttpVerb
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger(BaseVerb.class);
+    private final static Logger LOG = LoggerFactory.getLogger(HttpVerbImpl.class);
 
     private final Gson gson = new GsonBuilder()
             .setDateFormat(Constants.DATE_FORMAT)
@@ -60,16 +63,16 @@ final class BaseVerb implements HttpVerb
 
     private final AlchemyRequestMapper requestMapper;
 
-    BaseVerb(AlchemyRequestMapper requestMapper)
+    HttpVerbImpl(AlchemyRequestMapper requestMapper)
     {
         checkThat(requestMapper).is(notNull());
 
         this.requestMapper = requestMapper;
     }
 
-    static BaseVerb using(AlchemyRequestMapper requestMapper)
+    static HttpVerbImpl using(AlchemyRequestMapper requestMapper)
     {
-        return new BaseVerb(requestMapper);
+        return new HttpVerbImpl(requestMapper);
     }
 
     @Override

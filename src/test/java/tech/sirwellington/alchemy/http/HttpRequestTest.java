@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
 import java.util.Collections;
@@ -36,77 +37,78 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 @Repeat(50)
 public class HttpRequestTest
 {
+    
     private TestRequest testRequest;
-
+    
     private HttpRequest instance;
-
+    
     @Before
     public void setUp() throws Exception
     {
         testRequest = new TestRequest();
         instance = HttpRequest.copyOf(testRequest);
     }
-
+    
     @Test
     public void testGetRequestHeaders()
     {
         assertThat(instance.getRequestHeaders(), is(testRequest.requestHeaders));
     }
-
+    
     @Test
     public void testGetQueryParams()
     {
         assertThat(instance.getQueryParams(), is(testRequest.queryParams));
     }
-
+    
     @Test
     public void testHasQueryParams()
     {
         testRequest.queryParams = null;
         instance = HttpRequest.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(false));
-
+        
         testRequest.queryParams = Collections.emptyMap();
         instance = HttpRequest.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(false));
-
+        
         testRequest.queryParams = mapOf(alphabeticString(), alphabeticString(), 10);
         instance = HttpRequest.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(true));
-
+        
     }
-
+    
     @Test
     public void testGetUrl()
     {
         assertThat(instance.getUrl(), is(testRequest.getUrl()));
     }
-
+    
     @Test
     public void testGetBody()
     {
         assertThat(instance.getBody(), is(testRequest.body));
     }
-
+    
     @Test
     public void testGetVerb()
     {
         assertThat(instance.getVerb(), is(testRequest.getVerb()));
     }
-
+    
     @Test
     public void testHasBody()
     {
         assertThat(instance.getBody(), is(testRequest.body));
     }
-
+    
     @Test
     public void testEquals()
     {
         assertThat(instance.equals(testRequest), is(true));
         assertThat(testRequest.equals(instance), is(true));
     }
-
+    
     @Test
     public void testCopyOf()
     {
@@ -115,5 +117,11 @@ public class HttpRequestTest
         assertThat(result, is(instance));
         assertThat(instance, is(result));
     }
-
+    
+    @Test
+    public void testFrom()
+    {
+        HttpRequest.Builder result = HttpRequest.Builder.from(null);
+        assertThat(result, notNullValue());
+    }
 }

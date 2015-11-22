@@ -26,7 +26,8 @@ import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.http.HttpAssertions.okResponse;
 import static tech.sirwellington.alchemy.http.HttpAssertions.requestReady;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
@@ -134,7 +135,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
 
         HttpVerb verb = request.getVerb();
 
-        HttpResponse response = null;
+        HttpResponse response;
         try
         {
             response = verb.execute(apacheHttpClient, request);
@@ -150,18 +151,15 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             throw new AlchemyHttpException(request, ex);
         }
 
-        if (response == null)
-        {
-            LOG.error("HTTP Verb {} returned null response", verb);
-            throw new AlchemyHttpException(request, "HTTP Verb returned null response");
-        }
+        checkThat(response)
+                .throwing(ex -> new AlchemyHttpException(request, "HTTP Verb returned null response"))
+                .is(notNull());
+
+        checkThat(response)
+                .throwing(ex -> new AlchemyHttpException(request, response, "Http Response not OK. Status Code: " + response.statusCode()))
+                .is(okResponse());
 
         LOG.debug("HTTP Request {} successfully executed: {}", request, response);
-
-        if (!response.isOk())
-        {
-            throw new AlchemyHttpException(request, response, "Http Response not OK. Status Code: " + response.statusCode());
-        }
 
         if (classOfResponseType == HttpResponse.class)
         {

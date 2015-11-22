@@ -20,7 +20,7 @@ import java.util.Objects;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.DateGenerators.beforeNow;
+import static tech.sirwellington.alchemy.generator.DateGenerators.pastDates;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
@@ -52,7 +52,7 @@ class TestPojo
 
         pojo.firstName = one(alphabeticString());
         pojo.lastName = one(hexadecimalString(10));
-        pojo.birthday = one(beforeNow());
+        pojo.birthday = one(pastDates());
         pojo.address = one(strings(50));
         pojo.age = one(smallPositiveIntegers());
 

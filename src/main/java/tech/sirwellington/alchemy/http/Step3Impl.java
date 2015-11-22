@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
-import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
-import static tech.sirwellington.alchemy.arguments.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
 /**
@@ -39,7 +39,6 @@ final class Step3Impl implements AlchemyRequest.Step3
     private final static Logger LOG = LoggerFactory.getLogger(Step3Impl.class);
 
     private HttpRequest request;
-
     private final AlchemyHttpStateMachine stateMachine;
 
     Step3Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request)
