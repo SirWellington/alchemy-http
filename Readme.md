@@ -6,6 +6,32 @@ Alchemy HTTP
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-http.svg)](https://travis-ci.org/SirWellington/alchemy-http)
 
+- [Purpose](#purpose)
+  - [Javascript](#javascript)
+  - [Ruby](#ruby)
+  - [Java](#java)
+- [The Alchemy Way](#the-alchemy-way)
+  - [The Async Way](#the-async-way)
+    - [Another way](#another-way)
+- [Download](#download)
+  - [Release](#release)
+  - [Snapshot](#snapshot)
+- [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-http)
+- [Tested Against](#tested-against)
+  - [Google APIs](#google-apis)
+    - [Geocoding](#geocoding)
+    - [Places API](#places-api)
+  - [Mashape APIs](#mashape-apis)
+  - [More on the way...](#more-on-the-way)
+- [Requirements](#requirements)
+- [Building](#building)
+- [Feature Requests](#feature-requests)
+- [Release Notes](#release-notes)
+  - [1.1](#11)
+  - [1.0](#10)
+- [License](#license)
+
+
 # Purpose
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
 
@@ -13,12 +39,12 @@ Why can't making a REST call in Java be as easy and fluid as it is for other lan
 
 Making REST calls in other languages is **FAR SIMPLER!**
 
-### Javascript
+## Javascript
 In JavaScript:
 
 ```javascript
 $.ajax({
-	   url: "http://aroma.coffee/placeOrder",
+	   url: "http://aroma.tech/placeOrder",
 	   type: 'POST',
 	   data: { "size": "large",
 	   		"type": "black",
@@ -29,14 +55,14 @@ $.ajax({
    });
 ```
 
-### Ruby
+## Ruby
 In Ruby:
 
 ```ruby
-uri = URI('http://aroma.coffee/orders?orderNumber=99')
+uri = URI('http://aroma.tech/orders?orderNumber=99')
 Net::HTTP.get(uri) # => String
 ```
-### Java
+## Java
 Meanwhile, back in Java land...
 ```java
 
@@ -49,7 +75,7 @@ orderRequest.put("type", "black");
 orderRequest.put("amount", 3);
 
 //Set up the request method
-HttpPost post = new HttpPost("http://aroma.coffee/orders");
+HttpPost post = new HttpPost("http://aroma.tech/orders");
 
 //Stick the body in the body
 Entity body = new StringEntity(orderRequest.toString(), "application/json");
@@ -98,19 +124,19 @@ All that *just to get some damn JSON data*!
 Come on Java! No wonder they hate us.
 We can do better than that.
 
-## The Alchemy Way
+# The Alchemy Way
 ```java
 AlchemyHttp http = AlchemyHttp.newDefaultInstance();
 
 Coffee myCoffee = http.go()
 					  .get()
 					  .expecting(Coffee.class)
-					  .at("http://aroma.coffee/orders?orderNumber=99");
+					  .at("http://aroma.tech/orders?orderNumber=99");
 //Wait...that's it?
 ```
 **That's it!**
 
-### The Async Way
+## The Async Way
 
 There may be times when you don't care to wait for an immediate response from the service. An Async response would actually make a lot more sense.
 
@@ -123,9 +149,9 @@ http.go()
 	.expecting(Coffee.class)
 	.onSuccess(c -> LOG.warn("What took you so long to get my cofee! {}", c))
 	.onFailure(ex -> LOG.error("What can I do without coffee?", ex))
-	.at("http://aroma.coffee/orders");
+	.at("http://aroma.tech/orders");
 ```
-#### Another way
+### Another way
 To be fair Java Lambdas aren't as clean as `Blocks` in other languages.
 It's often better to things somewhere else. Try using a method reference instead, for example:
 
@@ -142,7 +168,7 @@ class BaristaService
 			.expecting(Coffee.class)
 			.onSuccess(coffee -> customer.accept(coffee))
 			.onFailure(this::handleOrderIssue)
-			.at("http://aroma.coffee/orders");
+			.at("http://aroma.tech/orders");
 	}
 
 	private void handleOrderIssue(AlchemyException ex)
@@ -215,6 +241,10 @@ To build, just run a `mvn clean install` to compile and install to your local ma
 Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http/issues).**
 
 # Release Notes
+
+## 1.1
++ Dependency Updates
++ Bugfixes and Improvements
 
 ## 1.0
 + Initial Public Release
