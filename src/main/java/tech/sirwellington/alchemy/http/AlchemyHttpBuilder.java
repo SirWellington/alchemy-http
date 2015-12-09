@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
@@ -38,8 +39,8 @@ import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
 @BuilderPattern(role = BuilderPattern.Role.BUILDER)
 public final class AlchemyHttpBuilder
 {
-    
-    private HttpClient apacheHttpClient;
+    private static final HttpClient DEFAULT_APACHE_CLIENT = HttpClientBuilder.create().build();
+    private HttpClient apacheHttpClient = DEFAULT_APACHE_CLIENT;
     private ExecutorService executor = MoreExecutors.newDirectExecutorService();
 
     //Copy from DEFAULT HEADERS
