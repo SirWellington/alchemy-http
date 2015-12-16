@@ -177,19 +177,17 @@ public class AlchemyHttpBuilderTest
     @Test
     public void testBuildEdgeCases()
     {
-        //Missing everything
+        //Nothing is set
         instance = newInstance();
-        assertThrows(() -> instance.build())
-                .isInstanceOf(IllegalStateException.class);
+        instance.build();
 
         //No Executor Service set
         instance = newInstance().usingApacheHttpClient(apacheHttpClient);
         instance.build();
 
-        //Missing Apache Client
+        //No Apache Client set
         instance = newInstance().usingExecutorService(executor);
-        assertThrows(() -> instance.build())
-                .isInstanceOf(IllegalStateException.class);
+        instance.build();
     }
 
     @Test

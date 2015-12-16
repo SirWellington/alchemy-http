@@ -111,6 +111,7 @@ public interface AlchemyHttp
      * Create an instance using the {@linkplain HttpClient Apache HTTP Client} provided.
      *
      * @param apacheHttpClient
+     * @return 
      *
      * @throws IllegalArgumentException
      */
