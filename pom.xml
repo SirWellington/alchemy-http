@@ -20,6 +20,12 @@
         Makes it dead-easy to call RESTful Web Services in Java.
         It is designed for interactions with APIs written in REST and JSON.
     </description>
+    
+    <scm>
+        <connection>scm:git:git@github.com:SirWellington/alchemy-http.git</connection>
+        <developerConnection>scm:git:git@github.com:SirWellington/alchemy-http.git</developerConnection>
+        <url>git@github.com:SirWellington/alchemy-http.git</url>
+    </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
