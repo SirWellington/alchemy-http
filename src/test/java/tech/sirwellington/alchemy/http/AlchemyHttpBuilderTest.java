@@ -118,8 +118,9 @@ public class AlchemyHttpBuilderTest
     @Test
     public void testUsingDefaultHeaders()
     {
-        Map<String, String> headers = mapOf(alphabeticString(),                                               asString(smallPositiveIntegers()),
-                                               100);
+        Map<String, String> headers = mapOf(alphabeticString(), 
+                                            asString(smallPositiveIntegers()),
+                                            100);
 
         AlchemyHttpBuilder result = instance.usingDefaultHeaders(headers);
         assertThat(result, notNullValue());
