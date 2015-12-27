@@ -20,7 +20,7 @@
         Makes it dead-easy to call RESTful Web Services in Java.
         It is designed for interactions with APIs written in REST and JSON.
     </description>
-    
+
     <scm>
         <connection>scm:git:git@github.com:SirWellington/alchemy-http.git</connection>
         <developerConnection>scm:git:git@github.com:SirWellington/alchemy-http.git</developerConnection>
@@ -41,7 +41,9 @@
 
     <dependencies>
 
+        <!--=======================-->
         <!--UNIT TESTING-->
+        <!--=======================-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -59,10 +61,11 @@
             <artifactId>hamcrest-library</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--======================-->
-        
-        
+
+
+        <!--=======================-->
         <!--ALCHEMY-->
+        <!--=======================-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-arguments</artifactId>
@@ -88,45 +91,47 @@
             <artifactId>alchemy-annotations</artifactId>
             <version>1.3.1</version>
         </dependency>
-        <!--======================-->
 
 
+        <!--=======================-->
         <!--LOGGING-->
+        <!--=======================-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
         </dependency>
-        <!--======================-->
 
 
+        <!--=======================-->
         <!--GSON-->
+        <!--=======================-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-        <!--======================-->
 
 
+        <!--=======================-->
         <!--APACHE HTTP-->
+        <!--=======================-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-        <!--======================-->
 
 
+        <!--=======================-->
         <!--GUAVA-->
+        <!--=======================-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <!--======================-->
-
 
     </dependencies>
 
