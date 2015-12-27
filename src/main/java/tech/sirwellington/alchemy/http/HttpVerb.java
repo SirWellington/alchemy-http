@@ -24,7 +24,7 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
  * @author SirWellington
  */
 @Internal
-interface HttpVerb
+public interface HttpVerb
 {
 
     HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException;
