@@ -43,6 +43,7 @@ import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static java.lang.System.currentTimeMillis;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -51,6 +52,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
@@ -313,6 +315,35 @@ public class HttpVerbImplTest
         JsonElement asJSON = result.body();
         assertThat(asJSON.isJsonPrimitive(), is(true));
         assertThat(asJSON.getAsJsonPrimitive().isString(), is(true));
+    }
+    
+    @Test
+    public void testWhenDuplicateValuesInAHeader()
+    {
+        String headerName = one(alphabeticString());
+        List<String> headerValues = listOf(alphabeticString(), 5);
+        
+        List<Header> headers = Lists.newArrayList();
+        
+        for(String value : headerValues)
+        {
+            headers.add(new BasicHeader(headerName, value));
+        }
+        
+        Header[] headerArray = headers.toArray(new Header[0]);
+        
+        when(apacheResponse.getAllHeaders())
+            .thenReturn(headerArray);
+        
+        HttpResponse response = instance.execute(apacheClient, request);
+        
+        Map<String, String> responseHeaders = response.responseHeaders();
+        assertThat(responseHeaders, notNullValue());
+        assertThat(responseHeaders.containsKey(headerName), is(true));
+        
+        String resultValue = responseHeaders.get(headerName);
+        headerValues.forEach(value -> assertThat(resultValue, containsString(value)));
+        
     }
 
     @DontRepeat

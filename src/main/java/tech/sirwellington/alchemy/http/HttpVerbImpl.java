@@ -18,6 +18,7 @@ package tech.sirwellington.alchemy.http;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,10 +26,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
@@ -182,9 +181,33 @@ final class HttpVerbImpl implements HttpVerb
             return Collections.emptyMap();
         }
 
-        return Arrays.asList(apacheResponse.getAllHeaders())
-                .stream()
-                .collect(Collectors.toMap(Header::getName, Header::getValue));
+        Map<String,String> headers = Maps.newHashMap();
+        
+        for(Header header : apacheResponse.getAllHeaders())
+        {
+            String headerName = header.getName();
+            String headerValue = header.getValue();
+            
+            String existingValue = headers.get(headerName);
+            
+            if(!Strings.isNullOrEmpty(existingValue))
+            {
+                existingValue = joinValues(existingValue, headerValue);
+            }
+            else
+            {
+                existingValue = headerValue;
+            }
+            
+            headers.put(headerName, existingValue);
+        }
+        
+        return headers;
+    }
+
+    private String joinValues(String first, String second)
+    {
+        return String.format("%s, %s", first, second);
     }
 
 }
