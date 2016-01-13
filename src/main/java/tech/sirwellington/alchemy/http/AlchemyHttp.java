@@ -22,7 +22,8 @@ import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
@@ -75,16 +76,19 @@ public interface AlchemyHttp
     /**
      * Sets a default header on this instance. This default header will be included with every request.
      *
+     * @param key
+     * @param value
+     * 
      * @return
      */
-    AlchemyHttp usingDefaultHeader(@NonEmpty String key, String value);
+    AlchemyHttp usingDefaultHeader(@NonEmpty String key, @Optional String value);
 
     /**
      * Get the Default Headers used by this instance.
      *
      * @return Headers, never {@code null}.
      */
-    @NonNull
+    @Required
     Map<String, String> getDefaultHeaders();
 
     /**
@@ -115,7 +119,7 @@ public interface AlchemyHttp
      *
      * @throws IllegalArgumentException
      */
-    static AlchemyHttp newInstanceWithApacheHttpClient(@NonNull HttpClient apacheHttpClient) throws IllegalArgumentException
+    static AlchemyHttp newInstanceWithApacheHttpClient(@Required HttpClient apacheHttpClient) throws IllegalArgumentException
     {
         return AlchemyHttpBuilder.newInstance()
                 .usingApacheHttpClient(apacheHttpClient)
