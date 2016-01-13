@@ -24,9 +24,11 @@ import java.util.concurrent.Executors;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
+import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
@@ -36,7 +38,7 @@ import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
  *
  * @author SirWellington
  */
-@BuilderPattern(role = BuilderPattern.Role.BUILDER)
+@BuilderPattern(role = BUILDER)
 public final class AlchemyHttpBuilder
 {
     private static final HttpClient DEFAULT_APACHE_CLIENT = HttpClientBuilder.create().build();
@@ -55,7 +57,7 @@ public final class AlchemyHttpBuilder
     {
     }
     
-    public AlchemyHttpBuilder usingApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingApacheHttpClient(@Required HttpClient apacheHttpClient) throws IllegalArgumentException
     {
         checkThat(apacheHttpClient).is(notNull());
         
@@ -72,7 +74,7 @@ public final class AlchemyHttpBuilder
      * @return
      * @throws IllegalArgumentException
      */
-    public AlchemyHttpBuilder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingExecutorService(@Required ExecutorService executor) throws IllegalArgumentException
     {
         checkThat(executor).is(notNull());
         
@@ -90,7 +92,7 @@ public final class AlchemyHttpBuilder
         return usingExecutorService(MoreExecutors.newDirectExecutorService());
     }
     
-    public AlchemyHttpBuilder usingDefaultHeaders(@NonNull Map<String, String> defaultHeaders) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingDefaultHeaders(@Required Map<String, String> defaultHeaders) throws IllegalArgumentException
     {
         checkThat(defaultHeaders).is(notNull());
         
@@ -99,7 +101,7 @@ public final class AlchemyHttpBuilder
         return this;
     }
     
-    public AlchemyHttpBuilder usingDefaultHeader(@NonEmpty String key, String value) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingDefaultHeader(@NonEmpty String key, @Optional String value) throws IllegalArgumentException
     {
         checkThat(key)
                 .usingMessage("missing key")
