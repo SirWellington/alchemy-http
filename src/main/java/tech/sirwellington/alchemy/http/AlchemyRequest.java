@@ -22,7 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
@@ -52,7 +52,7 @@ public interface AlchemyRequest
          * @throws IllegalArgumentException
          * @throws AlchemyHttpException
          */
-        default byte[] download(@NonNull URL url) throws IllegalArgumentException, AlchemyHttpException
+        default byte[] download(@Required URL url) throws IllegalArgumentException, AlchemyHttpException
         {
             checkThat(url)
                     .usingMessage("missing URL")
@@ -69,21 +69,25 @@ public interface AlchemyRequest
 
         /**
          * Begins a GET Request.
+         * @return 
          */
         Step3 get();
 
         /**
          * Begins a POST Request.
+         * @return 
          */
         Step2 post();
 
         /**
          * Begins a PUT Request.
+         * @return 
          */
         Step2 put();
 
         /**
          * Begins a DELETE Request.
+         * @return 
          */
         Step2 delete();
         
@@ -99,6 +103,7 @@ public interface AlchemyRequest
         /**
          * Includes a JSON String as the body.
          *
+         * @param jsonString
          * @throws IllegalArgumentException
          */
         Step3 body(@NonEmpty String jsonString) throws IllegalArgumentException;
@@ -106,9 +111,12 @@ public interface AlchemyRequest
         /**
          * Includes a regular Java Value Object (or POJO) as the JSON Request Body.
          *
+         * @param pojo
+         * 
+         * @return 
          * @throws IllegalArgumentException
          */
-        Step3 body(@NonNull Object pojo) throws IllegalArgumentException;
+        Step3 body(@Required Object pojo) throws IllegalArgumentException;
     }
     
     interface Step3
@@ -120,6 +128,10 @@ public interface AlchemyRequest
         /**
          * Adds the HTTP 'Accept' Header with multiple values.
          *
+         * @param mediaType
+         * @param others
+         * 
+         * @return 
          * @throws IllegalArgumentException
          */
         default Step3 accept(String mediaType, String... others) throws IllegalArgumentException
@@ -191,6 +203,8 @@ public interface AlchemyRequest
          * required.
          *
          * @param onSuccessCallback Called when the response successfully completes.
+         * 
+         * @return 
          */
         Step5<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
@@ -199,6 +213,8 @@ public interface AlchemyRequest
     {
         /**
          * @param onFailureCallback Called when the request could not be completed successfully.
+         * 
+         * @return 
          */
         Step6<ResponseType> onFailure(OnFailure onFailureCallback);
     }
