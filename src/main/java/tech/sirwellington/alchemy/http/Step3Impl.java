@@ -21,8 +21,10 @@ import java.net.URL;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
+import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
@@ -33,6 +35,7 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
  *
  * @author SirWellington
  */
+@StepMachineDesign(role = STEP)
 final class Step3Impl implements AlchemyRequest.Step3
 {
 

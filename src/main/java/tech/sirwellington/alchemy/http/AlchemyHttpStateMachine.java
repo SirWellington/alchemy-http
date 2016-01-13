@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step1;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step2;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step3;
@@ -28,6 +29,7 @@ import tech.sirwellington.alchemy.http.AlchemyRequest.Step5;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step6;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
+import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
@@ -37,6 +39,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
  * @author SirWellington
  */
 @Internal
+@StepMachineDesign(role = MACHINE)
 interface AlchemyHttpStateMachine
 {
 
