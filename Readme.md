@@ -4,7 +4,7 @@ Alchemy HTTP
 
 ## "REST without the MESS"
 
-[![Build Status](https://travis-ci.org/SirWellington/alchemy-http.svg)](https://travis-ci.org/SirWellington/alchemy-http)
+[![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP/)
 
 - [Purpose](#purpose)
   - [Javascript](#javascript)
