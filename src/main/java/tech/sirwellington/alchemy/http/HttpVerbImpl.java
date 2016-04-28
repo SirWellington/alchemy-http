@@ -25,12 +25,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,6 @@ import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.http.HttpAssertions.validContentType;
 
 /**
  *
@@ -120,6 +121,21 @@ final class HttpVerbImpl implements HttpVerb
             LOG.error("Could not parse Response from Request {}", request, ex);
             throw new OperationFailedException(request, ex);
         }
+        finally
+        {
+            if (apacheResponse instanceof CloseableHttpResponse)
+            {
+                try
+                {
+                    ((CloseableHttpResponse) apacheResponse).close();
+                }
+                catch (IOException ex)
+                {
+                    LOG.error("Failed to close HTTP Response.", ex);
+                    throw new OperationFailedException(request, "Could not close Http Response");
+                }
+            }
+        }
 
         HttpResponse response = HttpResponse.Builder.newInstance()
                 .withResponseBody(json)
@@ -141,10 +157,11 @@ final class HttpVerbImpl implements HttpVerb
         HttpEntity entity = apacheResponse.getEntity();
 
         String contentType = entity.getContentType().getValue();
-        checkThat(contentType)
-                .throwing(JsonException.class)
-                .is(validContentType());
-
+        
+        /*
+         * We used to care what the content type was, and had a check for it here.
+         * But perhaps it's better if we don't care what the content type is, as long as we can read it as a String.
+         */
         String responseString = null;
         try (final InputStream istream = entity.getContent())
         {

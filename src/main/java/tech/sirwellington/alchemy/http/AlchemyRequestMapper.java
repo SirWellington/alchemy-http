@@ -98,7 +98,7 @@ interface AlchemyRequestMapper
         {
             URL url = expandUrlFromRequest(request);
             HttpPost post = new HttpPost(url.toURI());
-
+            
             if (request.hasBody())
             {
                 HttpEntity entity = new StringEntity(request.getBody().toString(), UTF_8);
