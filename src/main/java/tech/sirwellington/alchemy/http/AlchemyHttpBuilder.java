@@ -21,13 +21,16 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
@@ -41,7 +44,8 @@ import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
 @BuilderPattern(role = BUILDER)
 public final class AlchemyHttpBuilder
 {
-    private static final HttpClient DEFAULT_APACHE_CLIENT = HttpClientBuilder.create().build();
+    private static final HttpClient DEFAULT_APACHE_CLIENT = createDefaultApacheClient();
+    
     private HttpClient apacheHttpClient = DEFAULT_APACHE_CLIENT;
     private ExecutorService executor = MoreExecutors.newDirectExecutorService();
 
@@ -133,5 +137,26 @@ public final class AlchemyHttpBuilder
                 .usingExecutorService(executor)
                 .build();
     }
-    
+
+    private static HttpClient createDefaultApacheClient()
+    {
+        return createDefaultApacheClient(45, SECONDS);
+    }
+
+    private static HttpClient createDefaultApacheClient(int timeout, TimeUnit timeUnit)
+    {
+        int actualTimeout = (int) TimeUnit.SECONDS.toMillis(timeout);
+
+        //I really hate that they don't specify the expected Unit for the Timeout.
+        RequestConfig config = RequestConfig.custom()
+            .setSocketTimeout(actualTimeout)
+            .setConnectTimeout(actualTimeout)
+            .setConnectionRequestTimeout(actualTimeout)
+            .build();
+
+        return HttpClientBuilder.create()
+            .setDefaultRequestConfig(config)
+            .build();
+    }
+
 }
