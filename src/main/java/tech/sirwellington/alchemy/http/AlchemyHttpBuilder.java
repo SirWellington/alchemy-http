@@ -27,6 +27,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Positive;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
@@ -34,6 +35,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveInteger;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
 
@@ -83,6 +85,35 @@ public final class AlchemyHttpBuilder
         checkThat(executor).is(notNull());
         
         this.executor = executor;
+        return this;
+    }
+    
+    /**
+     * Sets the Timeout to be used for each request.
+     * 
+     * Note that this overrides any previously set 
+     * {@linkplain #usingApacheHttpClient(org.apache.http.client.HttpClient) Apache Http Clients}.
+     * <p>
+     * If you wish to use a custom HTTP Client and a default timeout, then use a {@link RequestConfig} and set it
+     * on your custom {@linkplain HttpClient Client}.
+     * 
+     * @param timeout Must be positive.
+     * @param timeUnit The Unit of Time to use for the timeout.
+     * 
+     * @return 
+     */
+    public AlchemyHttpBuilder usingTimeout(@Positive int timeout, TimeUnit timeUnit)
+    {
+        checkThat(timeout)
+            .usingMessage("timeout must be > 0")
+            .is(positiveInteger());
+        
+        checkThat(timeUnit)
+            .usingMessage("missing timeunit")
+            .is(notNull());
+        
+        this.apacheHttpClient = createDefaultApacheClient(timeout, timeUnit);
+        
         return this;
     }
     

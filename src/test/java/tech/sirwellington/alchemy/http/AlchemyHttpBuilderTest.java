@@ -19,6 +19,7 @@ package tech.sirwellington.alchemy.http;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.client.HttpClient;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -33,6 +34,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.asString;
@@ -87,6 +90,30 @@ public class AlchemyHttpBuilderTest
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
+    
+    @Repeat(50)
+    @Test
+    public void testUsingTimeout()
+    {
+        int socketTimeout = one(integers(15, 100));
+        AlchemyHttpBuilder result = instance.usingTimeout(socketTimeout, TimeUnit.SECONDS);
+        assertThat(result, notNullValue());
+    }
+    
+    @Repeat(10)
+    @Test
+    public void testUsingTimeoutWithBadArgs()
+    {
+        int negativeNumber = one(negativeIntegers());
+        
+        assertThrows(() -> instance.usingTimeout(negativeNumber, TimeUnit.SECONDS))
+            .isInstanceOf(IllegalArgumentException.class);
+        
+        int positiveNumber = one(integers(10, 60));
+        assertThrows(() -> instance.usingTimeout(positiveNumber, null))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+    
 
     @Repeat(100)
     @Test
@@ -205,5 +232,6 @@ public class AlchemyHttpBuilderTest
         assertThat(headers, Matchers.hasKey("Content-Type"));
 
     }
+
 
 }
