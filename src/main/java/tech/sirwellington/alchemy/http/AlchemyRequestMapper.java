@@ -29,7 +29,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import tech.sirwellington.alchemy.annotations.access.Internal;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
@@ -50,10 +50,10 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.notNullAndHasURL;
 interface AlchemyRequestMapper
 {
 
-    HttpUriRequest convertToApacheRequest(@NonNull HttpRequest alchemyRequest) throws AlchemyHttpException;
+    HttpUriRequest convertToApacheRequest(@Required HttpRequest alchemyRequest) throws AlchemyHttpException;
 
     @Internal
-    static URL expandUrlFromRequest(@NonNull HttpRequest request) throws URISyntaxException, MalformedURLException
+    static URL expandUrlFromRequest(@Required HttpRequest request) throws URISyntaxException, MalformedURLException
     {
         checkThat(request).is(notNullAndHasURL());
 
