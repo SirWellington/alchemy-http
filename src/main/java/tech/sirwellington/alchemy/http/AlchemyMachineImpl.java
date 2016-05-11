@@ -21,10 +21,12 @@ import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
+import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.HttpAssertions.okResponse;
@@ -36,6 +38,7 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
  * @author SirWellington
  */
 @Internal
+@StepMachineDesign(role = MACHINE)
 final class AlchemyMachineImpl implements AlchemyHttpStateMachine
 {
 
@@ -204,8 +207,10 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
                 response = executeSync(request, classOfResponseType);
 
                 checkThat(response)
-                        .throwing(ex -> new IllegalStateException("Received unexpected null response"))
-                        .is(notNull());
+                    .throwing(IllegalStateException.class)
+                    .usingMessage("Received unexpected null response")
+                    .is(notNull());
+                
             }
             catch (AlchemyHttpException ex)
             {

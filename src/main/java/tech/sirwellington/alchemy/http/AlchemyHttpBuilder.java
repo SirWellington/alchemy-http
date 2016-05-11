@@ -21,14 +21,21 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Positive;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveInteger;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
 
@@ -36,10 +43,11 @@ import static tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS;
  *
  * @author SirWellington
  */
-@BuilderPattern(role = BuilderPattern.Role.BUILDER)
+@BuilderPattern(role = BUILDER)
 public final class AlchemyHttpBuilder
 {
-    private static final HttpClient DEFAULT_APACHE_CLIENT = HttpClientBuilder.create().build();
+    private static final HttpClient DEFAULT_APACHE_CLIENT = createDefaultApacheClient();
+    
     private HttpClient apacheHttpClient = DEFAULT_APACHE_CLIENT;
     private ExecutorService executor = MoreExecutors.newDirectExecutorService();
 
@@ -55,7 +63,7 @@ public final class AlchemyHttpBuilder
     {
     }
     
-    public AlchemyHttpBuilder usingApacheHttpClient(HttpClient apacheHttpClient) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingApacheHttpClient(@Required HttpClient apacheHttpClient) throws IllegalArgumentException
     {
         checkThat(apacheHttpClient).is(notNull());
         
@@ -72,11 +80,40 @@ public final class AlchemyHttpBuilder
      * @return
      * @throws IllegalArgumentException
      */
-    public AlchemyHttpBuilder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingExecutorService(@Required ExecutorService executor) throws IllegalArgumentException
     {
         checkThat(executor).is(notNull());
         
         this.executor = executor;
+        return this;
+    }
+    
+    /**
+     * Sets the Timeout to be used for each request.
+     * 
+     * Note that this overrides any previously set 
+     * {@linkplain #usingApacheHttpClient(org.apache.http.client.HttpClient) Apache Http Clients}.
+     * <p>
+     * If you wish to use a custom HTTP Client and a default timeout, then use a {@link RequestConfig} and set it
+     * on your custom {@linkplain HttpClient Client}.
+     * 
+     * @param timeout Must be positive.
+     * @param timeUnit The Unit of Time to use for the timeout.
+     * 
+     * @return 
+     */
+    public AlchemyHttpBuilder usingTimeout(@Positive int timeout, TimeUnit timeUnit)
+    {
+        checkThat(timeout)
+            .usingMessage("timeout must be > 0")
+            .is(positiveInteger());
+        
+        checkThat(timeUnit)
+            .usingMessage("missing timeunit")
+            .is(notNull());
+        
+        this.apacheHttpClient = createDefaultApacheClient(timeout, timeUnit);
+        
         return this;
     }
     
@@ -90,7 +127,7 @@ public final class AlchemyHttpBuilder
         return usingExecutorService(MoreExecutors.newDirectExecutorService());
     }
     
-    public AlchemyHttpBuilder usingDefaultHeaders(@NonNull Map<String, String> defaultHeaders) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingDefaultHeaders(@Required Map<String, String> defaultHeaders) throws IllegalArgumentException
     {
         checkThat(defaultHeaders).is(notNull());
         
@@ -99,7 +136,7 @@ public final class AlchemyHttpBuilder
         return this;
     }
     
-    public AlchemyHttpBuilder usingDefaultHeader(@NonEmpty String key, String value) throws IllegalArgumentException
+    public AlchemyHttpBuilder usingDefaultHeader(@NonEmpty String key, @Optional String value) throws IllegalArgumentException
     {
         checkThat(key)
                 .usingMessage("missing key")
@@ -131,5 +168,26 @@ public final class AlchemyHttpBuilder
                 .usingExecutorService(executor)
                 .build();
     }
-    
+
+    private static HttpClient createDefaultApacheClient()
+    {
+        return createDefaultApacheClient(45, SECONDS);
+    }
+
+    private static HttpClient createDefaultApacheClient(int timeout, TimeUnit timeUnit)
+    {
+        int actualTimeout = (int) TimeUnit.SECONDS.toMillis(timeout);
+
+        //I really hate that they don't specify the expected Unit for the Timeout.
+        RequestConfig config = RequestConfig.custom()
+            .setSocketTimeout(actualTimeout)
+            .setConnectTimeout(actualTimeout)
+            .setConnectionRequestTimeout(actualTimeout)
+            .build();
+
+        return HttpClientBuilder.create()
+            .setDefaultRequestConfig(config)
+            .build();
+    }
+
 }

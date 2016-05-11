@@ -17,7 +17,9 @@ package tech.sirwellington.alchemy.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 
+import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
@@ -26,6 +28,7 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
  *
  * @author SirWellington
  */
+@StepMachineDesign(role = STEP)
 final class Step5Impl<ResponseType> implements AlchemyRequest.Step5<ResponseType>
 {
 

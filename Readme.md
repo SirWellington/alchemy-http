@@ -1,10 +1,10 @@
 Alchemy HTTP
 ==============================================
-[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">](https://github.com/SirWellington/alchemy)
+[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v7-name.png" width="500">](https://github.com/SirWellington/alchemy)
 
 ## "REST without the MESS"
 
-[![Build Status](https://travis-ci.org/SirWellington/alchemy-http.svg)](https://travis-ci.org/SirWellington/alchemy-http)
+[![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP/)
 
 - [Purpose](#purpose)
   - [Javascript](#javascript)
@@ -190,7 +190,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-    <version>1.1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 ## Snapshot
@@ -199,7 +199,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 </dependency>
 ```
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
@@ -242,9 +242,13 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 
 # Release Notes
 
-## 1.1
-+ Dependency Updates
+# 1.2
 + Bugfixes and Improvements
++ Dependency Updates
+
+## 1.1
++ Bugfixes and Improvements
++ Dependency Updates
 
 ## 1.0
 + Initial Public Release

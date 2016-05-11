@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -28,6 +27,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import sir.wellington.alchemy.collections.lists.Lists;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
@@ -43,19 +44,22 @@ import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static java.lang.System.currentTimeMillis;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.http.Generators.jsonElements;
 import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
@@ -82,7 +86,7 @@ public class HttpVerbImplTest
     private HttpUriRequest apacheRequest;
 
     @Mock
-    private org.apache.http.HttpResponse apacheResponse;
+    private CloseableHttpResponse apacheResponse;
 
     @Mock
     private StatusLine statusLine;
@@ -133,7 +137,7 @@ public class HttpVerbImplTest
     public void setupResponseHeaders()
     {
         responseHeaders = mapOf(alphabeticString(), hexadecimalString(10), 15);
-        List<Header> headers = Lists.newArrayList();
+        List<Header> headers = Lists.create();
         responseHeaders.forEach((k, v) -> headers.add(new BasicHeader(k, v)));
 
         Header[] headerArray = headers.toArray(new Header[headers.size()]);
@@ -152,7 +156,7 @@ public class HttpVerbImplTest
     }
 
     @Test
-    public void testExecute()
+    public void testExecute() throws IOException
     {
         HttpResponse response = instance.execute(apacheClient, request);
 
@@ -162,6 +166,8 @@ public class HttpVerbImplTest
         assertThat(response.body(), is(responseBody));
         assertThat(response.responseHeaders(), is(responseHeaders));
         assertThat(response.bodyAsString(), is(responseBody.toString()));
+        
+        verify(apacheResponse).close();
     }
 
     //Edge Cases
@@ -250,8 +256,12 @@ public class HttpVerbImplTest
         assertThat(result.body(), instanceOf(JsonNull.class));
     }
 
+    /*
+     * We are no longer sure if an invalid content type should constitute a failure.
+     * 
+     */
     @Test
-    public void testExecuteWhenContentTypeInvalid()
+    public void testExecuteWhenContentTypeInvalid() throws IOException
     {
         List<ContentType> invalidContentTypes = Arrays.asList(ContentType.APPLICATION_ATOM_XML,
                                                               ContentType.TEXT_HTML,
@@ -260,15 +270,16 @@ public class HttpVerbImplTest
                                                               ContentType.APPLICATION_OCTET_STREAM,
                                                               ContentType.create(one(alphabeticString())));
 
-        ContentType invalidContentType = invalidContentTypes.stream().findAny().get();
+        ContentType invalidContentType = Lists.oneOf(invalidContentTypes);
 
-        entity = new StringEntity(one(strings(1000)), invalidContentType);
+        String string = one(alphanumericString());
+        entity = new StringEntity(string, invalidContentType);
 
-        when(apacheResponse.getEntity())
-                .thenReturn(entity);
+        when(apacheResponse.getEntity()) .thenReturn(entity);
 
-        assertThrows(() -> instance.execute(apacheClient, request))
-                .isInstanceOf(AlchemyHttpException.class);
+        HttpResponse result = instance.execute(apacheClient, request);
+        assertThat(result.bodyAsString(), is(string));
+        verify(apacheResponse).close();
     }
 
     @DontRepeat
@@ -313,6 +324,35 @@ public class HttpVerbImplTest
         JsonElement asJSON = result.body();
         assertThat(asJSON.isJsonPrimitive(), is(true));
         assertThat(asJSON.getAsJsonPrimitive().isString(), is(true));
+    }
+    
+    @Test
+    public void testWhenDuplicateValuesInAHeader()
+    {
+        String headerName = one(alphabeticString());
+        List<String> headerValues = listOf(alphabeticString(), 5);
+        
+        List<Header> headers = Lists.create();
+        
+        for(String value : headerValues)
+        {
+            headers.add(new BasicHeader(headerName, value));
+        }
+        
+        Header[] headerArray = headers.toArray(new Header[0]);
+        
+        when(apacheResponse.getAllHeaders())
+            .thenReturn(headerArray);
+        
+        HttpResponse response = instance.execute(apacheClient, request);
+        
+        Map<String, String> responseHeaders = response.responseHeaders();
+        assertThat(responseHeaders, notNullValue());
+        assertThat(responseHeaders.containsKey(headerName), is(true));
+        
+        String resultValue = responseHeaders.get(headerName);
+        headerValues.forEach(value -> assertThat(resultValue, containsString(value)));
+        
     }
 
     @DontRepeat

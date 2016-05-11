@@ -17,14 +17,18 @@ package tech.sirwellington.alchemy.http;
 
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
+
+import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
 
 /**
  *
  * @author SirWellington
  */
+@StrategyPattern(role = INTERFACE)
 @Internal
-interface HttpVerb
+public interface HttpVerb
 {
 
     HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException;
