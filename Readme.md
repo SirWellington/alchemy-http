@@ -190,7 +190,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-    <version>1.1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 ## Snapshot
@@ -199,7 +199,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 </dependency>
 ```
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
@@ -242,9 +242,13 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 
 # Release Notes
 
-## 1.1
-+ Dependency Updates
+# 1.2
 + Bugfixes and Improvements
++ Dependency Updates
+
+## 1.1
++ Bugfixes and Improvements
++ Dependency Updates
 
 ## 1.0
 + Initial Public Release
