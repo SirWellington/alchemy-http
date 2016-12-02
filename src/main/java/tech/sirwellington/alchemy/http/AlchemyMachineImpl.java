@@ -26,6 +26,7 @@ import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
+import static java.lang.String.format;
 import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
@@ -159,7 +160,11 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
                 .is(notNull());
 
         checkThat(response)
-                .throwing(ex -> new AlchemyHttpException(request, response, "Http Response not OK. Status Code: " + response.statusCode()))
+                .throwing(ex -> new AlchemyHttpException(request,
+                                                        response,
+                                                        format("Http Response not OK. Status Code: %s Body: %s", 
+                                                               response.statusCode(),
+                                                               response.bodyAsString())))
                 .is(okResponse());
 
         LOG.debug("HTTP Request {} successfully executed: {}", request, response);
