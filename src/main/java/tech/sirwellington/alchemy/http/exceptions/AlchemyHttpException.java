@@ -148,7 +148,7 @@ public class AlchemyHttpException extends RuntimeException
         String string = super.toString();
         if (hasResponse())
         {
-            string += " | " + response.bodyAsString();
+            string += "Code: " + response.statusCode() + " | Response: " + response.bodyAsString();
         }
 
         return string;
