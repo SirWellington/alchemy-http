@@ -162,7 +162,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         checkThat(response)
                 .throwing(ex -> new AlchemyHttpException(request,
                                                         response,
-                                                        format("Http Response not OK. Status Code: %s Body: %s", 
+                                                        format("Http Response not OK. Status Code: %d Body: %s", 
                                                                response.statusCode(),
                                                                response.bodyAsString())))
                 .is(okResponse());
