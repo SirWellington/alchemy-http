@@ -157,10 +157,10 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         checkThat(response)
                 .throwing(ex -> new AlchemyHttpException(request, "HTTP Verb returned null response"))
                 .is(notNull());
-
+        
         checkThat(response)
-                .throwing(ex -> new AlchemyHttpException(request, response, "Http Response not OK. Status Code: " + response.statusCode()))
-                .is(okResponse());
+            .throwing(ex -> new AlchemyHttpException(request, response, "Http Response not OK."))
+            .is(okResponse());
 
         LOG.debug("HTTP Request {} successfully executed: {}", request, response);
 

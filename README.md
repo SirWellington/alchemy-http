@@ -6,6 +6,10 @@ Alchemy HTTP
 
 [![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP/)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
 - [Purpose](#purpose)
   - [Javascript](#javascript)
   - [Ruby](#ruby)
@@ -18,6 +22,8 @@ Alchemy HTTP
   - [Snapshot](#snapshot)
 - [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-http)
 - [Tested Against](#tested-against)
+  - [Slack](#slack)
+- [Gitter](#gitter)
   - [Google APIs](#google-apis)
     - [Geocoding](#geocoding)
     - [Places API](#places-api)
@@ -27,9 +33,12 @@ Alchemy HTTP
 - [Building](#building)
 - [Feature Requests](#feature-requests)
 - [Release Notes](#release-notes)
+  - [1.2](#12)
   - [1.1](#11)
   - [1.0](#10)
 - [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 # Purpose
@@ -190,7 +199,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
 </dependency>
 ```
 ## Snapshot
@@ -199,7 +208,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.4-SNAPSHOT</version>
 </dependency>
 ```
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
@@ -207,6 +216,14 @@ To use, simply add the following maven dependency.
 # Tested Against
 This library has been tested against in-house as well as production services.
 This is not a comprehensive list, but should give you some idea of compatibility.
+
+## Slack
+
+https://api.slack.com
+
+## Gitter
+
+https://developer.gitter.im/docs/welcome
 
 ## Google APIs
 
@@ -242,7 +259,11 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 
 # Release Notes
 
-# 1.2
+## 1.3
++ Bugfixes and Improvements
++ Dependency Updates
+
+## 1.2
 + Bugfixes and Improvements
 + Dependency Updates
 
