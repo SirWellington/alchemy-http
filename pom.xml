@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>alchemy-http</artifactId>
-    <version>1.3</version>
+    <version>1.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
 
