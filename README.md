@@ -259,6 +259,10 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 
 # Release Notes
 
+## 1.3
++ Bugfixes and Improvements
++ Dependency Updates
+
 ## 1.2
 + Bugfixes and Improvements
 + Dependency Updates
