@@ -150,8 +150,6 @@ public class HttpVerbImplTest
     public void testConstructor() throws Exception
     {
         assertThrows(() -> new HttpVerbImpl(null)).isInstanceOf(IllegalArgumentException.class);
-        assertThrows(() -> new HttpVerbImpl(null, gson)).isInstanceOf(IllegalArgumentException.class);
-        assertThrows(() -> new HttpVerbImpl(requestMapper, null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -167,7 +165,7 @@ public class HttpVerbImplTest
     @Test
     public void testExecute() throws IOException
     {
-        HttpResponse response = instance.execute(apacheClient, request);
+        HttpResponse response = instance.execute(apacheClient, gson, request);
 
         assertThat(response, notNullValue());
         assertThat(response.statusCode(), is(statusLine.getStatusCode()));
@@ -184,14 +182,9 @@ public class HttpVerbImplTest
     @Test
     public void testExecuteWithBadArgs()
     {
-        assertThrows(() -> instance.execute(null, null))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        assertThrows(() -> instance.execute(null, request))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        assertThrows(() -> instance.execute(apacheClient, null))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> instance.execute(null, gson, request)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> instance.execute(apacheClient, null, request)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> instance.execute(apacheClient, gson, null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -200,7 +193,7 @@ public class HttpVerbImplTest
         when(requestMapper.convertToApacheRequest(request))
                 .thenReturn(null);
 
-        assertThrows(() -> instance.execute(apacheClient, request))
+        assertThrows(() -> instance.execute(apacheClient, gson, request))
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
@@ -210,7 +203,7 @@ public class HttpVerbImplTest
         when(apacheClient.execute(apacheRequest))
                 .thenThrow(new IOException());
 
-        assertThrows(() -> instance.execute(apacheClient, request))
+        assertThrows(() -> instance.execute(apacheClient, gson, request))
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
@@ -221,7 +214,7 @@ public class HttpVerbImplTest
         when(apacheClient.execute(apacheRequest))
                 .thenReturn(null);
 
-        assertThrows(() -> instance.execute(apacheClient, request))
+        assertThrows(() -> instance.execute(apacheClient, gson, request))
                 .isInstanceOf(AlchemyHttpException.class);
 
     }
@@ -233,7 +226,7 @@ public class HttpVerbImplTest
         when(apacheResponse.getEntity())
                 .thenReturn(null);
 
-        HttpResponse result = instance.execute(apacheClient, request);
+        HttpResponse result = instance.execute(apacheClient, gson, request);
         assertThat(result, notNullValue());
         assertThat(result.body(), is(JsonNull.INSTANCE));
     }
@@ -249,7 +242,7 @@ public class HttpVerbImplTest
         when(badEntity.getContent())
                 .thenThrow(new IOException());
 
-        assertThrows(() -> instance.execute(apacheClient, request))
+        assertThrows(() -> instance.execute(apacheClient, gson, request))
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
@@ -261,7 +254,7 @@ public class HttpVerbImplTest
         when(apacheResponse.getEntity())
                 .thenReturn(entity);
 
-        HttpResponse result = instance.execute(apacheClient, request);
+        HttpResponse result = instance.execute(apacheClient, gson, request);
         assertThat(result.body(), instanceOf(JsonNull.class));
     }
 
@@ -286,7 +279,7 @@ public class HttpVerbImplTest
 
         when(apacheResponse.getEntity()) .thenReturn(entity);
 
-        HttpResponse result = instance.execute(apacheClient, request);
+        HttpResponse result = instance.execute(apacheClient, gson, request);
         assertThat(result.bodyAsString(), is(string));
         verify(apacheResponse).close();
     }
@@ -298,7 +291,7 @@ public class HttpVerbImplTest
         when(apacheResponse.getAllHeaders())
                 .thenReturn(null);
 
-        HttpResponse result = instance.execute(apacheClient, request);
+        HttpResponse result = instance.execute(apacheClient, gson, request);
         assertThat(result.responseHeaders(), notNullValue());
         assertThat(result.responseHeaders().isEmpty(), is(true));
     }
@@ -315,7 +308,7 @@ public class HttpVerbImplTest
         when(apacheResponse.getEntity())
                 .thenReturn(entity);
 
-        assertThrows(() -> instance.execute(apacheClient, request))
+        assertThrows(() -> instance.execute(apacheClient, gson, request))
                 .isInstanceOf(JsonException.class);
     }
 
@@ -327,7 +320,7 @@ public class HttpVerbImplTest
         when(apacheResponse.getEntity())
                 .thenReturn(entity);
 
-        HttpResponse result = instance.execute(apacheClient, request);
+        HttpResponse result = instance.execute(apacheClient, gson, request);
         assertThat(result, notNullValue());
         assertThat(result.bodyAsString(), is(text));
         JsonElement asJSON = result.body();
@@ -353,7 +346,7 @@ public class HttpVerbImplTest
         when(apacheResponse.getAllHeaders())
             .thenReturn(headerArray);
         
-        HttpResponse response = instance.execute(apacheClient, request);
+        HttpResponse response = instance.execute(apacheClient, gson, request);
         
         Map<String, String> responseHeaders = response.responseHeaders();
         assertThat(responseHeaders, notNullValue());

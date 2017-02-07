@@ -111,7 +111,7 @@ public class AlchemyMachineImplTest
 
     private void setupVerb()
     {
-        when(verb.execute(apacheClient, request))
+        when(verb.execute(apacheClient, gson, request))
                 .thenReturn(response);
 
         request.verb = this.verb;
@@ -260,7 +260,7 @@ public class AlchemyMachineImplTest
     public void testExecuteSyncWhenVerbFails()
     {
 
-        when(verb.execute(apacheClient, request))
+        when(verb.execute(apacheClient, gson, request))
                 .thenThrow(new RuntimeException());
 
         assertThrows(() -> instance.executeSync(request))
@@ -269,7 +269,7 @@ public class AlchemyMachineImplTest
         //Reset and do another assertion
         reset(verb);
 
-        when(verb.execute(apacheClient, request))
+        when(verb.execute(apacheClient, gson, request))
                 .thenThrow(new AlchemyHttpException(request));
 
         assertThrows(() -> instance.executeSync(request))
@@ -295,7 +295,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteWhenVerbReturnsNullResponse()
     {
-        when(verb.execute(apacheClient, request))
+        when(verb.execute(apacheClient, gson, request))
                 .thenReturn(null);
 
         assertThrows(() -> instance.executeSync(request, responseClass))
@@ -350,7 +350,7 @@ public class AlchemyMachineImplTest
     {
         AlchemyHttpException ex = new AlchemyHttpException();
 
-        when(verb.execute(apacheClient, request))
+        when(verb.execute(apacheClient, gson, request))
                 .thenThrow(ex);
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
@@ -367,7 +367,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteAsyncWhenRuntimeExceptionHappens()
     {
-        when(verb.execute(apacheClient, request))
+        when(verb.execute(apacheClient, gson, request))
                 .thenThrow(new RuntimeException());
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);

@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.gson.Gson;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
@@ -31,7 +32,7 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
 public interface HttpVerb
 {
 
-    HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException;
+    HttpResponse execute(HttpClient apacheHttpClient, Gson gson, HttpRequest request) throws AlchemyHttpException;
 
     static HttpVerb get()
     {

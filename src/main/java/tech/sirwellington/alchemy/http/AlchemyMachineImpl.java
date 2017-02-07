@@ -141,7 +141,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         HttpResponse response;
         try
         {
-            response = verb.execute(apacheHttpClient, request);
+            response = verb.execute(apacheHttpClient, gson, request);
         }
         catch (AlchemyHttpException ex)
         {

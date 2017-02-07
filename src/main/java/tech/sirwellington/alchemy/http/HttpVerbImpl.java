@@ -57,20 +57,12 @@ final class HttpVerbImpl implements HttpVerb
     private final static Logger LOG = LoggerFactory.getLogger(HttpVerbImpl.class);
 
     private final AlchemyRequestMapper requestMapper;
-    private final Gson gson;
 
     HttpVerbImpl(AlchemyRequestMapper requestMapper)
     {
-        this(requestMapper, Constants.getDefaultGson());
-    }
-
-    HttpVerbImpl(AlchemyRequestMapper requestMapper, Gson gson)
-    {
-        checkThat(requestMapper, gson)
-            .are(notNull());
-
+        checkThat(requestMapper).is(notNull());
+        
         this.requestMapper = requestMapper;
-        this.gson = gson;
     }
 
     static HttpVerbImpl using(AlchemyRequestMapper requestMapper)
@@ -79,9 +71,9 @@ final class HttpVerbImpl implements HttpVerb
     }
 
     @Override
-    public HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException
+    public HttpResponse execute(HttpClient apacheHttpClient, Gson gson, HttpRequest request) throws AlchemyHttpException
     {
-        checkThat(apacheHttpClient, request)
+        checkThat(apacheHttpClient, gson, request)
                 .usingMessage("null arguments")
                 .are(notNull());
 
@@ -112,7 +104,7 @@ final class HttpVerbImpl implements HttpVerb
         JsonElement json;
         try
         {
-            json = extractJsonFromResponse(request, apacheResponse);
+            json = extractJsonFromResponse(request, apacheResponse, gson);
         }
         catch (JsonParseException ex)
         {
@@ -150,7 +142,7 @@ final class HttpVerbImpl implements HttpVerb
         return response;
     }
 
-    private JsonElement extractJsonFromResponse(HttpRequest matchingRequest, org.apache.http.HttpResponse apacheResponse) throws JsonException, JsonParseException
+    private JsonElement extractJsonFromResponse(HttpRequest matchingRequest, org.apache.http.HttpResponse apacheResponse, Gson gson) throws JsonException, JsonParseException
     {
         if (apacheResponse.getEntity() == null)
         {
