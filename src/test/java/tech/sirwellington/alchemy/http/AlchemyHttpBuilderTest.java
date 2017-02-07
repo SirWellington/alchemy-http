@@ -16,6 +16,7 @@
 
 package tech.sirwellington.alchemy.http;
 
+import com.google.gson.Gson;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +48,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
+@Repeat(25)
 @RunWith(AlchemyTestRunner.class)
 public class AlchemyHttpBuilderTest
 {
@@ -114,6 +116,20 @@ public class AlchemyHttpBuilderTest
             .isInstanceOf(IllegalArgumentException.class);
     }
     
+     @Test
+    public void testUsingGson()
+    {
+        Gson gson = new Gson();
+        AlchemyHttpBuilder result = instance.usingGson(gson);
+        assertThat(result, notNullValue());
+        
+    }
+    
+    @Test
+    public void testUsingGsonWithBadArgs() throws Exception
+    {
+        assertThrows(() -> instance.usingGson(null)).isInstanceOf(IllegalArgumentException.class);
+    }
 
     @Repeat(100)
     @Test

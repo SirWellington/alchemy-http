@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step1;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step2;
@@ -87,7 +88,7 @@ interface AlchemyHttpStateMachine
 
         private HttpClient apacheHttpClient;
         private ExecutorService executor = MoreExecutors.newDirectExecutorService();
-        private final Gson gson = Constants.getDefaultGson();
+        private Gson gson = Constants.getDefaultGson();
 
         static Builder newInstance()
         {
@@ -107,6 +108,14 @@ interface AlchemyHttpStateMachine
             checkThat(apacheHttpClient).is(notNull());
 
             this.apacheHttpClient = apacheHttpClient;
+            return this;
+        }
+        
+        Builder usingGson(@Required Gson gson) throws IllegalArgumentException
+        {
+            checkThat(gson).is(notNull());
+            
+            this.gson = gson;
             return this;
         }
 

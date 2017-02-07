@@ -18,6 +18,7 @@ package tech.sirwellington.alchemy.http;
 
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.gson.Gson;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,6 +55,8 @@ public final class AlchemyHttpBuilder
     //Copy from DEFAULT HEADERS
     private final Map<String, String> defaultHeaders = Maps.newHashMap(DEFAULT_HEADERS);
     
+    private Gson gson = Constants.getDefaultGson();
+    
     static AlchemyHttpBuilder newInstance()
     {
         return new AlchemyHttpBuilder();
@@ -85,6 +88,22 @@ public final class AlchemyHttpBuilder
         checkThat(executor).is(notNull());
         
         this.executor = executor;
+        return this;
+    }
+    
+    /**
+     * Sets the GSON to use to parse each request.
+     * This is useful if you anticipate serialization issues with the default GSON configuration.
+     * 
+     * @param gson The Gson to use to parse JsonObjects internally.
+     * @return
+     * @throws IllegalArgumentException 
+     */
+    public AlchemyHttpBuilder usingGson(@Required Gson gson) throws IllegalArgumentException
+    {
+        checkThat(gson).is(notNull());
+        
+        this.gson = gson;
         return this;
     }
     
