@@ -185,6 +185,7 @@ public final class AlchemyHttpBuilder
         return AlchemyHttpStateMachine.Builder.newInstance()
                 .usingApacheHttpClient(apacheHttpClient)
                 .usingExecutorService(executor)
+                .usingGson(gson)
                 .build();
     }
 
