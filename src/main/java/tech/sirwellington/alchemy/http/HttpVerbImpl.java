@@ -21,7 +21,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
@@ -57,17 +56,21 @@ final class HttpVerbImpl implements HttpVerb
 
     private final static Logger LOG = LoggerFactory.getLogger(HttpVerbImpl.class);
 
-    private final Gson gson = new GsonBuilder()
-            .setDateFormat(Constants.DATE_FORMAT)
-            .create();
-
     private final AlchemyRequestMapper requestMapper;
+    private final Gson gson;
 
     HttpVerbImpl(AlchemyRequestMapper requestMapper)
     {
-        checkThat(requestMapper).is(notNull());
+        this(requestMapper, Constants.getDefaultGson());
+    }
+
+    HttpVerbImpl(AlchemyRequestMapper requestMapper, Gson gson)
+    {
+        checkThat(requestMapper, gson)
+            .are(notNull());
 
         this.requestMapper = requestMapper;
+        this.gson = gson;
     }
 
     static HttpVerbImpl using(AlchemyRequestMapper requestMapper)

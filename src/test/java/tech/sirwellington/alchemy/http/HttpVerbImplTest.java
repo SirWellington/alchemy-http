@@ -144,6 +144,15 @@ public class HttpVerbImplTest
         when(apacheResponse.getAllHeaders())
                 .thenReturn(headerArray);
     }
+    
+    @DontRepeat
+    @Test
+    public void testConstructor() throws Exception
+    {
+        assertThrows(() -> new HttpVerbImpl(null)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> new HttpVerbImpl(null, gson)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> new HttpVerbImpl(requestMapper, null)).isInstanceOf(IllegalArgumentException.class);
+    }
 
     @Test
     public void testUsing()
