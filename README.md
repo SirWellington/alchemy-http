@@ -139,9 +139,9 @@ We can do better than that.
 AlchemyHttp http = AlchemyHttp.newDefaultInstance();
 
 Coffee myCoffee = http.go()
-					  .get()
-					  .expecting(Coffee.class)
-					  .at("http://aroma.tech/orders?orderNumber=99");
+                      .get()
+		      .expecting(Coffee.class)
+		      .at("http://aroma.tech/orders?orderNumber=99");
 //Wait...that's it?
 ```
 **That's it!**
