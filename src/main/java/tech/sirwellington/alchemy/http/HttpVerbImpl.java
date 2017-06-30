@@ -21,7 +21,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
@@ -57,16 +56,12 @@ final class HttpVerbImpl implements HttpVerb
 
     private final static Logger LOG = LoggerFactory.getLogger(HttpVerbImpl.class);
 
-    private final Gson gson = new GsonBuilder()
-            .setDateFormat(Constants.DATE_FORMAT)
-            .create();
-
     private final AlchemyRequestMapper requestMapper;
 
     HttpVerbImpl(AlchemyRequestMapper requestMapper)
     {
         checkThat(requestMapper).is(notNull());
-
+        
         this.requestMapper = requestMapper;
     }
 
@@ -76,9 +71,9 @@ final class HttpVerbImpl implements HttpVerb
     }
 
     @Override
-    public HttpResponse execute(HttpClient apacheHttpClient, HttpRequest request) throws AlchemyHttpException
+    public HttpResponse execute(HttpClient apacheHttpClient, Gson gson, HttpRequest request) throws AlchemyHttpException
     {
-        checkThat(apacheHttpClient, request)
+        checkThat(apacheHttpClient, gson, request)
                 .usingMessage("null arguments")
                 .are(notNull());
 
@@ -109,7 +104,7 @@ final class HttpVerbImpl implements HttpVerb
         JsonElement json;
         try
         {
-            json = extractJsonFromResponse(request, apacheResponse);
+            json = extractJsonFromResponse(request, apacheResponse, gson);
         }
         catch (JsonParseException ex)
         {
@@ -147,7 +142,7 @@ final class HttpVerbImpl implements HttpVerb
         return response;
     }
 
-    private JsonElement extractJsonFromResponse(HttpRequest matchingRequest, org.apache.http.HttpResponse apacheResponse) throws JsonException, JsonParseException
+    private JsonElement extractJsonFromResponse(HttpRequest matchingRequest, org.apache.http.HttpResponse apacheResponse, Gson gson) throws JsonException, JsonParseException
     {
         if (apacheResponse.getEntity() == null)
         {

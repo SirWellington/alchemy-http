@@ -139,9 +139,9 @@ We can do better than that.
 AlchemyHttp http = AlchemyHttp.newDefaultInstance();
 
 Coffee myCoffee = http.go()
-					  .get()
-					  .expecting(Coffee.class)
-					  .at("http://aroma.tech/orders?orderNumber=99");
+                      .get()
+		      .expecting(Coffee.class)
+		      .at("http://aroma.tech/orders?orderNumber=99");
 //Wait...that's it?
 ```
 **That's it!**
@@ -154,12 +154,12 @@ There may be times when you don't care to wait for an immediate response from th
 
 ```java
 http.go()
-	.post()
-	.body(request)
-	.expecting(Coffee.class)
-	.onSuccess(c -> LOG.warn("What took you so long to get my cofee! {}", c))
-	.onFailure(ex -> LOG.error("What can I do without coffee?", ex))
-	.at("http://aroma.tech/orders");
+    .post()
+    .body(request)
+    .expecting(Coffee.class)
+    .onSuccess(c -> LOG.warn("What took you so long to get my cofee! {}", c))
+    .onFailure(ex -> LOG.error("What can I do without coffee?", ex))
+    .at("http://aroma.tech/orders");
 ```
 ### Another way
 To be fair Java Lambdas aren't as clean as `Blocks` in other languages.
@@ -174,11 +174,11 @@ class BaristaService
 	public void serveCustomer(Customer customer)
 	{
 		http.go()
-			.get()
-			.expecting(Coffee.class)
-			.onSuccess(coffee -> customer.accept(coffee))
-			.onFailure(this::handleOrderIssue)
-			.at("http://aroma.tech/orders");
+		    .get()
+		    .expecting(Coffee.class)
+		    .onSuccess(coffee -> customer.accept(coffee))
+		    .onFailure(this::handleOrderIssue)
+		    .at("http://aroma.tech/orders");
 	}
 
 	private void handleOrderIssue(AlchemyException ex)

@@ -15,6 +15,7 @@
  */ 
 package tech.sirwellington.alchemy.http;
 
+import com.google.gson.Gson;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.http.ProtocolVersion;
@@ -78,11 +79,12 @@ class VerbAssertions
 
         URI uri = createFakeUri();
 
+        Gson gson = Constants.getDefaultGson();
         HttpRequest request = HttpRequest.Builder.newInstance()
                 .usingUrl(uri.toURL())
                 .build();
 
-        verb.execute(mockClient, request);
+        verb.execute(mockClient, gson, request);
 
         ArgumentCaptor<HttpUriRequest> captor = forClass(HttpUriRequest.class);
 

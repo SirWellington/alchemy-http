@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import com.google.gson.Gson;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
@@ -27,6 +28,7 @@ import org.mockito.Mock;
 import tech.sirwellington.alchemy.http.AlchemyHttpStateMachine.Builder;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -116,6 +118,20 @@ public class AlchemyHttpStateMachineTest
         
         assertThat(result, notNullValue());
         
+    }
+    
+    @DontRepeat
+    @Test
+    public void testUsingGson() throws Exception
+    {
+        Gson gson = new Gson();
+        
+        AlchemyHttpStateMachine result = Builder.newInstance()
+            .usingApacheHttpClient(apacheClient)
+            .usingGson(gson)
+            .build();
+        
+        assertThat(result, notNullValue());
     }
     
     @Test
