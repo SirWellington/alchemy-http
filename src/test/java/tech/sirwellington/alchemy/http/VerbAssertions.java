@@ -41,8 +41,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 
 @Internal
@@ -131,7 +131,7 @@ class VerbAssertions
 
     private static URI createFakeUri() throws URISyntaxException
     {
-        String uri = "http://" + one(alphabeticString());
+        String uri = "http://" + one(alphabeticStrings());
         return new URI(uri);
     }
 }

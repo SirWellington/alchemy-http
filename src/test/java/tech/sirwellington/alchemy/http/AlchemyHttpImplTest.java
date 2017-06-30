@@ -36,9 +36,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -64,7 +64,7 @@ public class AlchemyHttpImplTest
     public void setUp()
     {
 
-        defaultHeaders = mapOf(alphabeticString(), alphabeticString(), 20);
+        defaultHeaders = mapOf(alphabeticStrings(), alphabeticStrings(), 20);
 
         instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);
         verifyZeroInteractions(stateMachine);
@@ -100,8 +100,8 @@ public class AlchemyHttpImplTest
     @Test
     public void testUsingDefaultHeader()
     {
-        String key = one(alphabeticString());
-        String value = one(alphabeticString());
+        String key = one(alphabeticStrings());
+        String value = one(alphabeticStrings());
 
         AlchemyHttp result = instance.usingDefaultHeader(key, value);
         assertThat(result, notNullValue());
@@ -122,8 +122,8 @@ public class AlchemyHttpImplTest
     @Test
     public void testUsingDefaultHeaderEdgeCase()
     {
-        String key = one(alphabeticString());
-        String value = one(alphabeticString());
+        String key = one(alphabeticStrings());
+        String value = one(alphabeticStrings());
 
         assertThrows(() -> instance.usingDefaultHeader(null, null))
                 .isInstanceOf(IllegalArgumentException.class);

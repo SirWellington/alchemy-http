@@ -30,14 +30,15 @@ import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.http.HttpAssertions.jsonArray;
 
 class TestResponse implements HttpResponse
 {
 
-    int statusCode = AlchemyGenerator.one(NumberGenerators.integers(200, 500));
-    Map<String, String> responseHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticString(), StringGenerators.alphabeticString(), 10);
-    JsonElement responseBody = AlchemyGenerator.one(Generators.jsonElements());
+    int statusCode = one(NumberGenerators.integers(200, 500));
+    Map<String, String> responseHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 10);
+    JsonElement responseBody = one(Generators.jsonElements());
     private final Gson gson = Constants.getDefaultGson();
 
     TestResponse()

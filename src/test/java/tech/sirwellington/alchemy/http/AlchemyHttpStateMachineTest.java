@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -84,7 +84,7 @@ public class AlchemyHttpStateMachineTest
     @Before
     public void setUp()
     {
-        requestHeaders = mapOf(alphabeticString(), alphabeticString(), 15);
+        requestHeaders = mapOf(alphabeticStrings(), alphabeticStrings(), 15);
         
         instance = new TestImpl();
         instance = spy(instance);

@@ -38,12 +38,12 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.BooleanGenerators.booleans;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
@@ -109,7 +109,7 @@ public class Step3ImplTest
                 .isInstanceOf(IllegalArgumentException.class);
 
         //Happy cases
-        Map<String, String> expectedHeaders = mapOf(alphabeticString(), hexadecimalString(10), 20);
+        Map<String, String> expectedHeaders = mapOf(alphabeticStrings(), hexadecimalString(10), 20);
         for (Map.Entry<String, String> header : expectedHeaders.entrySet())
         {
             instance = instance.usingHeader(header.getKey(), header.getValue());
@@ -125,7 +125,7 @@ public class Step3ImplTest
         assertThat(requestMade.getRequestHeaders(), is(expectedHeaders));
 
         //Adding an empty value should be ok too
-        String key = one(alphabeticString());
+        String key = one(alphabeticStrings());
         instance.usingHeader(key, "");
     }
 
@@ -134,9 +134,9 @@ public class Step3ImplTest
     {
         int amount = one(integers(5, 20));
 
-        Map<String, String> strings = mapOf(alphabeticString(), hexadecimalString(10), amount);
-        Map<String, Integer> integers = mapOf(alphabeticString(), smallPositiveIntegers(), amount);
-        Map<String, Boolean> booleans = mapOf(alphabeticString(), booleans(), amount);
+        Map<String, String> strings = mapOf(alphabeticStrings(), hexadecimalString(10), amount);
+        Map<String, Integer> integers = mapOf(alphabeticStrings(), smallPositiveIntegers(), amount);
+        Map<String, Boolean> booleans = mapOf(alphabeticStrings(), booleans(), amount);
 
         for (Map.Entry<String, String> param : strings.entrySet())
         {

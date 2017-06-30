@@ -29,12 +29,12 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.BooleanGenerators.booleans;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveDoubles;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 /**
  *
@@ -53,7 +53,7 @@ class Generators
         {
             AlchemyGenerator<String> protocols = StringGenerators.stringsFromFixedList("https://", "http://");
             String protocol = one(protocols);
-            String uri = protocol + one(alphabeticString());
+            String uri = protocol + one(alphabeticStrings());
 
             try
             {
@@ -95,7 +95,7 @@ class Generators
 
             for (int i = 0; i < elements; ++i)
             {
-                String key = one(alphabeticString());
+                String key = one(alphabeticStrings());
 
                 int random = one(integers(1, 3));
                 switch (random)
@@ -146,7 +146,7 @@ class Generators
                 case 3:
                     return new JsonPrimitive(one(positiveIntegers()));
                 default:
-                    return new JsonPrimitive(one(alphabeticString()));
+                    return new JsonPrimitive(one(alphabeticStrings()));
             }
         };
     }

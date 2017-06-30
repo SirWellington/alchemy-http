@@ -28,7 +28,7 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -55,8 +55,8 @@ public class AlchemyHttpTest
     @Before
     public void setUp()
     {
-        defaultHeaders = mapOf(alphabeticString(),
-                               alphabeticString(),
+        defaultHeaders = mapOf(alphabeticStrings(),
+                               alphabeticStrings(),
                                20);
 
         instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);

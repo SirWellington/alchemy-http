@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 /**
  *
@@ -72,7 +72,7 @@ public class HttpRequestTest
         instance = HttpRequest.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(false));
         
-        testRequest.queryParams = mapOf(alphabeticString(), alphabeticString(), 10);
+        testRequest.queryParams = mapOf(alphabeticStrings(), alphabeticStrings(), 10);
         instance = HttpRequest.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(true));
         

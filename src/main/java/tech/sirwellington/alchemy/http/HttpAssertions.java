@@ -16,6 +16,8 @@
 
 package tech.sirwellington.alchemy.http;
 
+import java.net.URL;
+
 import com.google.gson.JsonElement;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
@@ -23,17 +25,14 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.assertions.Assertions.not;
-import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.assertions.Assertions.sameInstanceAs;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.*;
+import static tech.sirwellington.alchemy.arguments.assertions.BooleanAssertions.falseStatement;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.lessThanOrEqualTo;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringBeginningWith;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 
 /**
- *
  * @author SirWellington
  */
 @Internal
@@ -52,8 +51,8 @@ final class HttpAssertions
          * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
          */
 
-        return greaterThanOrEqualTo(100)
-                .and(lessThanOrEqualTo(505));
+        return Assertions.combine(greaterThanOrEqualTo(100),
+                                  lessThanOrEqualTo(505));
     }
 
     /*
@@ -63,8 +62,14 @@ final class HttpAssertions
     {
         AlchemyAssertion<Class<Response>> notNull = Assertions.<Class<Response>>notNull();
 
-        return notNull
-                .and(not(sameInstanceAs(Void.class)));
+        return klass ->
+        {
+            checkThat(klass).is(notNull());
+
+            checkThat(klass == Void.class)
+                    .usingMessage("Response class cannot be null")
+                    .is(falseStatement());
+        };
     }
 
     static AlchemyAssertion<HttpRequest> requestReady()
@@ -73,7 +78,7 @@ final class HttpAssertions
         {
             checkThat(request)
                     .usingMessage("Request missing")
-                    .is(notNull());
+                    .is(nonNullReference());
 
             checkThat(request.getVerb())
                     .usingMessage("Request missing HTTP Verb")

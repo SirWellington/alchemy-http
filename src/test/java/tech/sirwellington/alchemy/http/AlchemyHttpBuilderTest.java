@@ -33,12 +33,12 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.asString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.AlchemyHttpBuilder.newInstance;
@@ -66,7 +66,7 @@ public class AlchemyHttpBuilderTest
     @Before
     public void setUp()
     {
-        defaultHeaders = mapOf(alphabeticString(), alphabeticString(), 20);
+        defaultHeaders = mapOf(alphabeticStrings(), alphabeticStrings(), 20);
 
         instance = new AlchemyHttpBuilder()
                 .usingApacheHttpClient(apacheHttpClient)
@@ -161,7 +161,7 @@ public class AlchemyHttpBuilderTest
     @Test
     public void testUsingDefaultHeaders()
     {
-        Map<String, String> headers = mapOf(alphabeticString(), 
+        Map<String, String> headers = mapOf(alphabeticStrings(),
                                             asString(smallPositiveIntegers()),
                                             100);
 
@@ -184,7 +184,7 @@ public class AlchemyHttpBuilderTest
     @Test
     public void testUsingDefaultHeader()
     {
-        String key = one(alphabeticString());
+        String key = one(alphabeticStrings());
         String value = one(hexadecimalString(10));
 
         AlchemyHttpBuilder result = instance.usingDefaultHeader(key, value);
@@ -203,7 +203,7 @@ public class AlchemyHttpBuilderTest
         assertThrows(() -> instance.usingDefaultHeader("", null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        String key = one(alphabeticString());
+        String key = one(alphabeticStrings());
         //should be ok
         instance.usingDefaultHeader(key, "");
     }

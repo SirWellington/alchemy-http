@@ -35,10 +35,10 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.BinaryGenerators.binary;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -59,7 +59,7 @@ public class AlchemyRequestTest
     public void setUp()
     {
         url = one(validUrls());
-        headers = mapOf(alphabeticString(), alphabeticString(), 14);
+        headers = mapOf(alphabeticStrings(), alphabeticStrings(), 14);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class AlchemyRequestTest
                 .isInstanceOf(IllegalArgumentException.class);
 
         //Test the built-in accepts(String...) function
-        AlchemyGenerator<String> types = alphabeticString();
+        AlchemyGenerator<String> types = alphabeticStrings();
         String first = types.get();
         String second = types.get();
         String third = types.get();
@@ -248,7 +248,7 @@ public class AlchemyRequestTest
         OnSuccess instance = OnSuccess.NO_OP;
         assertThat(instance, notNullValue());
 
-        String response = one(alphabeticString());
+        String response = one(alphabeticStrings());
         instance.processResponse(response);
     }
 

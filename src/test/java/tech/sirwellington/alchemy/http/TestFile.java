@@ -25,8 +25,8 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 /**
  *
@@ -49,7 +49,7 @@ class TestFile
         
         checkThat(binary).is(notNull());
         
-        String filename = one(alphabeticString(10));
+        String filename = one(alphabeticStrings(10));
         File tempFile = File.createTempFile(filename, ".txt");
         Files.write(binary, tempFile);
         LOG.debug("Wrote {} bytes to temp file at {}", binary.length, tempFile.getAbsolutePath());

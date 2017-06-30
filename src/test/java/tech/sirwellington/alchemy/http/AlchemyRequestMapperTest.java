@@ -48,9 +48,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.http.Generators.jsonElements;
 import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
@@ -79,7 +79,7 @@ public class AlchemyRequestMapperTest
     public void setUp() throws Exception
     {
         body = one(jsonElements());
-        queryParams = mapOf(alphabeticString(), alphabeticString(), 10);
+        queryParams = mapOf(alphabeticStrings(), alphabeticStrings(), 10);
         url = one(validUrls());
         expandedUrl = expandUrl();
 

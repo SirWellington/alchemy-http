@@ -36,9 +36,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.Generators.jsonArrays;
 import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
@@ -158,7 +158,7 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
 
         //Bad URL
-        URL badUrl = new URL("file://" + one(alphabeticString()));
+        URL badUrl = new URL("file://" + one(alphabeticStrings()));
         when(request.getUrl()).thenReturn(badUrl);
 
         assertThrows(() -> instance.check(request))
@@ -178,7 +178,7 @@ public class HttpAssertionsTest
         String contentType = one(validTypes);
 
         instance.check(contentType);
-        instance.check(contentType + one(alphabeticString()));
+        instance.check(contentType + one(alphabeticStrings()));
     }
 
     @Test
@@ -193,7 +193,7 @@ public class HttpAssertionsTest
         assertThrows(() -> instance.check(""))
                 .isInstanceOf(FailedAssertionException.class);
 
-        assertThrows(() -> instance.check(one(alphabeticString())))
+        assertThrows(() -> instance.check(one(alphabeticStrings())))
                 .isInstanceOf(FailedAssertionException.class);
 
         assertThrows(() -> instance.check(one(hexadecimalString(10))))

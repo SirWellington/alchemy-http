@@ -53,12 +53,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.Generators.jsonElements;
 import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
@@ -136,7 +136,7 @@ public class HttpVerbImplTest
 
     public void setupResponseHeaders()
     {
-        responseHeaders = mapOf(alphabeticString(), hexadecimalString(10), 15);
+        responseHeaders = mapOf(alphabeticStrings(), hexadecimalString(10), 15);
         List<Header> headers = Lists.create();
         responseHeaders.forEach((k, v) -> headers.add(new BasicHeader(k, v)));
 
@@ -270,11 +270,11 @@ public class HttpVerbImplTest
                                                               ContentType.TEXT_XML,
                                                               ContentType.APPLICATION_XML,
                                                               ContentType.APPLICATION_OCTET_STREAM,
-                                                              ContentType.create(one(alphabeticString())));
+                                                              ContentType.create(one(alphabeticStrings())));
 
         ContentType invalidContentType = Lists.oneOf(invalidContentTypes);
 
-        String string = one(alphanumericString());
+        String string = one(alphanumericStrings());
         entity = new StringEntity(string, invalidContentType);
 
         when(apacheResponse.getEntity()) .thenReturn(entity);
@@ -315,7 +315,7 @@ public class HttpVerbImplTest
     @Test
     public void testExecuteWhenEntityIsText()
     {
-        String text = one(alphabeticString());
+        String text = one(alphabeticStrings());
         entity = new StringEntity(text, ContentType.TEXT_PLAIN);
         when(apacheResponse.getEntity())
                 .thenReturn(entity);
@@ -331,8 +331,8 @@ public class HttpVerbImplTest
     @Test
     public void testWhenDuplicateValuesInAHeader()
     {
-        String headerName = one(alphabeticString());
-        List<String> headerValues = listOf(alphabeticString(), 5);
+        String headerName = one(alphabeticStrings());
+        List<String> headerValues = listOf(alphabeticStrings(), 5);
         
         List<Header> headers = Lists.create();
         

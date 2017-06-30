@@ -25,7 +25,9 @@ import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 
-/**
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+
+    /**
  *
  * @author SirWellington
  */
@@ -33,10 +35,10 @@ import tech.sirwellington.alchemy.generator.StringGenerators;
 class TestRequest implements HttpRequest
 {
 
-    Map<String, String> requestHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticString(), StringGenerators.alphabeticString(), 20);
-    Map<String, String> queryParams = CollectionGenerators.mapOf(StringGenerators.alphabeticString(), StringGenerators.alphabeticString(), 6);
-    URL url = AlchemyGenerator.one(Generators.validUrls());
-    JsonElement body = AlchemyGenerator.one(Generators.jsonElements());
+    Map<String, String> requestHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 20);
+    Map<String, String> queryParams = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 6);
+    URL url = one(Generators.validUrls());
+    JsonElement body = one(Generators.jsonElements());
     HttpVerb verb = Mockito.mock(HttpVerb.class);
 
     @Override
