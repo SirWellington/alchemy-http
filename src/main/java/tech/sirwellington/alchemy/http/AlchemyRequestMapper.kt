@@ -111,8 +111,8 @@ internal interface AlchemyRequestMapper
                 val uri = request.url.toURI()
                 val uriBuilder = URIBuilder(uri)
 
-                request.queryParams
-                       .forEach { param, value -> uriBuilder.addParameter(param, value) }
+                request.queryParams?.
+                        forEach { param, value -> uriBuilder.addParameter(param, value) }
 
                 uriBuilder.build().toURL()
             }
