@@ -45,7 +45,7 @@ public final class AlchemyHttpBuilder
     private static final HttpClient DEFAULT_APACHE_CLIENT = createDefaultApacheClient();
 
     private HttpClient apacheHttpClient = DEFAULT_APACHE_CLIENT;
-    private Executor executor = SynchronousExecutor.newInstance();
+    private Executor executor = SynchronousExecutor.Companion.newInstance();
 
     //Copy from DEFAULT HEADERS
     private final Map<String, String> defaultHeaders = Maps.mutableCopyOf(DEFAULT_HEADERS);
@@ -138,7 +138,7 @@ public final class AlchemyHttpBuilder
 
     public AlchemyHttpBuilder disableAsyncCallbacks()
     {
-        return usingExecutorService(SynchronousExecutor.newInstance());
+        return usingExecutorService(SynchronousExecutor.Companion.newInstance());
     }
 
     public AlchemyHttpBuilder usingDefaultHeaders(@Required Map<String, String> defaultHeaders) throws IllegalArgumentException

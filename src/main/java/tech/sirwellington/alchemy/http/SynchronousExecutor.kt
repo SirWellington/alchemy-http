@@ -14,35 +14,32 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.http;
+package tech.sirwellington.alchemy.http
 
-import java.util.concurrent.Executor;
-
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.Internal
+import java.util.concurrent.Executor
 
 /**
- * This {@link Executor} implementation runs commands in the
+ * This [Executor] implementation runs commands in the
  * same thread they are called from.
  *
  * @author SirWellington
  */
 @Internal
-final class SynchronousExecutor implements Executor
+internal class SynchronousExecutor : Executor
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SynchronousExecutor.class);
-
-    static SynchronousExecutor newInstance()
+    override fun execute(command: Runnable)
     {
-        return new SynchronousExecutor();
+        command.run()
     }
 
-    @Override
-    public void execute(@NotNull Runnable command)
+    companion object
     {
-        command.run();
+
+        fun newInstance(): SynchronousExecutor
+        {
+            return SynchronousExecutor()
+        }
     }
 }

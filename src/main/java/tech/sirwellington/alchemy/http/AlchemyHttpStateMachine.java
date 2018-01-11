@@ -82,7 +82,7 @@ interface AlchemyHttpStateMachine
     {
 
         private HttpClient apacheHttpClient;
-        private Executor executor = SynchronousExecutor.newInstance();
+        private Executor executor = SynchronousExecutor.Companion.newInstance();
         private Gson gson = Constants.getDefaultGson();
 
         static Builder newInstance()

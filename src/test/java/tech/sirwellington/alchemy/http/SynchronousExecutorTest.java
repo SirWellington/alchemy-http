@@ -16,15 +16,15 @@
 
 package tech.sirwellington.alchemy.http;
 
-import org.hamcrest.Matchers;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.test.junit.runners.*;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(AlchemyTestRunner.class)
 public class SynchronousExecutorTest
@@ -42,13 +42,13 @@ public class SynchronousExecutorTest
         setupData();
         setupMocks();
 
-        instance = SynchronousExecutor.newInstance();
+        instance = SynchronousExecutor.Companion.newInstance();
     }
 
     @Test
     public void testNewInstance() throws Exception
     {
-        instance = SynchronousExecutor.newInstance();
+        instance = SynchronousExecutor.Companion.newInstance();
         assertThat(instance, notNullValue());
     }
 
