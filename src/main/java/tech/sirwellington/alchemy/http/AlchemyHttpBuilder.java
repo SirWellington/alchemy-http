@@ -191,7 +191,7 @@ public final class AlchemyHttpBuilder
 
     private static HttpClient createDefaultApacheClient(int timeout, TimeUnit timeUnit)
     {
-        int actualTimeout = (int) TimeUnit.SECONDS.toMillis(timeout);
+        int actualTimeout = (int) timeUnit.toMillis(timeout);
 
         //I really hate that they don't specify the expected Unit for the Timeout.
         RequestConfig config = RequestConfig.custom()
