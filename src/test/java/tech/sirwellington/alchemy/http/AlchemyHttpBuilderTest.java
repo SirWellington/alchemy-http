@@ -16,11 +16,12 @@
 
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import com.google.gson.Gson;
 import org.apache.http.client.HttpClient;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -35,14 +36,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.generator.StringGenerators.asString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.http.AlchemyHttpBuilder.newInstance;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.*;
+import static tech.sirwellington.alchemy.generator.StringGenerators.*;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -77,7 +73,7 @@ public class AlchemyHttpBuilderTest
     @Test
     public void testNewInstance()
     {
-        instance = AlchemyHttpBuilder.newInstance();
+        instance = AlchemyHttpBuilder.Companion.newInstance();
         assertThat(instance, notNullValue());
     }
 
@@ -222,24 +218,24 @@ public class AlchemyHttpBuilderTest
     public void testBuildEdgeCases()
     {
         //Nothing is set
-        instance = newInstance();
+        instance = Companion.newInstance();
         instance.build();
 
         //No Executor Service set
-        instance = newInstance().usingApacheHttpClient(apacheHttpClient);
+        instance = Companion.newInstance().usingApacheHttpClient(apacheHttpClient);
         instance.build();
 
         //No Apache Client set
-        instance = newInstance().usingExecutorService(executor);
+        instance = Companion.newInstance().usingExecutorService(executor);
         instance.build();
     }
 
     @Test
     public void testDefaultIncludesBasicRequestHeaders()
     {
-        instance = newInstance()
-                .usingApacheHttpClient(apacheHttpClient)
-                .usingExecutorService(executor);
+        instance = Companion.newInstance()
+                            .usingApacheHttpClient(apacheHttpClient)
+                            .usingExecutorService(executor);
 
         AlchemyHttp result = instance.build();
         assertThat(result, notNullValue());

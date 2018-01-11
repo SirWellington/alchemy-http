@@ -19,18 +19,17 @@ package tech.sirwellington.alchemy.http;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.Optional;
-import tech.sirwellington.alchemy.annotations.arguments.Required;
+import tech.sirwellington.alchemy.annotations.arguments.*;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
@@ -121,9 +120,9 @@ public interface AlchemyHttp
      */
     static AlchemyHttp newInstanceWithApacheHttpClient(@Required HttpClient apacheHttpClient) throws IllegalArgumentException
     {
-        return AlchemyHttpBuilder.newInstance()
-                .usingApacheHttpClient(apacheHttpClient)
-                .build();
+        return AlchemyHttpBuilder.Companion.newInstance()
+                                           .usingApacheHttpClient(apacheHttpClient)
+                                           .build();
     }
 
     /**
@@ -152,11 +151,11 @@ public interface AlchemyHttp
                 .usingMessage("Default HTTP Headers cannot be null. Use an empty map instead.")
                 .is(notNull());
 
-        return AlchemyHttpBuilder.newInstance()
-                .usingApacheHttpClient(apacheHttpClient)
-                .usingExecutorService(executorService)
-                .usingDefaultHeaders(defaultHeaders)
-                .build();
+        return AlchemyHttpBuilder.Companion.newInstance()
+                                           .usingApacheHttpClient(apacheHttpClient)
+                                           .usingExecutorService(executorService)
+                                           .usingDefaultHeaders(defaultHeaders)
+                                           .build();
     }
 
     /**
@@ -167,7 +166,7 @@ public interface AlchemyHttp
      */
     static AlchemyHttpBuilder newBuilder()
     {
-        return AlchemyHttpBuilder.newInstance();
+        return AlchemyHttpBuilder.Companion.newInstance();
     }
 
 }
