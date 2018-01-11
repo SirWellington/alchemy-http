@@ -1,10 +1,10 @@
 /*
- * Copyright 2016 RedRoma, Inc..
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- 
+
 package tech.sirwellington.alchemy.http;
 
 
@@ -28,7 +28,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.p
 
 /**
  * Contains commonly used HTTP Status Codes.
- * 
+ *
  * @see <a href="http://www.restapitutorial.com/httpstatuscodes.html">http://www.restapitutorial.com/httpstatuscodes.html</a>
  * @author SirWellington
  */
@@ -36,7 +36,7 @@ public enum HttpStatusCode
 {
     //Informational
     INFORMATIONAL(100),
-    
+
     //Success
     OK(200),
     CREATED(201),
@@ -45,7 +45,7 @@ public enum HttpStatusCode
     NO_CONTENT(204),
     RESET_CONTENT(205),
     PARTIAL_CONTENT(206),
-    
+
     //Redirection
     REDIRECTED(300),
     MOVED_PERMANENTLY(301),
@@ -53,8 +53,8 @@ public enum HttpStatusCode
     NOT_MODIFIED(304),
     USE_PROXY(305),
     TEMPORARY_REDIRECT(307),
-    
-    
+
+
     //Client Errors
     BAD_REQUEST(400),
     UNAUTHORIZED(401),
@@ -72,7 +72,7 @@ public enum HttpStatusCode
     REQUEST_ENTITY_TOO_LARGE(413),
     REQUEST_URI_TOO_LONG(414),
     UNSUPPORTED_MEDIA_TYPE(415),
-    
+
     //Server Errrors
     INTERNAL_SERVICE_ERROR(500),
     NOT_IMPLEMENTED(501),
@@ -82,27 +82,27 @@ public enum HttpStatusCode
     HTTP_VERSION_NOT_SUPPORTED(505),
     NETWORK_READ_TIMEOUT_ERROR(598),
     NETWORK_AUTHENTICATION_REQUIRED(511)
-    
+
     ;
     private final static Logger LOG = LoggerFactory.getLogger(HttpStatusCode.class);
     private final static Map<Integer, HttpStatusCode> REVERSE_MAP = createReverseMapping();
-    
+
     public final String name;
     public final int code;
 
     private HttpStatusCode(int code)
     {
         checkThat(code).is(positiveInteger());
-        
+
         this.name = this.toString();
         this.code = code;
     }
-    
+
     public static HttpStatusCode forCode(int code)
     {
         return REVERSE_MAP.get(code);
     }
-    
+
     public boolean matchesCode(int code)
     {
         return this.code == code;
@@ -111,14 +111,14 @@ public enum HttpStatusCode
     private static Map<Integer, HttpStatusCode> createReverseMapping()
     {
         Map<Integer, HttpStatusCode> map = Maps.create();
-        
+
         for (HttpStatusCode code : HttpStatusCode.values())
         {
             map.put(code.code, code);
         }
-        
+
         return Maps.immutableCopyOf(map);
     }
-    
-    
+
+
 }

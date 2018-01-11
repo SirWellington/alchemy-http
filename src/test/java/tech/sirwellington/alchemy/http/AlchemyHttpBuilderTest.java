@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -92,7 +92,7 @@ public class AlchemyHttpBuilderTest
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
-    
+
     @Repeat(50)
     @Test
     public void testUsingTimeout()
@@ -101,30 +101,30 @@ public class AlchemyHttpBuilderTest
         AlchemyHttpBuilder result = instance.usingTimeout(socketTimeout, TimeUnit.SECONDS);
         assertThat(result, notNullValue());
     }
-    
+
     @Repeat(10)
     @Test
     public void testUsingTimeoutWithBadArgs()
     {
         int negativeNumber = one(negativeIntegers());
-        
+
         assertThrows(() -> instance.usingTimeout(negativeNumber, TimeUnit.SECONDS))
             .isInstanceOf(IllegalArgumentException.class);
-        
+
         int positiveNumber = one(integers(10, 60));
         assertThrows(() -> instance.usingTimeout(positiveNumber, null))
             .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
      @Test
     public void testUsingGson()
     {
         Gson gson = new Gson();
         AlchemyHttpBuilder result = instance.usingGson(gson);
         assertThat(result, notNullValue());
-        
+
     }
-    
+
     @Test
     public void testUsingGsonWithBadArgs() throws Exception
     {

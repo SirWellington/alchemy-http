@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -137,7 +137,7 @@ public class Step1ImplTest
         File tempFile = TestFile.writeToTempFile(bytes);
 
         URL url = tempFile.toURI().toURL();
-        
+
         byte[] download = instance.download(url);
         assertThat(download, is(bytes));
     }

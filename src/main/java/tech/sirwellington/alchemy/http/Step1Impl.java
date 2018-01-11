@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -30,65 +30,65 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
 @StepMachineDesign(role = STEP)
 final class Step1Impl implements AlchemyRequest.Step1
 {
-    
+
     private final static Logger LOG = LoggerFactory.getLogger(Step1Impl.class);
-    
+
     private final AlchemyHttpStateMachine stateMachine;
     private final HttpRequest request;
-    
+
     Step1Impl(AlchemyHttpStateMachine stateMachine, HttpRequest request)
     {
         checkThat(stateMachine, request)
                 .are(notNull());
-        
+
         this.stateMachine = stateMachine;
         this.request = request;
     }
-    
+
     @Override
     public AlchemyRequest.Step3 get()
     {
         HttpRequest newRequest = HttpRequest.Builder.from(this.request)
                 .usingVerb(HttpVerb.get())
                 .build();
-        
+
         return stateMachine.jumpToStep3(newRequest);
     }
-    
+
     @Override
     public AlchemyRequest.Step2 post()
     {
         HttpRequest newRequest = HttpRequest.Builder.from(this.request)
                 .usingVerb(HttpVerb.post())
                 .build();
-        
+
         return stateMachine.jumpToStep2(newRequest);
     }
-    
+
     @Override
     public AlchemyRequest.Step2 put()
     {
         HttpRequest newRequest = HttpRequest.Builder.from(this.request)
                 .usingVerb(HttpVerb.put())
                 .build();
-        
+
         return stateMachine.jumpToStep2(newRequest);
     }
-    
+
     @Override
     public AlchemyRequest.Step2 delete()
     {
         HttpRequest newRequest = HttpRequest.Builder.from(this.request)
                 .usingVerb(HttpVerb.delete())
                 .build();
-        
+
         return stateMachine.jumpToStep2(newRequest);
     }
-    
+
     @Override
     public String toString()
     {
         return "Step1Impl{" + "stateMachine=" + stateMachine + ", request=" + request + '}';
     }
-    
+
 }

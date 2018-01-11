@@ -1,10 +1,11 @@
-    /*
- * Copyright 2015 SirWellington Tech.
+
+/*
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -13,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.JsonElement;
-import java.net.URL;
-import java.util.Map;
-import java.util.Objects;
-import org.mockito.Mockito;
-import tech.sirwellington.alchemy.annotations.access.Internal;
-import tech.sirwellington.alchemy.generator.AlchemyGenerator;
-import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.generator.StringGenerators;
+    import java.net.URL;
+    import java.util.Map;
+    import java.util.Objects;
 
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+    import com.google.gson.JsonElement;
+    import org.mockito.Mockito;
+    import tech.sirwellington.alchemy.annotations.access.Internal;
+    import tech.sirwellington.alchemy.generator.CollectionGenerators;
+    import tech.sirwellington.alchemy.generator.StringGenerators;
+
+    import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 
     /**
  *

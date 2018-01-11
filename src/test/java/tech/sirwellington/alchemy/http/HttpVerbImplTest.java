@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -144,7 +144,7 @@ public class HttpVerbImplTest
         when(apacheResponse.getAllHeaders())
                 .thenReturn(headerArray);
     }
-    
+
     @DontRepeat
     @Test
     public void testConstructor() throws Exception
@@ -173,7 +173,7 @@ public class HttpVerbImplTest
         assertThat(response.body(), is(responseBody));
         assertThat(response.responseHeaders(), is(responseHeaders));
         assertThat(response.bodyAsString(), is(responseBody.toString()));
-        
+
         verify(apacheResponse).close();
     }
 
@@ -260,7 +260,7 @@ public class HttpVerbImplTest
 
     /*
      * We are no longer sure if an invalid content type should constitute a failure.
-     * 
+     *
      */
     @Test
     public void testExecuteWhenContentTypeInvalid() throws IOException
@@ -327,34 +327,34 @@ public class HttpVerbImplTest
         assertThat(asJSON.isJsonPrimitive(), is(true));
         assertThat(asJSON.getAsJsonPrimitive().isString(), is(true));
     }
-    
+
     @Test
     public void testWhenDuplicateValuesInAHeader()
     {
         String headerName = one(alphabeticStrings());
         List<String> headerValues = listOf(alphabeticStrings(), 5);
-        
+
         List<Header> headers = Lists.create();
-        
+
         for(String value : headerValues)
         {
             headers.add(new BasicHeader(headerName, value));
         }
-        
+
         Header[] headerArray = headers.toArray(new Header[0]);
-        
+
         when(apacheResponse.getAllHeaders())
             .thenReturn(headerArray);
-        
+
         HttpResponse response = instance.execute(apacheClient, gson, request);
-        
+
         Map<String, String> responseHeaders = response.responseHeaders();
         assertThat(responseHeaders, notNullValue());
         assertThat(responseHeaders.containsKey(headerName), is(true));
-        
+
         String resultValue = responseHeaders.get(headerName);
         headerValues.forEach(value -> assertThat(resultValue, containsString(value)));
-        
+
     }
 
     @DontRepeat

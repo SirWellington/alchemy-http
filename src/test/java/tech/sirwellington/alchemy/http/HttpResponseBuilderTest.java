@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -43,73 +43,73 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
 @Repeat
 public class HttpResponseBuilderTest
 {
-    
+
     private final Gson gson = Constants.getDefaultGson();
-    
+
     private TestResponse response;
     private JsonElement responseBody;
-    
+
     private HttpResponse.Builder instance;
-    
+
     @Before
     public void setUp()
     {
         instance = newInstance();
-        
+
         response = new TestResponse();
         responseBody = response.responseBody;
     }
-    
+
     @Test
     public void testWithStatusCode()
     {
         int goodStatusCode = one(integers(200, 500));
         HttpResponse.Builder result = instance.withStatusCode(goodStatusCode);
         assertThat(result, notNullValue());
-        
+
         int badStatusCode = one(integers(520, 10000));
         assertThrows(() -> instance.withStatusCode(badStatusCode))
                 .isInstanceOf(IllegalArgumentException.class);
-        
+
         int negativeStatusCode = one(negativeIntegers());
         assertThrows(() -> instance.withStatusCode(negativeStatusCode))
                 .isInstanceOf(IllegalArgumentException.class);
-        
+
     }
-    
+
     @Test
     public void testUsingGson()
     {
         HttpResponse.Builder result = instance.usingGson(gson);
         assertThat(result, notNullValue());
-        
+
         assertThrows(() -> instance.usingGson(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     public void testWithResponseBody()
     {
         HttpResponse.Builder result = instance.withResponseBody(responseBody);
         assertThat(result, notNullValue());
-        
+
         instance.withResponseBody(one(jsonNull()));
-        
+
         assertThrows(() -> instance.withResponseBody(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     public void testWithResponseHeaders()
     {
         HttpResponse.Builder result = instance.withResponseHeaders(response.responseHeaders);
         assertThat(result, notNullValue());
-        
+
         //Empty Map is ok
         instance.withResponseHeaders(Collections.emptyMap());
         instance.withResponseHeaders(null);
     }
-    
+
     @Test
     public void testBuild()
     {
@@ -118,34 +118,34 @@ public class HttpResponseBuilderTest
                 .withResponseHeaders(response.responseHeaders)
                 .withStatusCode(response.statusCode)
                 .build();
-        
+
         assertThat(result, notNullValue());
         assertThat(result.equals(response), is(true));
         assertThat(response.equals(result), is(true));
-        
+
     }
-    
+
     @Test
     public void testBuildMissingStatusCode()
     {
         instance.withResponseBody(responseBody)
                 .withResponseHeaders(response.responseHeaders);
-        
+
         assertThrows(() -> instance.build())
                 .isInstanceOf(IllegalStateException.class);
     }
-    
+
     @Test
     public void testMergeFrom()
     {
         instance.mergeFrom(response);
-        
+
         HttpResponse result = instance.build();
         assertThat(result, is(response));
         assertThat(response, is(result));
-        
+
     }
-    
+
     @Test
     public void testMergeFromEdgeCases()
     {
@@ -153,11 +153,11 @@ public class HttpResponseBuilderTest
         response.responseHeaders = null;
         HttpResponse result = instance.mergeFrom(response).build();
         assertThat(result, notNullValue());
-        
+
         response.responseHeaders = headers;
         response.statusCode = one(negativeIntegers());
         assertThrows(() -> instance.mergeFrom(response))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
 }
