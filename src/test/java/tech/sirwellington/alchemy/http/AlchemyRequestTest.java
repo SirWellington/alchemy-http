@@ -242,7 +242,7 @@ public class AlchemyRequestTest
     @Test
     public void testOnSuccessNoOp()
     {
-        OnSuccess instance = OnSuccess.NO_OP;
+        OnSuccess instance = OnSuccess.Companion.getNO_OP();
         assertThat(instance, notNullValue());
 
         String response = one(alphabeticStrings());
@@ -252,7 +252,7 @@ public class AlchemyRequestTest
     @Test
     public void testOnFailureNoOp()
     {
-        OnFailure instance = OnFailure.NO_OP;
+        OnFailure instance = OnFailure.Companion.getNO_OP();
         assertThat(instance, notNullValue());
 
         AlchemyHttpException ex = new AlchemyHttpException();
