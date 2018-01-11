@@ -52,12 +52,12 @@ public final class AlchemyHttpBuilder
 
     private Gson gson = Constants.getDefaultGson();
 
-    static AlchemyHttpBuilder newInstance()
+    public static AlchemyHttpBuilder newInstance()
     {
         return new AlchemyHttpBuilder();
     }
 
-    AlchemyHttpBuilder()
+    public AlchemyHttpBuilder()
     {
     }
 
