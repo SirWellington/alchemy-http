@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http
 
+import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
@@ -26,6 +27,7 @@ import java.net.URL
  *
  * @author SirWellington
  */
+@Internal
 @StepMachineDesign(role = STEP)
 internal class Step4Impl<ResponseType>(private val stateMachine: AlchemyHttpStateMachine, private val request: HttpRequest, private val classOfResponseType: Class<ResponseType>) : AlchemyRequest.Step4<ResponseType>
 {

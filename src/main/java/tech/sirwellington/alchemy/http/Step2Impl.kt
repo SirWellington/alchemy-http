@@ -19,6 +19,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import org.slf4j.LoggerFactory
+import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
@@ -30,6 +31,7 @@ import tech.sirwellington.alchemy.http.exceptions.JsonException
  *
  * @author SirWellington
  */
+@Internal
 @StepMachineDesign(role = STEP)
 internal class Step2Impl(private val request: HttpRequest,
                          private val stateMachine: AlchemyHttpStateMachine,

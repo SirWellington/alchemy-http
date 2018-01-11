@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.http
 
 import sir.wellington.alchemy.collections.maps.Maps
+import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
@@ -29,6 +30,7 @@ import java.net.URL
  *
  * @author SirWellington
  */
+@Internal
 @StepMachineDesign(role = STEP)
 internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
                          private var request: HttpRequest?) : AlchemyRequest.Step3

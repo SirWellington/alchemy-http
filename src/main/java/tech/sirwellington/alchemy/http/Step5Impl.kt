@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http
 
+import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
@@ -24,6 +25,7 @@ import tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass
  *
  * @author SirWellington
  */
+@Internal
 @StepMachineDesign(role = STEP)
 internal class Step5Impl<ResponseType>(private val stateMachine: AlchemyHttpStateMachine,
                                        private val request: HttpRequest,
