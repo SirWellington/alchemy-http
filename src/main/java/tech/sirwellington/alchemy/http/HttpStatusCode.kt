@@ -15,25 +15,23 @@
  */
 
 
-package tech.sirwellington.alchemy.http;
+package tech.sirwellington.alchemy.http
 
 
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.collections.maps.Maps;
-
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveInteger;
+import tech.sirwellington.alchemy.arguments.Arguments.checkThat
+import tech.sirwellington.alchemy.arguments.assertions.positiveInteger
+import tech.sirwellington.alchemy.kotlin.extensions.anyElement
 
 /**
  * Contains commonly used HTTP Status Codes.
  *
- * @see <a href="http://www.restapitutorial.com/httpstatuscodes.html">http://www.restapitutorial.com/httpstatuscodes.html</a>
+ * @see [http://www.restapitutorial.com/httpstatuscodes.html](http://www.restapitutorial.com/httpstatuscodes.html)
+ *
  * @author SirWellington
  */
-public enum HttpStatusCode
+enum class HttpStatusCode(val code: Int)
 {
+
     //Informational
     INFORMATIONAL(100),
 
@@ -81,43 +79,41 @@ public enum HttpStatusCode
     GATEWAY_TIMEOUT(504),
     HTTP_VERSION_NOT_SUPPORTED(505),
     NETWORK_READ_TIMEOUT_ERROR(598),
-    NETWORK_AUTHENTICATION_REQUIRED(511)
+    NETWORK_AUTHENTICATION_REQUIRED(511);
 
-    ;
-    private final static Logger LOG = LoggerFactory.getLogger(HttpStatusCode.class);
-    private final static Map<Integer, HttpStatusCode> REVERSE_MAP = createReverseMapping();
+    val statusName = this.toString()
 
-    public final String name;
-    public final int code;
-
-    private HttpStatusCode(int code)
+    init
     {
-        checkThat(code).is(positiveInteger());
-
-        this.name = this.toString();
-        this.code = code;
+        checkThat(code).isA(positiveInteger())
     }
 
-    public static HttpStatusCode forCode(int code)
+    fun matchesCode(code: Int): Boolean
     {
-        return REVERSE_MAP.get(code);
+        return this.code == code
     }
 
-    public boolean matchesCode(int code)
+    companion object
     {
-        return this.code == code;
-    }
 
-    private static Map<Integer, HttpStatusCode> createReverseMapping()
-    {
-        Map<Integer, HttpStatusCode> map = Maps.create();
+        private val REVERSE_MAP = createReverseMapping()
 
-        for (HttpStatusCode code : HttpStatusCode.values())
+        @JvmStatic
+        val all = values().toList()
+
+        @JvmStatic
+        val any get() = all.anyElement ?: OK
+
+        @JvmStatic
+        fun forCode(code: Int): HttpStatusCode?
         {
-            map.put(code.code, code);
+            return REVERSE_MAP[code]
         }
 
-        return Maps.immutableCopyOf(map);
+        private fun createReverseMapping(): Map<Int, HttpStatusCode>
+        {
+            return all.map { it.code to it }.toMap()
+        }
     }
 
 
