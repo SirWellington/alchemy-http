@@ -118,7 +118,7 @@ public class Step4ImplTest
     @Test
     public void testToString()
     {
-        assertThat(Strings.isNullOrEmpty(instance.toString()), is(false));
+        assertThat(Strings.INSTANCE.isNullOrEmpty(instance.toString()), is(false));
     }
 
 }

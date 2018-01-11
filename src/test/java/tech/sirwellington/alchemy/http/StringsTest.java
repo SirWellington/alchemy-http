@@ -16,16 +16,14 @@
 
 package tech.sirwellington.alchemy.http;
 
-import org.hamcrest.Matchers;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(AlchemyTestRunner.class)
 @Repeat
@@ -47,10 +45,10 @@ public class StringsTest
     @Test
     public void testNullToEmpty() throws Exception
     {
-        String result = Strings.nullToEmpty(string);
+        String result = Strings.INSTANCE.nullToEmpty(string);
         assertThat(result, equalTo(string));
 
-        result = Strings.nullToEmpty(null);
+        result = Strings.INSTANCE.nullToEmpty(null);
         assertThat(result, notNullValue());
         assertThat(result, equalTo(""));
     }
@@ -58,9 +56,9 @@ public class StringsTest
     @Test
     public void testIsNullOrEmpty() throws Exception
     {
-        assertFalse(Strings.isNullOrEmpty(string));
-        assertTrue(Strings.isNullOrEmpty(null));
-        assertTrue(Strings.isNullOrEmpty(""));
+        assertFalse(Strings.INSTANCE.isNullOrEmpty(string));
+        assertTrue(Strings.INSTANCE.isNullOrEmpty(null));
+        assertTrue(Strings.INSTANCE.isNullOrEmpty(""));
     }
 
     private void setupData() throws Exception

@@ -163,7 +163,7 @@ final class HttpVerbImpl implements HttpVerb
             throw new AlchemyHttpException(matchingRequest, "Failed to read response from server", ex);
         }
 
-        if (Strings.isNullOrEmpty(responseString))
+        if (Strings.INSTANCE.isNullOrEmpty(responseString))
         {
             return JsonNull.INSTANCE;
         }
@@ -196,7 +196,7 @@ final class HttpVerbImpl implements HttpVerb
 
             String existingValue = headers.get(headerName);
 
-            if(!Strings.isNullOrEmpty(existingValue))
+            if(!Strings.INSTANCE.isNullOrEmpty(existingValue))
             {
                 existingValue = joinValues(existingValue, headerValue);
             }

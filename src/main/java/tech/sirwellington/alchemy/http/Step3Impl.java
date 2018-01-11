@@ -61,7 +61,7 @@ final class Step3Impl implements AlchemyRequest.Step3
                 .is(nonEmptyString());
 
         //Value of an HTTP Header can be empty ?
-        value = Strings.nullToEmpty(value);
+        value = Strings.INSTANCE.nullToEmpty(value);
 
         Map<String, String> requestHeaders = Maps.create();
 

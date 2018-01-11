@@ -14,36 +14,28 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.http;
+package tech.sirwellington.alchemy.http
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.Internal
 
 /**
  * @author SirWellington
  */
 @Internal
-final class Strings
+internal object Strings
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Strings.class);
-
     @Internal
-    static String nullToEmpty(String string)
+    @JvmStatic
+    fun nullToEmpty(string: String?): String
     {
-        if (string == null)
-        {
-            return "";
-        }
-        else
-        {
-            return string;
-        }
+        return string ?: ""
     }
 
-    static boolean isNullOrEmpty(String string)
+    @Internal
+    @JvmStatic
+    fun isNullOrEmpty(string: String?): Boolean
     {
-        return string == null || string.isEmpty();
+        return string == null || string.isEmpty()
     }
 }

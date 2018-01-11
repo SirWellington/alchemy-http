@@ -113,7 +113,7 @@ public class Step6ImplTest
     public void testToString()
     {
         String toString = instance.toString();
-        assertThat(Strings.isNullOrEmpty(toString), is(false));
+        assertThat(Strings.INSTANCE.isNullOrEmpty(toString), is(false));
     }
 
 }
