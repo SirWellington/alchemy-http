@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -38,25 +38,25 @@ public class HttpVerbTest
     @Test
     public void testGet()
     {
-        assertNotNull(HttpVerb.get());
+        assertNotNull(HttpVerb.Companion.get());
     }
 
     @Test
     public void testPost()
     {
-        assertNotNull(HttpVerb.post());
+        assertNotNull(HttpVerb.Companion.post());
     }
 
     @Test
     public void testPut()
     {
-        assertNotNull(HttpVerb.put());
+        assertNotNull(HttpVerb.Companion.put());
     }
 
     @Test
     public void testDelete()
     {
-        assertNotNull(HttpVerb.delete());
+        assertNotNull(HttpVerb.Companion.delete());
     }
 
 }
