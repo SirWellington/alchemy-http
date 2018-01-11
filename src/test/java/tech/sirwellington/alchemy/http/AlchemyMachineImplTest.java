@@ -16,7 +16,9 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
-import java.util.concurrent.ExecutorService;
+
+import java.util.concurrent.Executor;
+
 import org.apache.http.client.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +59,7 @@ public class AlchemyMachineImplTest
     private HttpClient apacheClient;
 
     @Mock
-    private ExecutorService executorService;
+    private Executor executor;
 
     @Captor
     private ArgumentCaptor<Runnable> taskCaptor;
@@ -93,8 +95,8 @@ public class AlchemyMachineImplTest
         gson = Constants.getDefaultGson();
         request = new TestRequest();
 
-        instance = new AlchemyMachineImpl(apacheClient, executorService, gson);
-        verifyZeroInteractions(apacheClient, executorService);
+        instance = new AlchemyMachineImpl(apacheClient, executor, gson);
+        verifyZeroInteractions(apacheClient, executor);
 
         setupVerb();
         setupResponse();
@@ -127,7 +129,7 @@ public class AlchemyMachineImplTest
         assertThrows(() -> new AlchemyMachineImpl(apacheClient, null, null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(() -> new AlchemyMachineImpl(null, executorService, null))
+        assertThrows(() -> new AlchemyMachineImpl(null, executor, null))
                 .isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() -> new AlchemyMachineImpl(null, null, gson))
@@ -336,7 +338,7 @@ public class AlchemyMachineImplTest
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
-        verify(executorService).submit(taskCaptor.capture());
+        verify(executor).execute(taskCaptor.capture());
 
         Runnable task = taskCaptor.getValue();
         assertThat(task, notNullValue());
@@ -355,7 +357,7 @@ public class AlchemyMachineImplTest
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
-        verify(executorService).submit(taskCaptor.capture());
+        verify(executor).execute(taskCaptor.capture());
 
         Runnable task = taskCaptor.getValue();
         assertThat(task, notNullValue());
@@ -372,7 +374,7 @@ public class AlchemyMachineImplTest
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
-        verify(executorService).submit(taskCaptor.capture());
+        verify(executor).execute(taskCaptor.capture());
 
         Runnable task = taskCaptor.getValue();
         assertThat(task, notNullValue());
@@ -391,7 +393,7 @@ public class AlchemyMachineImplTest
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
-        verify(executorService).submit(taskCaptor.capture());
+        verify(executor).execute(taskCaptor.capture());
 
         Runnable task = taskCaptor.getValue();
         assertThat(task, notNullValue());

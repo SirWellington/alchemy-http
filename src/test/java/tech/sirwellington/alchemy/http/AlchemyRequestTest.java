@@ -15,32 +15,29 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step1;
+import tech.sirwellington.alchemy.http.AlchemyRequest.*;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.BinaryGenerators.binary;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.http.Generators.validUrls;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -114,7 +111,7 @@ public class AlchemyRequestTest
         {
 
             private URL url;
-            private Map<String, String> savedHeaders = Maps.newHashMap();
+            private Map<String, String> savedHeaders = Maps.create();
 
             @Override
             public AlchemyRequest.Step3 usingHeader(String key, String value) throws IllegalArgumentException
@@ -209,7 +206,7 @@ public class AlchemyRequestTest
         //Test built-in URL method
         instance.at(url.toString());
         assertThat(instance.url, is(this.url));
-        
+
          //Edge cases
         assertThrows(() -> instance.at(""))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -230,13 +227,13 @@ public class AlchemyRequestTest
             }
 
         }
-        
+
         TestImpl<String> instance = new TestImpl<>();
-        
+
         //Test built-in at() method
         instance.at(url.toString());
         assertThat(instance.url, is(this.url));
-        
+
         //Edge cases
         assertThrows(() -> instance.at(""))
                 .isInstanceOf(IllegalArgumentException.class);

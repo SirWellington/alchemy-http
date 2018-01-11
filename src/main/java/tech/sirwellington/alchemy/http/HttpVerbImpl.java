@@ -16,18 +16,12 @@
 
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+
+import com.google.gson.*;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
@@ -35,14 +29,14 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.http.exceptions.JsonException;
-import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
+import tech.sirwellington.alchemy.http.exceptions.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
@@ -61,7 +55,7 @@ final class HttpVerbImpl implements HttpVerb
     HttpVerbImpl(AlchemyRequestMapper requestMapper)
     {
         checkThat(requestMapper).is(notNull());
-        
+
         this.requestMapper = requestMapper;
     }
 
@@ -152,7 +146,7 @@ final class HttpVerbImpl implements HttpVerb
         HttpEntity entity = apacheResponse.getEntity();
 
         String contentType = entity.getContentType().getValue();
-        
+
         /*
          * We used to care what the content type was, and had a check for it here.
          * But perhaps it's better if we don't care what the content type is, as long as we can read it as a String.
@@ -161,7 +155,7 @@ final class HttpVerbImpl implements HttpVerb
         try (final InputStream istream = entity.getContent())
         {
             byte[] rawBytes = ByteStreams.toByteArray(istream);
-            responseString = new String(rawBytes, Charsets.UTF_8);
+            responseString = new String(rawBytes, UTF_8);
         }
         catch (Exception ex)
         {
@@ -193,15 +187,15 @@ final class HttpVerbImpl implements HttpVerb
             return Collections.emptyMap();
         }
 
-        Map<String,String> headers = Maps.newHashMap();
-        
+        Map<String,String> headers = Maps.create();
+
         for(Header header : apacheResponse.getAllHeaders())
         {
             String headerName = header.getName();
             String headerValue = header.getValue();
-            
+
             String existingValue = headers.get(headerName);
-            
+
             if(!Strings.isNullOrEmpty(existingValue))
             {
                 existingValue = joinValues(existingValue, headerValue);
@@ -210,10 +204,10 @@ final class HttpVerbImpl implements HttpVerb
             {
                 existingValue = headerValue;
             }
-            
+
             headers.put(headerName, existingValue);
         }
-        
+
         return headers;
     }
 

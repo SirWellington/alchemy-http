@@ -15,21 +15,21 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.gson.JsonElement;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
+
+import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.Mutable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.nonEmptyMap;
 
@@ -116,8 +116,8 @@ public interface HttpRequest
 
         private final static Logger LOG = LoggerFactory.getLogger(HttpRequest.class);
 
-        private Map<String, String> requestHeaders = Maps.newHashMap();
-        private Map<String, String> queryParams = Maps.newHashMap();
+        private Map<String, String> requestHeaders = Maps.create();
+        private Map<String, String> queryParams = Maps.create();
 
         private URL url;
         private JsonElement body;
@@ -141,12 +141,12 @@ public interface HttpRequest
 
             if (other.getRequestHeaders() != null)
             {
-                builder.requestHeaders = Maps.newHashMap(other.getRequestHeaders());
+                builder.requestHeaders = Maps.mutableCopyOf(other.getRequestHeaders());
             }
 
             if (other.getQueryParams() != null)
             {
-                builder.queryParams = Maps.newHashMap(other.getQueryParams());
+                builder.queryParams = Maps.mutableCopyOf(other.getQueryParams());
             }
 
             builder.body = other.getBody();
@@ -203,8 +203,8 @@ public interface HttpRequest
         {
             Impl instance = new Impl();
 
-            instance.requestHeaders = ImmutableMap.copyOf(this.requestHeaders);
-            instance.queryParams = ImmutableMap.copyOf(this.queryParams);
+            instance.requestHeaders = Maps.immutableCopyOf(this.requestHeaders);
+            instance.queryParams = Maps.immutableCopyOf(this.queryParams);
             instance.body = this.body;
             instance.url = this.url;
             instance.verb = this.verb;

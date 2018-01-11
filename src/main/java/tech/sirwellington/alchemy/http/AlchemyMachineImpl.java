@@ -16,6 +16,8 @@
 package tech.sirwellington.alchemy.http;
 
 import com.google.gson.Gson;
+
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
@@ -45,10 +47,10 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     private final static Logger LOG = LoggerFactory.getLogger(AlchemyMachineImpl.class);
 
     private final HttpClient apacheHttpClient;
-    private final ExecutorService async;
+    private final Executor async;
     private final Gson gson;
 
-    AlchemyMachineImpl(HttpClient apacheHttpClient, ExecutorService async, Gson gson)
+    AlchemyMachineImpl(HttpClient apacheHttpClient, Executor async, Gson gson)
     {
         checkThat(apacheHttpClient, async, gson)
                 .are(notNull());
@@ -157,7 +159,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         checkThat(response)
                 .throwing(ex -> new AlchemyHttpException(request, "HTTP Verb returned null response"))
                 .is(notNull());
-        
+
         checkThat(response)
             .throwing(ex -> new AlchemyHttpException(request, response, "Http Response not OK."))
             .is(okResponse());
@@ -210,7 +212,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
                     .throwing(IllegalStateException.class)
                     .usingMessage("Received unexpected null response")
                     .is(notNull());
-                
+
             }
             catch (AlchemyHttpException ex)
             {
@@ -237,7 +239,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             }
         };
 
-        async.submit(asyncTask);
+        async.execute(asyncTask);
     }
 
     @Override

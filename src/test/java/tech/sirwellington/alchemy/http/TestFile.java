@@ -15,15 +15,16 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.io.Files;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
@@ -46,12 +47,14 @@ class TestFile
 
     static File writeToTempFile(byte[] binary) throws IOException
     {
-        
+
         checkThat(binary).is(notNull());
-        
+
         String filename = one(alphabeticStrings(10));
         File tempFile = File.createTempFile(filename, ".txt");
-        Files.write(binary, tempFile);
+
+        InputStream istream = new ByteArrayInputStream(binary);
+        Files.copy(istream, tempFile.toPath(), REPLACE_EXISTING);
         LOG.debug("Wrote {} bytes to temp file at {}", binary.length, tempFile.getAbsolutePath());
         return tempFile;
     }

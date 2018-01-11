@@ -15,29 +15,22 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.Maps;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+import org.mockito.*;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step3;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.BooleanGenerators.booleans;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
@@ -46,7 +39,7 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiv
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.Generators.validUrls;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -153,7 +146,7 @@ public class Step3ImplTest
             instance = instance.usingQueryParam(param.getKey(), param.getValue());
         }
 
-        Map<String, String> expected = Maps.newHashMap(strings);
+        Map<String, String> expected = Maps.mutableCopyOf(strings);
         //Put the integers
         integers.forEach((k, v) -> expected.put(k, String.valueOf(v)));
         //Put the booleans too

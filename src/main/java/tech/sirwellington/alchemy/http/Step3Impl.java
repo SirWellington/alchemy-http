@@ -15,20 +15,20 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import java.net.URL;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
 /**
@@ -63,7 +63,7 @@ final class Step3Impl implements AlchemyRequest.Step3
         //Value of an HTTP Header can be empty ?
         value = Strings.nullToEmpty(value);
 
-        Map<String, String> requestHeaders = Maps.newHashMap();
+        Map<String, String> requestHeaders = Maps.create();
 
         //Keep existing headers
         if (request.getRequestHeaders() != null)
@@ -87,7 +87,7 @@ final class Step3Impl implements AlchemyRequest.Step3
                 .usingMessage("missing name or value")
                 .are(nonEmptyString());
 
-        Map<String, String> queryParams = Maps.newHashMap();
+        Map<String, String> queryParams = Maps.create();
 
         //Keep existing Query Params
         if (request.getQueryParams() != null)

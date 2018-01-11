@@ -15,23 +15,18 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.util.concurrent.MoreExecutors;
+import java.util.concurrent.Executor;
+
 import com.google.gson.Gson;
-import java.util.concurrent.ExecutorService;
 import org.apache.http.client.HttpClient;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign;
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step1;
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step2;
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step3;
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step4;
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step5;
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step6;
+import tech.sirwellington.alchemy.http.AlchemyRequest.*;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
@@ -87,7 +82,7 @@ interface AlchemyHttpStateMachine
     {
 
         private HttpClient apacheHttpClient;
-        private ExecutorService executor = MoreExecutors.newDirectExecutorService();
+        private Executor executor = SynchronousExecutor.newInstance();
         private Gson gson = Constants.getDefaultGson();
 
         static Builder newInstance()
@@ -95,7 +90,7 @@ interface AlchemyHttpStateMachine
             return new Builder();
         }
 
-        Builder usingExecutorService(ExecutorService executor) throws IllegalArgumentException
+        Builder usingExecutorService(Executor executor) throws IllegalArgumentException
         {
             checkThat(executor).is(notNull());
 
@@ -110,11 +105,11 @@ interface AlchemyHttpStateMachine
             this.apacheHttpClient = apacheHttpClient;
             return this;
         }
-        
+
         Builder usingGson(@Required Gson gson) throws IllegalArgumentException
         {
             checkThat(gson).is(notNull());
-            
+
             this.gson = gson;
             return this;
         }

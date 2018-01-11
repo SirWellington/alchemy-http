@@ -15,21 +15,17 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.Maps;
+import java.lang.reflect.Type;
+import java.util.*;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import tech.sirwellington.alchemy.generator.AlchemyGenerator;
-import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.generator.NumberGenerators;
-import tech.sirwellington.alchemy.generator.StringGenerators;
+import sir.wellington.alchemy.collections.maps.Maps;
+import tech.sirwellington.alchemy.generator.*;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.http.HttpAssertions.jsonArray;
 
@@ -49,7 +45,7 @@ class TestResponse implements HttpResponse
     {
         TestResponse clone = new TestResponse();
         clone.statusCode = this.statusCode;
-        clone.responseHeaders = Maps.newHashMap(this.responseHeaders);
+        clone.responseHeaders = Maps.mutableCopyOf(this.responseHeaders);
         clone.responseBody = gson.toJsonTree(responseBody);
         return clone;
     }
@@ -113,13 +109,13 @@ class TestResponse implements HttpResponse
     {
         return "TestResponse{" + "statusCode=" + statusCode + ", responseHeaders=" + responseHeaders + ", responseBody=" + responseBody + '}';
     }
-    
+
     @Override
     public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException
     {
         checkThat(this.responseBody)
                 .is(jsonArray());
-        
+
         Type type = new TypeToken<List<T>>()
         {
         }.getType();

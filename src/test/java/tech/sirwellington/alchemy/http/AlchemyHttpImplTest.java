@@ -15,31 +15,23 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.Maps;
 import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import org.mockito.*;
+import sir.wellington.alchemy.collections.maps.Maps;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -113,7 +105,7 @@ public class AlchemyHttpImplTest
         HttpRequest requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
 
-        Map<String, String> expectedHeaders = Maps.newHashMap(defaultHeaders);
+        Map<String, String> expectedHeaders = Maps.mutableCopyOf(defaultHeaders);
         expectedHeaders.put(key, value);
         assertThat(requestMade.getRequestHeaders(), is(expectedHeaders));
 
@@ -144,13 +136,13 @@ public class AlchemyHttpImplTest
         AlchemyRequest.Step1 result = instance.go();
         verify(stateMachine).begin(any(HttpRequest.class));
     }
-    
+
     @Test
     public void testGetDefaultHeaders()
     {
         Map<String, String> result = instance.getDefaultHeaders();
         assertThat(result, is(defaultHeaders));
-        
+
         assertThrows(() -> result.clear());
     }
 

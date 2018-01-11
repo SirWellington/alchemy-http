@@ -15,18 +15,18 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.util.Map;
+
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe;
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 
 /**
  *
@@ -46,7 +46,7 @@ final class AlchemyHttpImpl implements AlchemyHttp
         checkThat(defaultHeaders, stateMachine)
                 .are(notNull());
 
-        this.defaultHeaders = ImmutableMap.copyOf(defaultHeaders);
+        this.defaultHeaders = Maps.immutableCopyOf(defaultHeaders);
         this.stateMachine = stateMachine;
     }
 
@@ -57,7 +57,7 @@ final class AlchemyHttpImpl implements AlchemyHttp
                 .usingMessage("Key is empty")
                 .is(nonEmptyString());
 
-        Map<String, String> copy = Maps.newHashMap(defaultHeaders);
+        Map<String, String> copy = Maps.mutableCopyOf(defaultHeaders);
         copy.put(key, value);
         return new AlchemyHttpImpl(copy, stateMachine);
     }

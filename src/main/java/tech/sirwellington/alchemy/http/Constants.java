@@ -15,15 +15,15 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.Map;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 
 /**
- *
  * @author SirWellington
  */
 @NonInstantiable
@@ -34,12 +34,17 @@ final class Constants
     static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     @Internal
-    final static Map<String, String> DEFAULT_HEADERS = ImmutableMap.<String, String>builder()
-            .put("Accept", "application/json, text/plain")
-            .put("User-Agent", "Alchemy HTTP")
-            .put("Content-Type", "application/json")
-            .build();
-    
+    final static Map<String, String> DEFAULT_HEADERS = createDefaultHeaders();
+
+    private static Map<String, String> createDefaultHeaders()
+    {
+        Map<String, String> headers = Maps.create();
+        headers.put("Accept", "application/json, text/plain");
+        headers.put("User-Agent", "Alchemy HTTP");
+        headers.put("Content-Type", "application/json");
+        return Maps.immutableCopyOf(headers);
+    }
+
     static Gson getDefaultGson()
     {
         return new GsonBuilder()

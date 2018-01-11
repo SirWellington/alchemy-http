@@ -15,12 +15,12 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import sir.wellington.alchemy.collections.sets.Sets;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
@@ -40,7 +40,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.n
 @StepMachineDesign
 public interface AlchemyRequest
 {
-    
+
     interface Step1
     {
         /**
@@ -59,7 +59,7 @@ public interface AlchemyRequest
                     .is(notNull());
             try
             {
-                return Resources.toByteArray(url);
+                return ByteStreams.toByteArray(url);
             }
             catch (Exception ex)
             {
@@ -69,30 +69,30 @@ public interface AlchemyRequest
 
         /**
          * Begins a GET Request.
-         * @return 
+         * @return
          */
         Step3 get();
 
         /**
          * Begins a POST Request.
-         * @return 
+         * @return
          */
         Step2 post();
 
         /**
          * Begins a PUT Request.
-         * @return 
+         * @return
          */
         Step2 put();
 
         /**
          * Begins a DELETE Request.
-         * @return 
+         * @return
          */
         Step2 delete();
-        
+
     }
-    
+
     interface Step2
     {
         /**
@@ -112,13 +112,13 @@ public interface AlchemyRequest
          * Includes a regular Java Value Object (or POJO) as the JSON Request Body.
          *
          * @param pojo
-         * 
-         * @return 
+         *
+         * @return
          * @throws IllegalArgumentException
          */
         Step3 body(@Required Object pojo) throws IllegalArgumentException;
     }
-    
+
     interface Step3
     {
         Step3 usingHeader(String key, String value) throws IllegalArgumentException;
@@ -130,15 +130,15 @@ public interface AlchemyRequest
          *
          * @param mediaType
          * @param others
-         * 
-         * @return 
+         *
+         * @return
          * @throws IllegalArgumentException
          */
         default Step3 accept(String mediaType, String... others) throws IllegalArgumentException
         {
             checkThat(mediaType).is(nonEmptyString());
-            
-            Set<String> contentTypes = Sets.newLinkedHashSet();
+
+            Set<String> contentTypes = new LinkedHashSet<>();
             contentTypes.add(mediaType);
             if(others != null && others.length > 0)
             {
@@ -147,10 +147,9 @@ public interface AlchemyRequest
                     contentTypes.add(element);
                 }
             }
-            
-            String accepts = Joiner.on(",")
-                    .join(contentTypes);
-            
+
+            String accepts = String.join(",", contentTypes);
+
             return usingHeader("Accept", accepts);
         }
 
@@ -163,37 +162,37 @@ public interface AlchemyRequest
         {
             return usingQueryParam(name, String.valueOf(value));
         }
-        
+
         Step3 followRedirects(int maxNumberOfTimes) throws IllegalArgumentException;
-        
+
         default Step3 followRedirects()
         {
             return followRedirects(5);
         }
-        
+
         HttpResponse at(URL url) throws AlchemyHttpException;
-        
+
         default HttpResponse at(String url) throws IllegalArgumentException, AlchemyHttpException, MalformedURLException
         {
             checkThat(url).is(nonEmptyString());
-            
+
             return at(new URL(url));
         }
-        
+
         Step5<HttpResponse> onSuccess(OnSuccess<HttpResponse> onSuccessCallback);
-        
+
         <ResponseType> Step4<ResponseType> expecting(Class<ResponseType> classOfResponseType) throws IllegalArgumentException;
     }
-    
+
     interface Step4<ResponseType>
     {
-        
+
         ResponseType at(URL url) throws IllegalArgumentException, AlchemyHttpException;
-        
+
         default ResponseType at(String url) throws AlchemyHttpException, MalformedURLException
         {
             checkThat(url).is(nonEmptyString());
-            
+
             return at(new URL(url));
         }
 
@@ -203,42 +202,42 @@ public interface AlchemyRequest
          * required.
          *
          * @param onSuccessCallback Called when the response successfully completes.
-         * 
-         * @return 
+         *
+         * @return
          */
         Step5<ResponseType> onSuccess(OnSuccess<ResponseType> onSuccessCallback);
     }
-    
+
     interface Step5<ResponseType>
     {
         /**
          * @param onFailureCallback Called when the request could not be completed successfully.
-         * 
-         * @return 
+         *
+         * @return
          */
         Step6<ResponseType> onFailure(OnFailure onFailureCallback);
     }
-    
+
     interface Step6<ResponseType>
     {
-        
+
         void at(URL url);
-        
+
         default void at(String url) throws IllegalArgumentException, MalformedURLException
         {
             checkThat(url).is(nonEmptyString());
-            
+
             at(new URL(url));
         }
-        
+
     }
 
     @FunctionalInterface
     interface OnSuccess<ResponseType>
     {
-        
+
         void processResponse(ResponseType response);
-        
+
         OnSuccess NO_OP = response ->
         {
         };
@@ -247,12 +246,12 @@ public interface AlchemyRequest
     @FunctionalInterface
     interface OnFailure
     {
-        
+
         OnFailure NO_OP = ex ->
         {
-            
+
         };
-        
+
         void handleError(AlchemyHttpException ex);
     }
 }
