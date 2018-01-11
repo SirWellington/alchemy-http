@@ -15,17 +15,11 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonParser;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
+import java.util.*;
+
+import com.google.gson.*;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -39,30 +33,20 @@ import org.mockito.Mock;
 import sir.wellington.alchemy.collections.lists.Lists;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static java.lang.System.currentTimeMillis;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericStrings;
-import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.*;
 import static tech.sirwellington.alchemy.http.Generators.jsonElements;
 import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -155,10 +139,10 @@ public class HttpVerbImplTest
     @Test
     public void testUsing()
     {
-        HttpVerbImpl result = HttpVerbImpl.using(requestMapper);
+        HttpVerbImpl result = HttpVerbImpl.Companion.using(requestMapper);
         assertThat(result, notNullValue());
 
-        assertThrows(() -> HttpVerbImpl.using(null))
+        assertThrows(() -> HttpVerbImpl.Companion.using(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
