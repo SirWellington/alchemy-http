@@ -16,19 +16,16 @@
 
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.util.List;
+
+import com.google.gson.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
@@ -37,7 +34,7 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.http.Generators.jsonElements;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -67,7 +64,7 @@ public class HttpResponseTest
         pojo = TestPojo.generate();
         pojoAsJson = gson.toJsonTree(pojo).getAsJsonObject();
 
-        builder = HttpResponse.builder().mergeFrom(first);
+        builder = HttpResponse.Companion.builder().copyFrom(first);
     }
 
     @Test
@@ -81,7 +78,7 @@ public class HttpResponseTest
     public void testIsOk()
     {
         first.statusCode = one(integers(200, 209));
-        builder = builder.mergeFrom(first);
+        builder = builder.copyFrom(first);
 
         HttpResponse instance = builder.build();
         assertThat(instance.isOk(), is(true));
@@ -91,7 +88,7 @@ public class HttpResponseTest
     public void testIsOkWhenNotOk()
     {
         first.statusCode = one(integers(400, 506));
-        builder = builder.mergeFrom(first);
+        builder = builder.copyFrom(first);
 
         HttpResponse instance = builder.build();
         assertThat(instance.isOk(), is(false));
@@ -127,7 +124,7 @@ public class HttpResponseTest
     public void testBodyAs()
     {
         first.responseBody = pojoAsJson;
-        HttpResponse instance = builder.mergeFrom(first).build();
+        HttpResponse instance = builder.copyFrom(first).build();
 
         TestPojo result = instance.bodyAs(TestPojo.class);
         assertThat(result.equals(pojo), is(true));
@@ -141,7 +138,7 @@ public class HttpResponseTest
         assertThat(jsonArray.isJsonArray(), is(true));
         first.responseBody = jsonArray;
 
-        HttpResponse instance = builder.mergeFrom(first).build();
+        HttpResponse instance = builder.copyFrom(first).build();
         List<TestPojo> result = instance.bodyAsArrayOf(TestPojo.class);
         assertThat(result, is(pojos));
     }
@@ -200,7 +197,7 @@ public class HttpResponseTest
     @Test
     public void testBuilder()
     {
-        assertThat(HttpResponse.builder(), notNullValue());
+        assertThat(HttpResponse.Companion.builder(), notNullValue());
     }
 
 }

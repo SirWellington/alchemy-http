@@ -16,8 +16,6 @@
 
 package tech.sirwellington.alchemy.http;
 
-import java.net.URL;
-
 import com.google.gson.JsonElement;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
@@ -51,8 +49,7 @@ final class HttpAssertions
          * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
          */
 
-        return Assertions.combine(greaterThanOrEqualTo(100),
-                                  lessThanOrEqualTo(505));
+        return combine(greaterThanOrEqualTo(100), lessThanOrEqualTo(505));
     }
 
     /*

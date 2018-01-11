@@ -15,10 +15,11 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import java.util.Collections;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,7 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.http.Generators.jsonNull;
 import static tech.sirwellington.alchemy.http.HttpResponse.Builder.newInstance;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -54,7 +55,7 @@ public class HttpResponseBuilderTest
     @Before
     public void setUp()
     {
-        instance = newInstance();
+        instance = Companion.newInstance();
 
         response = new TestResponse();
         responseBody = response.responseBody;
@@ -138,7 +139,7 @@ public class HttpResponseBuilderTest
     @Test
     public void testMergeFrom()
     {
-        instance.mergeFrom(response);
+        instance.copyFrom(response);
 
         HttpResponse result = instance.build();
         assertThat(result, is(response));
@@ -151,12 +152,12 @@ public class HttpResponseBuilderTest
     {
         Map<String,String> headers = response.responseHeaders;
         response.responseHeaders = null;
-        HttpResponse result = instance.mergeFrom(response).build();
+        HttpResponse result = instance.copyFrom(response).build();
         assertThat(result, notNullValue());
 
         response.responseHeaders = headers;
         response.statusCode = one(negativeIntegers());
-        assertThrows(() -> instance.mergeFrom(response))
+        assertThrows(() -> instance.copyFrom(response))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
