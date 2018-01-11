@@ -16,12 +16,10 @@
 
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.google.gson.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,17 +32,13 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.http.Generators.jsonArrays;
-import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
-import static tech.sirwellington.alchemy.http.Generators.jsonPrimitives;
-import static tech.sirwellington.alchemy.http.Generators.validUrls;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.http.Generators.*;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -75,7 +69,7 @@ public class HttpAssertionsTest
     @Test
     public void testValidHttpStatusCode()
     {
-        AlchemyAssertion<Integer> instance = HttpAssertions.validHttpStatusCode();
+        AlchemyAssertion<Integer> instance = HttpAssertions.Companion.validHttpStatusCode();
         assertThat(instance, notNullValue());
 
         int statusCode = one(integers(200, 500));
@@ -95,19 +89,19 @@ public class HttpAssertionsTest
     public void testValidResponseClass()
     {
         //Check Object
-        AlchemyAssertion<Class<Object>> instanceOne = HttpAssertions.validResponseClass();
+        AlchemyAssertion<Class<Object>> instanceOne = HttpAssertions.Companion.validResponseClass();
         assertThat(instanceOne, notNullValue());
         instanceOne.check(Object.class);
 
         //Check String
-        AlchemyAssertion<Class<String>> instanceTwo = HttpAssertions.validResponseClass();
+        AlchemyAssertion<Class<String>> instanceTwo = HttpAssertions.Companion.validResponseClass();
         instanceTwo.check(String.class);
 
         //Edge Cases
         assertThrows(() -> instanceOne.check(null))
                 .isInstanceOf(FailedAssertionException.class);
 
-        AlchemyAssertion<Class<Void>> instanceThree = HttpAssertions.validResponseClass();
+        AlchemyAssertion<Class<Void>> instanceThree = HttpAssertions.Companion.validResponseClass();
         assertThrows(() -> instanceThree.check(Void.class))
                 .isInstanceOf(FailedAssertionException.class);
     }
@@ -115,7 +109,7 @@ public class HttpAssertionsTest
     @Test
     public void testRequestReady() throws MalformedURLException
     {
-        AlchemyAssertion<HttpRequest> instance = HttpAssertions.requestReady();
+        AlchemyAssertion<HttpRequest> instance = HttpAssertions.Companion.requestReady();
 
         URL url = one(validUrls());
         HttpVerb verb = mock(HttpVerb.class);
@@ -131,7 +125,7 @@ public class HttpAssertionsTest
     @Test
     public void testRequestReadyEdgeCases() throws MalformedURLException
     {
-        AlchemyAssertion<HttpRequest> instance = HttpAssertions.requestReady();
+        AlchemyAssertion<HttpRequest> instance = HttpAssertions.Companion.requestReady();
 
         //Edge cases
         assertThrows(() -> instance.check(null))
@@ -170,7 +164,7 @@ public class HttpAssertionsTest
     @Test
     public void testValidContentType()
     {
-        AlchemyAssertion<String> instance = HttpAssertions.validContentType();
+        AlchemyAssertion<String> instance = HttpAssertions.Companion.validContentType();
         assertThat(instance, notNullValue());
 
         AlchemyGenerator<String> validTypes = StringGenerators.stringsFromFixedList("application/json", "text/plain");
@@ -184,7 +178,7 @@ public class HttpAssertionsTest
     @Test
     public void testValidContentTypeEdgeCases()
     {
-        AlchemyAssertion<String> instance = HttpAssertions.validContentType();
+        AlchemyAssertion<String> instance = HttpAssertions.Companion.validContentType();
 
         //Edge cases
         assertThrows(() -> instance.check(null))
@@ -203,7 +197,7 @@ public class HttpAssertionsTest
     @Test
     public void testNotNullAndHasURL()
     {
-        AlchemyAssertion<HttpRequest> instance = HttpAssertions.notNullAndHasURL();
+        AlchemyAssertion<HttpRequest> instance = HttpAssertions.Companion.notNullAndHasURL();
         assertThat(instance, notNullValue());
 
         assertThrows(() -> instance.check(null))
@@ -224,7 +218,7 @@ public class HttpAssertionsTest
     @Test
     public void testJsonArray()
     {
-        AlchemyAssertion<JsonElement> instance = HttpAssertions.jsonArray();
+        AlchemyAssertion<JsonElement> instance = HttpAssertions.Companion.jsonArray();
         assertThat(instance, notNullValue());
 
         JsonArray valid = one(jsonArrays());
@@ -243,7 +237,7 @@ public class HttpAssertionsTest
     @Test
     public void testOkResponse()
     {
-        AlchemyAssertion<HttpResponse> instance = HttpAssertions.okResponse();
+        AlchemyAssertion<HttpResponse> instance = HttpAssertions.Companion.okResponse();
         assertThat(instance, notNullValue());
 
         //Check with null argument

@@ -15,10 +15,9 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
-
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
+
+import com.google.gson.Gson;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +28,8 @@ import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
 import static tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.http.HttpAssertions.okResponse;
-import static tech.sirwellington.alchemy.http.HttpAssertions.requestReady;
-import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
 
 /**
  *
@@ -92,7 +88,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     public <ResponseType> AlchemyRequest.Step4<ResponseType> jumpToStep4(HttpRequest request,
                                                                          Class<ResponseType> classOfResponseType) throws IllegalArgumentException
     {
-        checkThat(classOfResponseType).is(validResponseClass());
+        checkThat(classOfResponseType).is(Companion.validResponseClass());
 
         HttpRequest requestCopy = HttpRequest.copyOf(request);
         return new Step4Impl<>(this, requestCopy, classOfResponseType);
@@ -103,7 +99,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
                                                                          Class<ResponseType> classOfResponseType,
                                                                          OnSuccess<ResponseType> successCallback) throws IllegalArgumentException
     {
-        checkThat(classOfResponseType).is(validResponseClass());
+        checkThat(classOfResponseType).is(Companion.validResponseClass());
 
         checkThat(request, successCallback)
                 .are(notNull());
@@ -118,7 +114,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
                                                                          OnSuccess<ResponseType> successCallback,
                                                                          OnFailure failureCallback)
     {
-        checkThat(classOfResponseType).is(validResponseClass());
+        checkThat(classOfResponseType).is(Companion.validResponseClass());
 
         checkThat(request, successCallback, failureCallback)
                 .are(notNull());
@@ -132,11 +128,11 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         LOG.debug("Executing synchronous HTTP Request {}", request);
 
-        checkThat(classOfResponseType).is(validResponseClass());
+        checkThat(classOfResponseType).is(Companion.validResponseClass());
 
         checkThat(request)
                 .is(notNull())
-                .is(requestReady());
+                .is(Companion.requestReady());
 
         HttpVerb verb = request.getVerb();
 
@@ -162,7 +158,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
 
         checkThat(response)
             .throwing(ex -> new AlchemyHttpException(request, response, "Http Response not OK."))
-            .is(okResponse());
+            .is(Companion.okResponse());
 
         LOG.debug("HTTP Request {} successfully executed: {}", request, response);
 
@@ -189,10 +185,10 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         checkThat(request)
                 .is(notNull())
-                .is(requestReady());
+                .is(Companion.requestReady());
 
         checkThat(classOfResponseType)
-                .is(validResponseClass());
+                .is(Companion.validResponseClass());
 
         checkThat(successCallback, failureCallback)
                 .are(notNull());

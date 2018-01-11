@@ -15,19 +15,10 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.net.*;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import tech.sirwellington.alchemy.annotations.access.Internal;
@@ -38,8 +29,7 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.http.HttpAssertions.notNullAndHasURL;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 
 /**
  * {@code AlchemyRequestMappers} convert {@linkplain HttpRequest Alchemy Requests} into a
@@ -57,7 +47,7 @@ interface AlchemyRequestMapper
     @Internal
     static URL expandUrlFromRequest(@Required HttpRequest request) throws URISyntaxException, MalformedURLException
     {
-        checkThat(request).is(notNullAndHasURL());
+        checkThat(request).is(Companion.notNullAndHasURL());
 
         if (!request.hasQueryParams())
         {
@@ -78,7 +68,7 @@ interface AlchemyRequestMapper
     @StrategyPattern(role = CLIENT)
     static final AlchemyRequestMapper GET = request ->
     {
-        checkThat(request).is(notNullAndHasURL());
+        checkThat(request).is(Companion.notNullAndHasURL());
 
         try
         {
@@ -94,7 +84,7 @@ interface AlchemyRequestMapper
 
     static final AlchemyRequestMapper POST = request ->
     {
-        checkThat(request).is(notNullAndHasURL());
+        checkThat(request).is(Companion.notNullAndHasURL());
 
         try
         {
@@ -117,7 +107,7 @@ interface AlchemyRequestMapper
 
     static final AlchemyRequestMapper PUT = request ->
     {
-        checkThat(request).is(notNullAndHasURL());
+        checkThat(request).is(Companion.notNullAndHasURL());
 
         try
         {
@@ -140,7 +130,7 @@ interface AlchemyRequestMapper
 
     static final AlchemyRequestMapper DELETE = request ->
     {
-        checkThat(request).is(notNullAndHasURL());
+        checkThat(request).is(Companion.notNullAndHasURL());
 
         try
         {

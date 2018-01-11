@@ -27,7 +27,6 @@ import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
-import static tech.sirwellington.alchemy.http.HttpAssertions.jsonArray;
 
 class TestResponse implements HttpResponse
 {
@@ -114,7 +113,7 @@ class TestResponse implements HttpResponse
     public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException
     {
         checkThat(this.responseBody)
-                .is(jsonArray());
+                .is(Companion.jsonArray());
 
         Type type = new TypeToken<List<T>>()
         {
