@@ -80,7 +80,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testGet() throws Exception
     {
-        instance = AlchemyRequestMapper.GET;
+        instance = AlchemyRequestMapper.Companion.getGET();
         assertThat(instance, notNullValue());
 
         HttpUriRequest result = instance.convertToApacheRequest(request);
@@ -93,7 +93,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testGetEdgeConditions()
     {
-        instance = AlchemyRequestMapper.GET;
+        instance = AlchemyRequestMapper.Companion.getGET();
 
         //Edge conditions
         assertThrows(() -> instance.convertToApacheRequest(null))
@@ -113,7 +113,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testGetExpandsURL() throws Exception
     {
-        instance = AlchemyRequestMapper.GET;
+        instance = AlchemyRequestMapper.Companion.getGET();
 
         when(request.hasQueryParams())
                 .thenReturn(true);
@@ -125,7 +125,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testPost() throws Exception
     {
-        instance = AlchemyRequestMapper.POST;
+        instance = AlchemyRequestMapper.Companion.getPOST();
         assertThat(instance, notNullValue());
 
         HttpUriRequest result = instance.convertToApacheRequest(request);
@@ -139,7 +139,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testPostEdgeConditions()
     {
-        instance = AlchemyRequestMapper.POST;
+        instance = AlchemyRequestMapper.Companion.getPOST();
 
         //Edge conditions
         assertThrows(() -> instance.convertToApacheRequest(null))
@@ -159,7 +159,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testPostWithBody() throws Exception
     {
-        instance = AlchemyRequestMapper.POST;
+        instance = AlchemyRequestMapper.Companion.getPOST();
 
         when(request.hasBody()).thenReturn(true);
 
@@ -173,7 +173,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testPostExpandsURL() throws Exception
     {
-        instance = AlchemyRequestMapper.POST;
+        instance = AlchemyRequestMapper.Companion.getPOST();
 
         when(request.hasQueryParams())
                 .thenReturn(Boolean.TRUE);
@@ -185,7 +185,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testPut() throws Exception
     {
-        instance = AlchemyRequestMapper.PUT;
+        instance = AlchemyRequestMapper.Companion.getPUT();
         assertThat(instance, notNullValue());
 
         HttpUriRequest result = instance.convertToApacheRequest(request);
@@ -200,7 +200,7 @@ public class AlchemyRequestMapperTest
     public void testPutEdgeConditions()
     {
         //Edge Conditions
-        instance = AlchemyRequestMapper.PUT;
+        instance = AlchemyRequestMapper.Companion.getPUT();
 
         assertThrows(() -> instance.convertToApacheRequest(null))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -219,7 +219,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testPutWithBody() throws Exception
     {
-        instance = AlchemyRequestMapper.PUT;
+        instance = AlchemyRequestMapper.Companion.getPUT();
 
         when(request.hasBody()).thenReturn(true);
 
@@ -233,7 +233,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testPutExpandsURL() throws Exception
     {
-        instance = AlchemyRequestMapper.PUT;
+        instance = AlchemyRequestMapper.Companion.getPUT();
 
         when(request.hasQueryParams())
                 .thenReturn(Boolean.TRUE);
@@ -245,7 +245,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testDelete() throws Exception
     {
-        instance = AlchemyRequestMapper.DELETE;
+        instance = AlchemyRequestMapper.Companion.getDELETE();
         assertThat(instance, notNullValue());
 
         HttpUriRequest result = instance.convertToApacheRequest(request);
@@ -260,7 +260,7 @@ public class AlchemyRequestMapperTest
     public void testDeleteEdgeConditions()
     {
         //Edge conditions
-        instance = AlchemyRequestMapper.DELETE;
+        instance = AlchemyRequestMapper.Companion.getDELETE();
 
         assertThrows(() -> instance.convertToApacheRequest(null))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -280,7 +280,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testDeleteWithBody() throws Exception
     {
-        instance = AlchemyRequestMapper.DELETE;
+        instance = AlchemyRequestMapper.Companion.getDELETE();
 
         when(request.hasBody()).thenReturn(true);
 
@@ -294,7 +294,7 @@ public class AlchemyRequestMapperTest
     @Test
     public void testDeleteExpandsURL() throws Exception
     {
-        instance = AlchemyRequestMapper.DELETE;
+        instance = AlchemyRequestMapper.Companion.getDELETE();
 
         when(request.hasQueryParams())
                 .thenReturn(Boolean.TRUE);
@@ -335,13 +335,13 @@ public class AlchemyRequestMapperTest
     public void testExpandUrlFromRequest() throws Exception
     {
         //When no queryparams
-        URL result = AlchemyRequestMapper.expandUrlFromRequest(request);
+        URL result = AlchemyRequestMapper.Companion.expandUrlFromRequest(request);
         assertThat(result, is(url));
 
         //When there are query params
         when(request.hasQueryParams())
                 .thenReturn(true);
-        result = AlchemyRequestMapper.expandUrlFromRequest(request);
+        result = AlchemyRequestMapper.Companion.expandUrlFromRequest(request);
         assertThat(result, is(expandedUrl));
 
     }

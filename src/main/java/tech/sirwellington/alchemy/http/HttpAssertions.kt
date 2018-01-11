@@ -111,7 +111,7 @@ internal object HttpAssertions
     }
 
     @JvmStatic
-    fun notNullAndHasURL(): AlchemyAssertion<HttpRequest>
+    fun validRequest(): AlchemyAssertion<HttpRequest>
     {
         return AlchemyAssertion { request ->
 
