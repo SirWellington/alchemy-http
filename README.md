@@ -7,40 +7,6 @@ Alchemy HTTP
 [![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP/)
 ![Maven Central Version](http://img.shields.io/maven-central/v/tech.sirwellington.alchemy/alchemy-http.svg)
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
-
-- [Purpose](#purpose)
-  - [Javascript](#javascript)
-  - [Ruby](#ruby)
-  - [Java](#java)
-- [The Alchemy Way](#the-alchemy-way)
-  - [The Async Way](#the-async-way)
-    - [Another way](#another-way)
-- [Download](#download)
-  - [Release](#release)
-  - [Snapshot](#snapshot)
-- [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-http)
-- [Tested Against](#tested-against)
-  - [Slack](#slack)
-- [Gitter](#gitter)
-  - [Google APIs](#google-apis)
-    - [Geocoding](#geocoding)
-    - [Places API](#places-api)
-  - [Mashape APIs](#mashape-apis)
-  - [More on the way...](#more-on-the-way)
-- [Requirements](#requirements)
-- [Building](#building)
-- [Feature Requests](#feature-requests)
-- [Release Notes](#release-notes)
-  - [1.2](#12)
-  - [1.1](#11)
-  - [1.0](#10)
-- [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 
 # Purpose
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy).
@@ -200,7 +166,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-    <version>1.4</version>
+    <version>2.0</version>
 </dependency>
 ```
 ## Snapshot
@@ -209,7 +175,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-	<version>2.0-SNAPSHOT</version>
+	<version>2.1-SNAPSHOT</version>
 </dependency>
 ```
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
@@ -259,6 +225,10 @@ To build, just run a `mvn clean install` to compile and install to your local ma
 Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http/issues).**
 
 # Release Notes
+
+## 2.0
++ Significantly reduces footprint, making this library suitable for the Android platform.
++ Bugfixes and Improvements
 
 ## 1.3
 + Bugfixes and Improvements
