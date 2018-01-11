@@ -43,7 +43,7 @@ final class ByteStreams
      * @return A {@code byte[]} containing all of the data in {@copde istream}.
      * @throws IOException If any of the underlying operations fail.
      */
-    static byte[] toByteArray(InputStream istream) throws IOException
+    private static byte[] toByteArray(InputStream istream) throws IOException
     {
         try (ByteArrayOutputStream ostream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);)
         {
@@ -63,7 +63,7 @@ final class ByteStreams
         }
     }
 
-    static byte[] toByteArray(@Required URL url) throws IOException
+    private static byte[] toByteArray(@Required URL url) throws IOException
     {
         try (InputStream istream = url.openStream())
         {
