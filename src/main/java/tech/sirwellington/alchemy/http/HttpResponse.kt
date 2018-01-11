@@ -174,8 +174,8 @@ interface HttpResponse
         fun copyFrom(other: HttpResponse): Builder
         {
             return this.withResponseBody(other.body())
-                       .withStatusCode(other.statusCode())
-                       .withResponseHeaders(other.responseHeaders())
+                    .withStatusCode(other.statusCode())
+                    .withResponseHeaders(other.responseHeaders())
         }
 
         @Throws(IllegalArgumentException::class)
@@ -283,7 +283,8 @@ interface HttpResponse
             {
                 checkThat(classOfT).isA(validResponseClass())
 
-                val type = object: TypeToken<Array<T>>() { }
+                val type = object : TypeToken<Array<T>>()
+                {}
 
                 try
                 {
@@ -350,3 +351,4 @@ interface HttpResponse
         }
     }
 
+}
