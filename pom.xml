@@ -57,7 +57,7 @@
     <properties>
 
         <!--Java Compiler Properties-->
-        <maven.compiler.source>1.</maven.compiler.source>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
