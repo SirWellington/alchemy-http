@@ -15,17 +15,14 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
-
 import java.util.concurrent.Executor;
 
+import com.google.gson.Gson;
 import org.apache.http.client.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+import org.mockito.*;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
@@ -33,19 +30,11 @@ import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static org.mockito.Mockito.*;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -92,7 +81,7 @@ public class AlchemyMachineImplTest
     @Before
     public void setUp() throws Exception
     {
-        gson = Constants.getDefaultGson();
+        gson = Constants.INSTANCE.getDefaultGson();
         request = new TestRequest();
 
         instance = new AlchemyMachineImpl(apacheClient, executor, gson);

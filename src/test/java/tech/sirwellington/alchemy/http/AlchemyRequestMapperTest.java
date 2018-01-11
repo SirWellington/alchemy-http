@@ -312,7 +312,7 @@ public class AlchemyRequestMapperTest
         assertThat(content, notNullValue());
         String stringBody = new String(content, UTF_8);
 
-        Gson gson = Constants.getDefaultGson();
+        Gson gson = Constants.INSTANCE.getDefaultGson();
         JsonElement jsonBody = gson.fromJson(stringBody, JsonElement.class);
         assertThat(jsonBody, is(body));
     }

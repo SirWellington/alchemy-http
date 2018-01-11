@@ -15,32 +15,25 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import com.google.gson.Gson;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.message.BasicHttpResponse;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
@@ -79,7 +72,7 @@ class VerbAssertions
 
         URI uri = createFakeUri();
 
-        Gson gson = Constants.getDefaultGson();
+        Gson gson = Constants.INSTANCE.getDefaultGson();
         HttpRequest request = HttpRequest.Builder.newInstance()
                 .usingUrl(uri.toURL())
                 .build();

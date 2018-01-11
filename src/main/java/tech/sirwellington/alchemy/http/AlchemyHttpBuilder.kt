@@ -54,7 +54,7 @@ class AlchemyHttpBuilder
     //Copy from DEFAULT HEADERS
     private val defaultHeaders = Maps.mutableCopyOf(DEFAULT_HEADERS)
 
-    private var gson = Constants.getDefaultGson()
+    private var gson = Constants.defaultGson
 
     @Throws(IllegalArgumentException::class)
     fun usingApacheHttpClient(@Required apacheHttpClient: HttpClient): AlchemyHttpBuilder
