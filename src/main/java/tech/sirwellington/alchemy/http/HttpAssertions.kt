@@ -66,7 +66,7 @@ internal object HttpAssertions
     }
 
     @JvmStatic
-    fun requestReady(): AlchemyAssertion<HttpRequest>
+    fun ready(): AlchemyAssertion<HttpRequest>
     {
         return AlchemyAssertion { request ->
 
