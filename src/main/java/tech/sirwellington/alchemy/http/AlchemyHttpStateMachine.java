@@ -41,8 +41,8 @@ interface AlchemyHttpStateMachine
 
     default Step1 begin()
     {
-        HttpRequest request = HttpRequest.Builder.newInstance()
-                .build();
+        HttpRequest request = HttpRequest.Builder.Companion.newInstance()
+                                                           .build();
 
         return begin(request);
     }

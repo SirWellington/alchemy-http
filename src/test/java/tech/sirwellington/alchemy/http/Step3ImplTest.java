@@ -70,9 +70,9 @@ public class Step3ImplTest
     {
         url = one(validUrls());
 
-        request = HttpRequest.Builder.newInstance()
-                .usingUrl(url)
-                .build();
+        request = HttpRequest.Builder.Companion.newInstance()
+                                               .usingUrl(url)
+                                               .build();
 
         instance = new Step3Impl(stateMachine, request);
 

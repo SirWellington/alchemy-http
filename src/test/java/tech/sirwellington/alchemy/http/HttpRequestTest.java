@@ -17,6 +17,7 @@
 package tech.sirwellington.alchemy.http;
 
 import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +47,7 @@ public class HttpRequestTest
     public void setUp() throws Exception
     {
         testRequest = new TestRequest();
-        instance = HttpRequest.copyOf(testRequest);
+        instance = HttpRequest.Companion.copyOf(testRequest);
     }
 
     @Test
@@ -65,15 +66,15 @@ public class HttpRequestTest
     public void testHasQueryParams()
     {
         testRequest.queryParams = null;
-        instance = HttpRequest.copyOf(testRequest);
+        instance = HttpRequest.Companion.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(false));
 
         testRequest.queryParams = Collections.emptyMap();
-        instance = HttpRequest.copyOf(testRequest);
+        instance = HttpRequest.Companion.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(false));
 
         testRequest.queryParams = mapOf(alphabeticStrings(), alphabeticStrings(), 10);
-        instance = HttpRequest.copyOf(testRequest);
+        instance = HttpRequest.Companion.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(true));
 
     }
@@ -112,7 +113,7 @@ public class HttpRequestTest
     @Test
     public void testCopyOf()
     {
-        HttpRequest result = HttpRequest.copyOf(instance);
+        HttpRequest result = HttpRequest.Companion.copyOf(instance);
         assertThat(result, notNullValue());
         assertThat(result, is(instance));
         assertThat(instance, is(result));
@@ -121,7 +122,7 @@ public class HttpRequestTest
     @Test
     public void testFrom()
     {
-        HttpRequest.Builder result = HttpRequest.Builder.from(null);
+        HttpRequest.Builder result = HttpRequest.Builder.Companion.from(null);
         assertThat(result, notNullValue());
     }
 }

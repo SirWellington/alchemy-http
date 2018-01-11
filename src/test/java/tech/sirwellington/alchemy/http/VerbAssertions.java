@@ -73,9 +73,9 @@ class VerbAssertions
         URI uri = createFakeUri();
 
         Gson gson = Constants.INSTANCE.getDefaultGson();
-        HttpRequest request = HttpRequest.Builder.newInstance()
-                .usingUrl(uri.toURL())
-                .build();
+        HttpRequest request = HttpRequest.Builder.Companion.newInstance()
+                                                           .usingUrl(uri.toURL())
+                                                           .build();
 
         verb.execute(mockClient, gson, request);
 

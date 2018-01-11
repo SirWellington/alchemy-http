@@ -18,31 +18,21 @@ package tech.sirwellington.alchemy.http;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import org.mockito.*;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Answers.RETURNS_SMART_NULLS;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.BinaryGenerators.binary;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertDeleteRequestMade;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertGetRequestMade;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertPostRequestMade;
-import static tech.sirwellington.alchemy.http.VerbAssertions.assertPutRequestMade;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.http.VerbAssertions.*;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -66,7 +56,7 @@ public class Step1ImplTest
     @Before
     public void setUp()
     {
-        request = HttpRequest.Builder
+        request = HttpRequest.Builder.Companion
                 .newInstance()
                 .build();
 

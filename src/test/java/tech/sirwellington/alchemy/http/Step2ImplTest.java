@@ -57,7 +57,7 @@ public class Step2ImplTest
     public void setUp()
     {
 
-        request = HttpRequest.Builder.newInstance().build();
+        request = HttpRequest.Builder.Companion.newInstance().build();
 
         instance = new Step2Impl(request, stateMachine, gson);
 

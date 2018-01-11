@@ -61,7 +61,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         checkThat(initialRequest).is(notNull());
 
-        HttpRequest requestCopy = HttpRequest.copyOf(initialRequest);
+        HttpRequest requestCopy = HttpRequest.Companion.copyOf(initialRequest);
         LOG.debug("Beginning HTTP request {}", requestCopy);
         return new Step1Impl(this, requestCopy);
     }
@@ -71,7 +71,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         checkThat(request).is(notNull());
 
-        HttpRequest requestCopy = HttpRequest.copyOf(request);
+        HttpRequest requestCopy = HttpRequest.Companion.copyOf(request);
         return new Step2Impl(requestCopy, this, gson);
     }
 
@@ -80,7 +80,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         checkThat(request).is(notNull());
 
-        HttpRequest requestCopy = HttpRequest.copyOf(request);
+        HttpRequest requestCopy = HttpRequest.Companion.copyOf(request);
         return new Step3Impl(this, requestCopy);
     }
 
@@ -90,7 +90,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         checkThat(classOfResponseType).is(Companion.validResponseClass());
 
-        HttpRequest requestCopy = HttpRequest.copyOf(request);
+        HttpRequest requestCopy = HttpRequest.Companion.copyOf(request);
         return new Step4Impl<>(this, requestCopy, classOfResponseType);
     }
 
@@ -104,7 +104,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         checkThat(request, successCallback)
                 .are(notNull());
 
-        HttpRequest requestCopy = HttpRequest.copyOf(request);
+        HttpRequest requestCopy = HttpRequest.Companion.copyOf(request);
         return new Step5Impl<>(this, requestCopy, classOfResponseType, successCallback);
     }
 
@@ -119,7 +119,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
         checkThat(request, successCallback, failureCallback)
                 .are(notNull());
 
-        HttpRequest requestCopy = HttpRequest.copyOf(request);
+        HttpRequest requestCopy = HttpRequest.Companion.copyOf(request);
         return new Step6Impl<>(this, requestCopy, classOfResponseType, successCallback, failureCallback);
     }
 

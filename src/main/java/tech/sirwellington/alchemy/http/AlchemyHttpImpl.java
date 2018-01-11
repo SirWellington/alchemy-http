@@ -65,9 +65,9 @@ final class AlchemyHttpImpl implements AlchemyHttp
     @Override
     public AlchemyRequest.Step1 go()
     {
-        HttpRequest initialRequest = HttpRequest.Builder.newInstance()
-                .usingRequestHeaders(defaultHeaders)
-                .build();
+        HttpRequest initialRequest = HttpRequest.Builder.Companion.newInstance()
+                                                                  .usingRequestHeaders(defaultHeaders)
+                                                                  .build();
         return stateMachine.begin(initialRequest);
     }
 

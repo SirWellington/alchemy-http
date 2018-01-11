@@ -170,7 +170,7 @@ internal interface AlchemyRequestMapper
 
                 if (request.hasBody())
                 {
-                    val entity = StringEntity(request.getBody().toString(), UTF_8)
+                    val entity = StringEntity(request.body.toString(), UTF_8)
                     put.entity = entity
                 }
 

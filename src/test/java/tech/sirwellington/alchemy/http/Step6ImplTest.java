@@ -102,9 +102,9 @@ public class Step6ImplTest
 
         instance.at(url);
 
-        HttpRequest expectedRequest = HttpRequest.Builder.from(request)
-                .usingUrl(url)
-                .build();
+        HttpRequest expectedRequest = HttpRequest.Builder.Companion.from(request)
+                                                                   .usingUrl(url)
+                                                                   .build();
 
         verify(stateMachine).executeAsync(expectedRequest, responseClass, onSuccess, onFailure);
     }
