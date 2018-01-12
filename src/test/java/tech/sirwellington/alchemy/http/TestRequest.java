@@ -113,31 +113,34 @@ class TestRequest implements HttpRequest
         {
             return false;
         }
-        if (getClass() != obj.getClass())
+
+        if (!(obj instanceof HttpRequest))
         {
             return false;
         }
-        final TestRequest other = (TestRequest) obj;
-        if (!Objects.equals(this.requestHeaders, other.requestHeaders))
+
+        final HttpRequest other = (HttpRequest) obj;
+        if (!Objects.equals(this.requestHeaders, other.getRequestHeaders()))
         {
             return false;
         }
-        if (!Objects.equals(this.queryParams, other.queryParams))
+        if (!Objects.equals(this.queryParams, other.getQueryParams()))
         {
             return false;
         }
-        if (!Objects.equals(this.url, other.url))
+        if (!Objects.equals(this.url, other.getUrl()))
         {
             return false;
         }
-        if (!Objects.equals(this.body, other.body))
+        if (!Objects.equals(this.body, other.getBody()))
         {
             return false;
         }
-        if (!Objects.equals(this.verb, other.verb))
+        if (!Objects.equals(this.verb, other.getVerb()))
         {
             return false;
         }
+
         return true;
     }
 
