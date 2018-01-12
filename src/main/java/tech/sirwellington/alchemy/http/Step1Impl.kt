@@ -18,6 +18,10 @@ package tech.sirwellington.alchemy.http
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
+import tech.sirwellington.alchemy.http.RequestMethod.DELETE
+import tech.sirwellington.alchemy.http.RequestMethod.GET
+import tech.sirwellington.alchemy.http.RequestMethod.POST
+import tech.sirwellington.alchemy.http.RequestMethod.PUT
 
 /**
  *
@@ -34,7 +38,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpExecutor.GET)
+                                    .usingRequestMethod(GET)
                                     .build()
 
         return stateMachine.jumpToStep3(newRequest)
@@ -44,7 +48,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpExecutor.POST)
+                                    .usingRequestMethod(POST)
                                     .build()
 
         return stateMachine.jumpToStep2(newRequest)
@@ -54,7 +58,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpExecutor.PUT)
+                                    .usingRequestMethod(PUT)
                                     .build()
 
         return stateMachine.jumpToStep2(newRequest)
@@ -64,7 +68,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpExecutor.DELETE)
+                                    .usingRequestMethod(DELETE)
                                     .build()
 
         return stateMachine.jumpToStep2(newRequest)
