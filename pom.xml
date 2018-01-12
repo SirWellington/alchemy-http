@@ -110,7 +110,6 @@
         </dependency>
 
 
-
         <!--=======================-->
         <!--ALCHEMY-->
         <!--=======================-->
@@ -182,12 +181,84 @@
         </dependency>
 
 
-
     </dependencies>
 
 
     <build>
         <!--Inherited from Parent POM-->
+
+
+        <plugins>
+
+
+            <!--=======================-->
+            <!--KOTLIN PLUGIN-->
+            <!--=======================-->
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <executions>
+
+                    <!--MAIN CODE CONFIGURATION-->
+                    <execution>
+                        <id>library-code</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <jvmTarget>1.6</jvmTarget>
+                        </configuration>
+                    </execution>
+
+                    <!--TEST CODE CONFIGURATION-->
+                    <execution>
+                        <id>test-code</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <jvmTarget>1.8</jvmTarget>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+
+                    <!--MAIN CODE-->
+                    <execution>
+                        <id>main-code</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <source>1.6</source>
+                            <target>1.6</target>
+                        </configuration>
+                    </execution>
+
+                    <!--TEST CODE-->
+                    <execution>
+                        <id>test-code</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                        </configuration>
+                    </execution>
+
+                </executions>
+
+            </plugin>
+
+
+        </plugins>
+
     </build>
 
 
