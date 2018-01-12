@@ -98,17 +98,21 @@ class TestResponse implements HttpResponse
             return true;
         }
 
-        if (o == null || getClass() != o.getClass())
+        if (o == null)
         {
             return false;
         }
 
-        TestResponse that = (TestResponse) o;
+        if (!(o instanceof HttpResponse))
+        {
+            return false;
+        }
 
-        return statusCode == that.statusCode &&
-                Objects.equals(responseHeaders, that.responseHeaders) &&
-                Objects.equals(responseBody, that.responseBody) &&
-                Objects.equals(gson, that.gson);
+        HttpResponse that = (HttpResponse) o;
+
+        return statusCode == that.statusCode() &&
+                Objects.equals(responseHeaders, that.responseHeaders()) &&
+                Objects.equals(responseBody, that.body());
     }
 
     @Override
