@@ -127,7 +127,6 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
             throw AlchemyHttpException(request, ex)
         }
 
-
         checkThat(response)
                 .throwing { ex -> AlchemyHttpException(request, response, "Http Response not OK.") }
                 .isA(okResponse())
