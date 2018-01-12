@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.http;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import org.apache.http.client.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +30,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -81,20 +82,20 @@ public class AlchemyHttpTest
     @Test
     public void testNewDefaultInstance()
     {
-        AlchemyHttp result = AlchemyHttp.newDefaultInstance();
+        AlchemyHttp result = AlchemyHttp.Companion.newDefaultInstance();
         assertThat(result, notNullValue());
     }
 
     @Test
     public void testNewInstanceWithApacheHttpClient()
     {
-        AlchemyHttp result = AlchemyHttp.newInstanceWithApacheHttpClient(apacheClient);
+        AlchemyHttp result = AlchemyHttp.Companion.newInstanceWithApacheHttpClient(apacheClient);
         assertThat(result, notNullValue());
 
         //Edge cases
         assertThrows(() ->
         {
-            AlchemyHttp.newInstanceWithApacheHttpClient(null);
+            AlchemyHttp.Companion.newInstanceWithApacheHttpClient(null);
         }).isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -103,35 +104,35 @@ public class AlchemyHttpTest
     public void testNewInstance()
     {
 
-        AlchemyHttp result = AlchemyHttp.newInstance(apacheClient, executorService, defaultHeaders);
+        AlchemyHttp result = AlchemyHttp.Companion.newInstance(apacheClient, executorService, defaultHeaders);
         assertThat(result, notNullValue());
 
         //Edge cases
         assertThrows(() ->
         {
-            AlchemyHttp.newInstance(null, null, null);
+            AlchemyHttp.Companion.newInstance(null, null, null);
         }).isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() ->
         {
-            AlchemyHttp.newInstance(apacheClient, null, null);
+            AlchemyHttp.Companion.newInstance(apacheClient, null, null);
         }).isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() ->
         {
-            AlchemyHttp.newInstance(apacheClient, executorService, null);
+            AlchemyHttp.Companion.newInstance(apacheClient, executorService, null);
         }).isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() ->
         {
-            AlchemyHttp.newInstance(apacheClient, null, defaultHeaders);
+            AlchemyHttp.Companion.newInstance(apacheClient, null, defaultHeaders);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void testNewBuilder()
     {
-        AlchemyHttpBuilder result = AlchemyHttp.newBuilder();
+        AlchemyHttpBuilder result = AlchemyHttp.Companion.newBuilder();
         assertThat(result, notNullValue());
 
         AlchemyHttp client = result.usingApacheHttpClient(apacheClient)
