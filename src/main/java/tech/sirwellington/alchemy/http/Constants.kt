@@ -42,6 +42,12 @@ internal object Constants
             .setDateFormat(DATE_FORMAT)
             .create()
 
+    /**
+     * [Http Requests][HttpRequest] default to [RequestMethod.GET]
+     * if not set explicitly.
+     */
+    @JvmField
+    val DEFAULT_REQUEST_METHOD = RequestMethod.GET
 
     @JvmField
     val DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(60, SECONDS)

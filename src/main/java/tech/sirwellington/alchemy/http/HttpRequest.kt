@@ -29,6 +29,28 @@ import tech.sirwellington.alchemy.arguments.assertions.nonEmptyMap
 import tech.sirwellington.alchemy.kotlin.extensions.notNull
 import java.net.URL
 
+
+/**
+ * Represents the RequestMethod that the request should use.
+ *
+ * @author SirWellington
+ */
+enum class RequestMethod
+{
+
+    GET,
+    POST,
+    HEAD,
+    OPTIONS,
+    PUT,
+    DELETE,
+    TRACE
+    ;
+
+    val asString = this.toString()
+}
+
+
 /**
  *
  * @author SirWellington
@@ -42,7 +64,7 @@ interface HttpRequest
     val queryParams: Map<String, String>?
     val url: URL?
     val body: JsonElement?
-    val method: RequestMethod?
+    val method: RequestMethod
 
     fun hasBody() = body.notNull
 
@@ -106,7 +128,7 @@ interface HttpRequest
 
         private var url: URL? = null
         private var body: JsonElement? = null
-        private var requestMethod: RequestMethod? = null
+        private var requestMethod: RequestMethod = Constants.DEFAULT_REQUEST_METHOD
 
         @Throws(IllegalArgumentException::class)
         fun usingRequestHeaders(requestHeaders: Map<String, String>): Builder
@@ -204,7 +226,7 @@ interface HttpRequest
                                                override val queryParams: Map<String, String>,
                                                override val url: URL?,
                                                override val body: JsonElement?,
-                                               override val method: RequestMethod?): HttpRequest
+                                               override val method: RequestMethod): HttpRequest
 
 
 

@@ -33,22 +33,6 @@ import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 
-
-enum class RequestMethod
-{
-
-    GET,
-    POST,
-    HEAD,
-    OPTIONS,
-    PUT,
-    DELETE,
-    TRACE
-    ;
-
-    val asString = this.toString()
-}
-
 /**
  *
  * @author SirWellington
