@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http
 
-import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
@@ -43,18 +42,9 @@ internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
                 .usingMessage("missing key")
                 .isA(nonEmptyString())
 
-        //Value of an HTTP Header can be empty ?
-        val cleanValue = Strings.nullToEmpty(value)
+        val newHeader = Pair(key, value)
 
-        val newRequestHeaders = Maps.create<String, String>()
-
-        //Keep existing headers
-        request?.requestHeaders?.let {
-            newRequestHeaders.putAll(it)
-        }
-
-        //Add the new header
-        newRequestHeaders[key] = cleanValue
+        val newRequestHeaders = request.requestHeaders?.plus(newHeader) ?: mapOf(newHeader)
 
         this.request = HttpRequest.Builder
                                   .from(request)
@@ -71,13 +61,9 @@ internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
                 .usingMessage("missing name or value")
                 .are(nonEmptyString())
 
-        val queryParams = Maps.create<String, String>()
+        val newParam = Pair(name, value)
 
-        //Keep existing Query Params
-        request?.queryParams?.let { queryParams.putAll(it) }
-
-        //Add the new query param
-        queryParams[name] = value
+        val queryParams = request.queryParams?.plus(newParam) ?: mapOf(newParam)
 
         request = HttpRequest.Builder
                              .from(request)
