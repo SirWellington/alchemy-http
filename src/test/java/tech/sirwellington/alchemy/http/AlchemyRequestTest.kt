@@ -39,7 +39,6 @@ import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import java.io.IOException
-import java.net.MalformedURLException
 import java.net.URL
 
 /**
@@ -53,7 +52,7 @@ class AlchemyRequestTest
 
     private var url: URL? = null
 
-    private var headers: Map<String, String>? = null
+    private lateinit var headers: Map<String, String>
 
     @Before
     fun setUp()
@@ -135,7 +134,7 @@ class AlchemyRequestTest
             override fun at(url: URL): HttpResponse
             {
                 this.url = url
-                return HttpResponse.builder().build()
+                return mock { }
             }
 
             override fun onSuccess(onSuccessCallback: OnSuccess<HttpResponse>): AlchemyRequest.Step5<HttpResponse>
@@ -182,12 +181,6 @@ class AlchemyRequestTest
 
             var url: URL? = null
             var onSuccess: OnSuccess<*>? = null
-
-            @Throws(AlchemyHttpException::class, MalformedURLException::class)
-            override fun at(url: String): T?
-            {
-                return null
-            }
 
             @Throws(IllegalArgumentException::class, AlchemyHttpException::class)
             override fun at(url: URL): T?

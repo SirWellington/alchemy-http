@@ -30,10 +30,11 @@ import tech.sirwellington.alchemy.arguments.assertions.nonEmptyString
 @Internal
 @BuilderPattern(role = PRODUCT)
 @ThreadSafe
-internal class AlchemyHttpImpl(override val defaultHeaders: Map<String, String>,
+internal class AlchemyHttpImpl(defaultHeaders: Map<String, String>,
                                private val stateMachine: AlchemyHttpStateMachine) : AlchemyHttp
 {
 
+    override val defaultHeaders = Maps.immutableCopyOf(defaultHeaders)
 
     override fun usingDefaultHeader(key: String, value: String): AlchemyHttp
     {
@@ -41,9 +42,9 @@ internal class AlchemyHttpImpl(override val defaultHeaders: Map<String, String>,
                 .usingMessage("Key is empty")
                 .isA(nonEmptyString())
 
-        val copy = Maps.mutableCopyOf(defaultHeaders)
-        copy[key] = value
-        return AlchemyHttpImpl(defaultHeaders = copy, stateMachine = stateMachine)
+        val copy = defaultHeaders.plus(Pair(key, value))
+
+        return AlchemyHttpImpl(defaultHeaders = Maps.immutableCopyOf(copy), stateMachine = stateMachine)
     }
 
     override fun go(): AlchemyRequest.Step1

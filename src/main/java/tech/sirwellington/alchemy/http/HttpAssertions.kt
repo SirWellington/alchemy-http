@@ -45,7 +45,7 @@ internal object HttpAssertions
      * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
      */
 
-        return combine<Int>(greaterThanOrEqualTo(100), lessThanOrEqualTo(505))
+        return combine(greaterThanOrEqualTo(100), lessThanOrEqualTo(505))
     }
 
     /*
