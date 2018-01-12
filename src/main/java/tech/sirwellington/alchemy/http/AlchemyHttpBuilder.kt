@@ -151,6 +151,7 @@ class AlchemyHttpBuilder
                                       .newInstance()
                                       .usingExecutorService(executor)
                                       .usingGson(gson)
+                                      .usingTimeout(timeoutMillis)
                                       .build()
     }
 
