@@ -21,7 +21,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonParseException
-import com.google.gson.reflect.TypeToken
 import jdk.nashorn.internal.ir.annotations.Immutable
 import tech.sirwellington.alchemy.annotations.arguments.Optional
 import tech.sirwellington.alchemy.annotations.arguments.Required
@@ -283,13 +282,13 @@ interface HttpResponse
             {
                 checkThat(classOfT).isA(validResponseClass())
 
-                val type = object : TypeToken<Array<T>>()
-                {}
+                val emptyArray = java.lang.reflect.Array.newInstance(classOfT, 0) as Array<T>
+                val type = emptyArray::class.java
 
                 try
                 {
-                    val array = gson.fromJson<Array<T>>(responseBody, type.rawType) ?: null
-                    return array?.asList() ?: emptyList()
+                    val array = gson.fromJson<Array<T>>(responseBody, type) ?: null
+                    return array?.toList() ?: emptyList()
                 }
                 catch (ex: Exception)
                 {
