@@ -34,7 +34,6 @@ import tech.sirwellington.alchemy.http.HttpAssertions.validHttpStatusCode
 import tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass
 import tech.sirwellington.alchemy.http.exceptions.JsonException
 import java.util.Collections.unmodifiableMap
-import java.util.Objects
 
 /**
  *
@@ -227,7 +226,7 @@ interface HttpResponse
         //==============================================================================================
         @Immutable
         @BuilderPattern(role = PRODUCT)
-        private class Impl constructor(private val statusCode: Int,
+        private data class Impl constructor(private val statusCode: Int,
                                        private val responseHeaders: Map<String, String>,
                                        private val gson: Gson,
                                        private val responseBody: JsonElement) : HttpResponse
@@ -295,35 +294,6 @@ interface HttpResponse
                     throw JsonException("Failed to parse json to class: " + classOfT, ex)
                 }
 
-            }
-
-            override fun hashCode(): Int
-            {
-                var hash = 3
-                hash = 41 * hash + this.statusCode
-                hash = 41 * hash + Objects.hashCode(this.responseHeaders)
-                hash = 41 * hash + Objects.hashCode(this.responseBody)
-                return hash
-            }
-
-            override fun equals(obj: Any?): Boolean
-            {
-                if (obj == null)
-                {
-                    return false
-                }
-
-                if (obj !is HttpResponse)
-                {
-                    return false
-                }
-
-                return this.equals(obj)
-            }
-
-            override fun toString(): String
-            {
-                return "HttpResponse{statusCode=$statusCode, responseHeaders=$responseHeaders, response=$responseBody}"
             }
 
         }

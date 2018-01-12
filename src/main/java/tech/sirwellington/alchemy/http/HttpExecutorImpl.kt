@@ -82,13 +82,15 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
                                         gson: Gson): JsonElement
     {
         val response = try
-                       {
-                           http.inputStream
-                       }
-                       catch (ex: SocketTimeoutException)
-                       {
-                           throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
-                       } ?: return JsonNull.INSTANCE
+       {
+           http.inputStream
+       }
+       catch (ex: SocketTimeoutException)
+       {
+           throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
+       }
+
+        if (response == null) return JsonNull.INSTANCE
 
         val responseString = try
         {
@@ -134,9 +136,10 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
 
         @FactoryMethodPattern(role = FACTORY_METHOD)
         @JvmStatic
-        fun using(method: RequestMethod): HttpExecutorImpl
+        @JvmOverloads
+        fun using(requestMapper: AlchemyRequestMapper = AlchemyRequestMapper.create()): HttpExecutorImpl
         {
-            return HttpExecutorImpl(method = method, requestMapper = AlchemyRequestMapper.create())
+            return HttpExecutorImpl(requestMapper)
         }
     }
 
