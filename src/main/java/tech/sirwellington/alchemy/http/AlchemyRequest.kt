@@ -239,7 +239,7 @@ interface AlchemyRequest
     }
 
     @FunctionalInterface
-    interface OnSuccess<in ResponseType>
+    interface OnSuccess<ResponseType>
     {
 
         fun processResponse(response: ResponseType)
