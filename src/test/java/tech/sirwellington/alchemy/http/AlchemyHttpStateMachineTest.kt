@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.Gson
-import com.nhaarman.mockito_kotlin.mock
 import org.apache.http.client.HttpClient
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
@@ -52,6 +51,7 @@ class AlchemyHttpStateMachineTest
 
     private lateinit var instance: AlchemyHttpStateMachine
 
+    @Mock
     private lateinit var step1: AlchemyRequest.Step1
 
     @Mock
@@ -148,7 +148,7 @@ class AlchemyHttpStateMachineTest
 
     }
 
-    internal inner class TestImpl : AlchemyHttpStateMachine
+    internal open inner class TestImpl : AlchemyHttpStateMachine
     {
 
         override fun begin(): AlchemyRequest.Step1
@@ -204,11 +204,6 @@ class AlchemyHttpStateMachineTest
         {
         }
 
-        @Throws(AlchemyHttpException::class)
-        override fun executeSync(request: HttpRequest): HttpResponse
-        {
-            return mock {  }
-        }
     }
 
 }
