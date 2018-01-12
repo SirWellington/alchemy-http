@@ -16,8 +16,7 @@
 
 package tech.sirwellington.alchemy.http
 
-import org.apache.http.client.HttpClient
-import org.apache.http.impl.client.HttpClientBuilder
+import sun.net.www.http.HttpClient
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable
@@ -29,6 +28,8 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
  *
@@ -104,25 +105,11 @@ interface AlchemyHttp
         @FactoryMethodPattern(role = Role.FACTORY_METHOD)
         fun newDefaultInstance(): AlchemyHttp
         {
-            val apacheHttpClient = HttpClientBuilder.create().build()
-            return newInstanceWithApacheHttpClient(apacheHttpClient)
+            return AlchemyHttpBuilder.newInstance()
+                    .disableAsyncCallbacks()
+                    .build()
         }
 
-        /**
-         * Create an instance using the [Apache HTTP Client][HttpClient] provided.
-         *
-         * @param apacheHttpClient
-         * @return
-         *
-         * @throws IllegalArgumentException
-         */
-        @Throws(IllegalArgumentException::class)
-        fun newInstanceWithApacheHttpClient(@Required apacheHttpClient: HttpClient): AlchemyHttp
-        {
-            return AlchemyHttpBuilder.newInstance()
-                                     .usingApacheHttpClient(apacheHttpClient)
-                                     .build()
-        }
 
         /**
          * Creates a new [AlchemyHttp] instance.
@@ -135,15 +122,18 @@ interface AlchemyHttp
          * @throws IllegalArgumentException
          */
         @Throws(IllegalArgumentException::class)
+        @JvmOverloads
         fun newInstance(apacheHttpClient: HttpClient,
                         executorService: ExecutorService,
-                        defaultHeaders: Map<String, String>): AlchemyHttp
+                        defaultHeaders: Map<String, String>,
+                        timeout: Int = Constants.DEFAULT_TIMEOUT.toInt(),
+                        timeUnit: TimeUnit = MILLISECONDS): AlchemyHttp
         {
 
             return AlchemyHttpBuilder.newInstance()
-                                     .usingApacheHttpClient(apacheHttpClient)
                                      .usingExecutorService(executorService)
                                      .usingDefaultHeaders(defaultHeaders)
+                                     .usingTimeout(timeout, timeUnit)
                                      .build()
         }
 

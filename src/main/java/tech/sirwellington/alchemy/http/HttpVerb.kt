@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.Gson
-import org.apache.http.client.HttpClient
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE
@@ -32,7 +31,7 @@ interface HttpVerb
 {
 
     @Throws(AlchemyHttpException::class)
-    fun execute(apacheHttpClient: HttpClient, gson: Gson, request: HttpRequest): HttpResponse
+    fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long = Constants.DEFAULT_TIMEOUT): HttpResponse
 
     object GET: HttpVerb by get()
     object POST: HttpVerb by post()
@@ -43,22 +42,22 @@ interface HttpVerb
     {
         fun get(): HttpVerb
         {
-            return HttpVerbImpl.using(AlchemyRequestMapper.GET)
+            return HttpVerbImpl.using(HttpMethod.GET)
         }
 
         fun post(): HttpVerb
         {
-            return HttpVerbImpl.using(AlchemyRequestMapper.POST)
+            return HttpVerbImpl.using(HttpMethod.POST)
         }
 
         fun put(): HttpVerb
         {
-            return HttpVerbImpl.using(AlchemyRequestMapper.PUT)
+            return HttpVerbImpl.using(HttpMethod.PUT)
         }
 
         fun delete(): HttpVerb
         {
-            return HttpVerbImpl.using(AlchemyRequestMapper.DELETE)
+            return HttpVerbImpl.using(HttpMethod.DELETE)
         }
     }
 }

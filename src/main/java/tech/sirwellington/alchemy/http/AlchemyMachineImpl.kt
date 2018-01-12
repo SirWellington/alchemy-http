@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.Gson
-import org.apache.http.client.HttpClient
 import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
@@ -37,9 +36,9 @@ import java.util.concurrent.Executor
  */
 @Internal
 @StepMachineDesign(role = MACHINE)
-internal class AlchemyMachineImpl(private val apacheHttpClient: HttpClient,
-                                  private val async: Executor,
-                                  private val gson: Gson) : AlchemyHttpStateMachine
+internal class AlchemyMachineImpl(private val async: Executor,
+                                  private val gson: Gson,
+                                  private val timeoutMillis: Long = Constants.DEFAULT_TIMEOUT) : AlchemyHttpStateMachine
 {
 
     private val LOG = LoggerFactory.getLogger(AlchemyMachineImpl::class.java)
@@ -110,7 +109,7 @@ internal class AlchemyMachineImpl(private val apacheHttpClient: HttpClient,
 
         val response = try
         {
-            verb.execute(apacheHttpClient, gson, request)
+            verb.execute(request, gson)
         }
         catch (ex: AlchemyHttpException)
         {
@@ -193,8 +192,7 @@ internal class AlchemyMachineImpl(private val apacheHttpClient: HttpClient,
 
     override fun toString(): String
     {
-        return "AlchemyMachineImpl{apacheHttpClient=$apacheHttpClient, async=$async, gson=$gson}"
+        return "AlchemyMachineImpl(async=$async, gson=$gson, timeoutMillis=$timeoutMillis)"
     }
-
 
 }

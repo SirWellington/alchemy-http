@@ -20,6 +20,8 @@ import com.google.gson.GsonBuilder
 import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * @author SirWellington
@@ -32,14 +34,17 @@ internal object Constants
     @JvmStatic
     val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 
-    @Internal
-    @JvmStatic
+    @JvmField
     val DEFAULT_HEADERS = createDefaultHeaders()
 
-    @JvmStatic
+    @JvmField
     val defaultGson: Gson = GsonBuilder()
-                                .setDateFormat(DATE_FORMAT)
-                                .create()
+            .setDateFormat(DATE_FORMAT)
+            .create()
+
+
+    @JvmField
+    val DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(60, SECONDS)
 
     @JvmStatic
     private fun createDefaultHeaders(): Map<String, String>

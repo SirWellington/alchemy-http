@@ -20,25 +20,34 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonParseException
-import org.apache.http.client.HttpClient
-import org.apache.http.client.methods.CloseableHttpResponse
 import org.slf4j.LoggerFactory
-import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role.FACTORY_METHOD
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT
-import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.assertions.nonNullReference
 import tech.sirwellington.alchemy.http.HttpResponse.Builder
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.exceptions.JsonException
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
-import tech.sirwellington.alchemy.kotlin.extensions.isNull
-import tech.sirwellington.alchemy.kotlin.extensions.notEmptyOrNull
-import java.io.IOException
-import java.nio.charset.StandardCharsets.UTF_8
+import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
+
+
+internal enum class HttpMethod
+{
+
+    GET,
+    POST,
+    HEAD,
+    OPTIONS,
+    PUT,
+    DELETE,
+    TRACE
+    ;
+
+    val asString = this.toString()
+}
 
 /**
  *
@@ -46,40 +55,31 @@ import java.nio.charset.StandardCharsets.UTF_8
  */
 @StrategyPattern(role = CLIENT)
 @Internal
-internal class HttpVerbImpl(private val requestMapper: AlchemyRequestMapper) : HttpVerb
+internal class HttpVerbImpl(private val method: HttpMethod) : HttpVerb
 {
 
 
     @Throws(AlchemyHttpException::class)
-    override fun execute(apacheHttpClient: HttpClient, gson: Gson, request: HttpRequest): HttpResponse
+    override fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long): HttpResponse
     {
+        val url = AlchemyRequestMapper.expandUrlFromRequest(request)
+        val connection = url.openConnection()
 
-        val apacheRequest = requestMapper.convertToApacheRequest(request)
+        val http = connection as? HttpURLConnection ?: throw OperationFailedException("URL is not an HTTP URL: [$url]")
 
-        checkThat(apacheRequest)
-                .throwing<Throwable> { ex -> AlchemyHttpException("Could not map HttpRequest: " + request) }
-                .isA(nonNullReference())
+        http.doInput = true
+        http.requestMethod = this.method.asString
+        request.requestHeaders?.forEach { key, value -> http.setRequestProperty(key, value) }
 
-        request.requestHeaders
-               ?.forEach { s, s1 -> apacheRequest.addHeader(s, s1) }
-
-        val apacheResponse = try
+        if (request.hasBody())
         {
-            apacheHttpClient.execute(apacheRequest)
-        }
-        catch (ex: Exception)
-        {
-            LOG.error("Failed to execute GET Request on {}", apacheRequest.uri, ex)
-            throw AlchemyHttpException(ex)
+            http.doOutput = true
+            http.setBody(request)
         }
 
-        checkThat(apacheResponse)
-                .throwing<Throwable> { ex -> AlchemyHttpException(request, "Missing Apache Client Response") }
-                .isA(nonNullReference())
-
-        val json= try
+        val json = try
         {
-            extractJsonFromResponse(request, apacheResponse, gson)
+            extractJsonFromResponse(request, http, gson)
         }
         catch (ex: JsonParseException)
         {
@@ -93,101 +93,65 @@ internal class HttpVerbImpl(private val requestMapper: AlchemyRequestMapper) : H
         }
         finally
         {
-            if (apacheResponse is CloseableHttpResponse)
-            {
-                try
-                {
-                    apacheResponse.close()
-                }
-                catch (ex: IOException)
-                {
-                    LOG.error("Failed to close HTTP Response.", ex)
-                    throw OperationFailedException(request, "Could not close Http Response")
-                }
-
-            }
+            http.disconnect()
         }
 
         return Builder.newInstance()
-                      .withResponseBody(json)
-                      .withStatusCode(apacheResponse.statusLine.statusCode)
-                      .withResponseHeaders(extractHeadersFrom(apacheResponse))
-                      .usingGson(gson)
-                      .build()
+                .withResponseBody(json)
+                .withStatusCode(http.responseCode)
+                .withResponseHeaders(extractHeadersFrom(http))
+                .usingGson(gson)
+                .build()
     }
 
-    @Throws(JsonException::class, JsonParseException::class)
-    private fun extractJsonFromResponse(matchingRequest: HttpRequest,
-                                        apacheResponse: org.apache.http.HttpResponse,
+    @Throws(AlchemyHttpException::class)
+    private fun extractJsonFromResponse(request: HttpRequest,
+                                        http: HttpURLConnection,
                                         gson: Gson): JsonElement
     {
-
-        val entity = apacheResponse.entity ?: return JsonNull.INSTANCE
-        val contentType = entity.contentType.value
-
-        /*
-         * We used to care what the content type was, and had a check for it here.
-         * But perhaps it's better if we don't care what the content type is, as long as we can read it as a String.
-         */
-        var responseString: String = try
+        val response = try
         {
-            entity.content.use {
-                val rawBytes = it.readBytes()
-                String(rawBytes, UTF_8)
+            http.inputStream
+        }
+        catch (ex: SocketTimeoutException)
+        {
+            throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
+        } ?: return JsonNull.INSTANCE
+
+        val responseString = try
+        {
+            response.use {
+                it.bufferedReader(Charsets.UTF_8).readText()
             }
         }
-        catch (ex: Exception)
+        catch(ex: Exception)
         {
-            LOG.error("Failed to read entity from request", ex)
-            throw AlchemyHttpException(matchingRequest, "Failed to read response from server", ex)
+            throw OperationFailedException("Failed to read response from server", ex)
         }
 
-        return if (Strings.isNullOrEmpty(responseString))
+        val contentType = http.contentType ?: ""
+
+        if (Strings.isNullOrEmpty(responseString))
         {
-            JsonNull.INSTANCE
+            return JsonNull.INSTANCE
+        }
+
+        return if (contentType.contains("application/json"))
+        {
+            gson.fromJson(responseString, JsonElement::class.java)
         }
         else
         {
-            if (contentType.contains("application/json"))
-            {
-                gson.fromJson(responseString, JsonElement::class.java)
-            }
-            else
-            {
-                gson.toJsonTree(responseString)
-            }
+            gson.toJsonTree(responseString)
         }
     }
 
-    private fun extractHeadersFrom(apacheResponse: org.apache.http.HttpResponse): Map<String, String>
+    private fun extractHeadersFrom(http: HttpURLConnection): Map<String, String>
     {
-        if (apacheResponse.allHeaders.isNull)
-        {
-            return emptyMap()
-        }
+        val headers = http.headerFields?.toMutableMap() ?: return emptyMap()
 
-        val headers = Maps.create<String, String>()
-
-        for (header in apacheResponse.allHeaders)
-        {
-            val headerName = header.name
-            val headerValue = header.value
-
-            var existingValue = headers[headerName]
-
-            val valueToWrite = if (existingValue.notEmptyOrNull)
-            {
-                "$existingValue, $headerValue"
-            }
-            else
-            {
-                headerValue
-            }
-
-            headers[headerName] = valueToWrite
-        }
-
-        return headers
+        return headers.map { it.key to it.value.joinToString(separator = ", ") }
+                      .toMap()
     }
 
 
@@ -198,9 +162,26 @@ internal class HttpVerbImpl(private val requestMapper: AlchemyRequestMapper) : H
 
         @FactoryMethodPattern(role = FACTORY_METHOD)
         @JvmStatic
-        fun using(requestMapper: AlchemyRequestMapper): HttpVerbImpl
+        fun using(method: HttpMethod): HttpVerbImpl
         {
-            return HttpVerbImpl(requestMapper)
+            return HttpVerbImpl(method)
+        }
+    }
+
+    private fun HttpURLConnection.setBody(request: HttpRequest)
+    {
+        val jsonString = request.body?.toString() ?: return
+
+        try
+        {
+            this.outputStream.use { it ->
+                it.bufferedWriter(Charsets.UTF_8).write(jsonString)
+            }
+        }
+        catch (ex: Exception)
+        {
+            LOG.error("Failed to set json request body [{}]", jsonString, ex)
+            throw OperationFailedException(request, "Failed to set json request body [$jsonString]", ex)
         }
     }
 

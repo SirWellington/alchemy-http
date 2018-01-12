@@ -164,15 +164,6 @@
 
 
         <!--=======================-->
-        <!--APACHE HTTP-->
-        <!--=======================-->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
-
-        <!--=======================-->
         <!--KOTLIN-->
         <!--=======================-->
         <dependency>
@@ -180,6 +171,15 @@
             <artifactId>kotlin-stdlib-jre7</artifactId>
         </dependency>
 
+
+        <!--=======================-->
+        <!--URL BUILDER-->
+        <!--=======================-->
+        <dependency>
+            <groupId>io.mikael</groupId>
+            <artifactId>urlbuilder</artifactId>
+            <version>2.0.9</version>
+        </dependency>
 
     </dependencies>
 
@@ -234,29 +234,29 @@
                 <!---->
                 <!--<executions>-->
 
-                    <!--&lt;!&ndash;MAIN CODE&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>main-code</id>-->
-                        <!--<goals>-->
-                            <!--<goal>compile</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<source>1.6</source>-->
-                            <!--<target>1.6</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+                <!--&lt;!&ndash;MAIN CODE&ndash;&gt;-->
+                <!--<execution>-->
+                <!--<id>main-code</id>-->
+                <!--<goals>-->
+                <!--<goal>compile</goal>-->
+                <!--</goals>-->
+                <!--<configuration>-->
+                <!--<source>1.6</source>-->
+                <!--<target>1.6</target>-->
+                <!--</configuration>-->
+                <!--</execution>-->
 
-                    <!--&lt;!&ndash;TEST CODE&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>test-code</id>-->
-                        <!--<goals>-->
-                            <!--<goal>testCompile</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<source>1.8</source>-->
-                            <!--<target>1.8</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+                <!--&lt;!&ndash;TEST CODE&ndash;&gt;-->
+                <!--<execution>-->
+                <!--<id>test-code</id>-->
+                <!--<goals>-->
+                <!--<goal>testCompile</goal>-->
+                <!--</goals>-->
+                <!--<configuration>-->
+                <!--<source>1.8</source>-->
+                <!--<target>1.8</target>-->
+                <!--</configuration>-->
+                <!--</execution>-->
 
                 <!--</executions>-->
 

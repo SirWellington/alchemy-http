@@ -17,9 +17,6 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.Gson
-import org.apache.http.client.HttpClient
-import org.apache.http.client.config.RequestConfig
-import org.apache.http.impl.client.HttpClientBuilder
 import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
 import tech.sirwellington.alchemy.annotations.arguments.Optional
@@ -37,7 +34,6 @@ import tech.sirwellington.alchemy.http.Constants.DEFAULT_HEADERS
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * Facilitates the creation of an [AlchemyHttp] instance.
@@ -48,20 +44,13 @@ import java.util.concurrent.TimeUnit.SECONDS
 class AlchemyHttpBuilder
 {
 
-    private var apacheHttpClient = DEFAULT_APACHE_CLIENT
     private var executor: Executor = SynchronousExecutor.newInstance()
 
     //Copy from DEFAULT HEADERS
     private val defaultHeaders = Maps.mutableCopyOf(DEFAULT_HEADERS)
 
     private var gson = Constants.defaultGson
-
-    @Throws(IllegalArgumentException::class)
-    fun usingApacheHttpClient(@Required apacheHttpClient: HttpClient): AlchemyHttpBuilder
-    {
-        this.apacheHttpClient = apacheHttpClient
-        return this
-    }
+    private var timeoutMillis = Constants.DEFAULT_TIMEOUT
 
     /**
      * Directly sets the Executor Service to use for Asynchronous Requests. Asynchronous requests only happen when the
@@ -97,13 +86,6 @@ class AlchemyHttpBuilder
     /**
      * Sets the Timeout to be used for each request.
      *
-     * Note that this overrides any previously set
-     * [Apache Http Clients][.usingApacheHttpClient].
-     *
-     *
-     * If you wish to use a custom HTTP Client and a default timeout, then use a [RequestConfig] and set it
-     * on your custom [Client][HttpClient].
-     *
      * @param timeout Must be positive.
      * @param timeUnit The Unit of Time to use for the timeout.
      *
@@ -115,7 +97,7 @@ class AlchemyHttpBuilder
                 .usingMessage("timeout must be > 0")
                 .isA(positiveInteger())
 
-        this.apacheHttpClient = createDefaultApacheClient(timeout, timeUnit)
+        this.timeoutMillis = timeUnit.toMillis(timeout.toLong())
 
         return this
     }
@@ -154,10 +136,6 @@ class AlchemyHttpBuilder
     @Throws(IllegalStateException::class)
     fun build(): AlchemyHttp
     {
-        checkThat(apacheHttpClient)
-                .throwing { ex -> IllegalStateException("missing apache HTTP Client") }
-                .isA(nonNullReference())
-
         checkThat(executor)
                 .throwing { ex -> IllegalStateException("missing Executor Service") }
                 .isA(nonNullReference())
@@ -171,7 +149,6 @@ class AlchemyHttpBuilder
     {
         return AlchemyHttpStateMachine.Builder
                                       .newInstance()
-                                      .usingApacheHttpClient(apacheHttpClient)
                                       .usingExecutorService(executor)
                                       .usingGson(gson)
                                       .build()
@@ -180,30 +157,13 @@ class AlchemyHttpBuilder
     companion object
     {
 
-        private val DEFAULT_APACHE_CLIENT = createDefaultApacheClient()
-
-        @FactoryMethodPattern(role = FACTORY_METHOD)
         @JvmStatic
+        @FactoryMethodPattern(role = FACTORY_METHOD)
         fun newInstance(): AlchemyHttpBuilder
         {
             return AlchemyHttpBuilder()
         }
 
-        private fun createDefaultApacheClient(timeout: Int = 45, timeUnit: TimeUnit = SECONDS): HttpClient
-        {
-            val actualTimeout = timeUnit.toMillis(timeout.toLong()).toInt()
-
-            //I really hate that they don't specify the expected Unit for the Timeout.
-            val config = RequestConfig.custom()
-                                      .setSocketTimeout(actualTimeout)
-                                      .setConnectTimeout(actualTimeout)
-                                      .setConnectionRequestTimeout(actualTimeout)
-                                      .build()
-
-            return HttpClientBuilder.create()
-                                    .setDefaultRequestConfig(config)
-                                    .build()
-        }
     }
 
 }

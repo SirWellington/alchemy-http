@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.Gson
-import org.apache.http.client.HttpClient
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
@@ -26,7 +25,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Ro
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.assertions.notNull
+import tech.sirwellington.alchemy.arguments.assertions.positiveLong
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step1
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step2
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step3
@@ -106,45 +105,38 @@ internal interface AlchemyHttpStateMachine
     class Builder
     {
 
-        private var apacheHttpClient: HttpClient? = null
         private var executor: Executor = SynchronousExecutor.newInstance()
         private var gson = Constants.defaultGson
+        private var timeout = Constants.DEFAULT_TIMEOUT
 
         @Throws(IllegalArgumentException::class)
         internal fun usingExecutorService(executor: Executor): Builder
         {
-            checkThat(executor).`is`(notNull())
-
             this.executor = executor
-            return this
-        }
-
-        @Throws(IllegalArgumentException::class)
-        internal fun usingApacheHttpClient(apacheHttpClient: HttpClient): Builder
-        {
-            checkThat(apacheHttpClient).`is`(notNull())
-
-            this.apacheHttpClient = apacheHttpClient
             return this
         }
 
         @Throws(IllegalArgumentException::class)
         internal fun usingGson(@Required gson: Gson): Builder
         {
-            checkThat(gson).`is`(notNull())
-
             this.gson = gson
+            return this
+        }
+
+        @Throws(IllegalArgumentException::class)
+        internal fun usingTimeout(timeoutMillis: Long) : Builder
+        {
+            checkThat(timeoutMillis).isA(positiveLong())
+
+            this.timeout = timeoutMillis
             return this
         }
 
         @Throws(IllegalStateException::class)
         internal fun build(): AlchemyHttpStateMachine
         {
-            checkThat<HttpClient>(apacheHttpClient)
-                    .throwing { ex -> IllegalStateException("missing Apache HTTP Client") }
-                    .`is`(notNull())
 
-            return AlchemyMachineImpl(apacheHttpClient!!, executor, gson)
+            return AlchemyMachineImpl(executor, gson)
         }
 
         companion object
