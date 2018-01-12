@@ -26,6 +26,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.nonEmptyMap
+import tech.sirwellington.alchemy.kotlin.extensions.notNull
 import java.net.URL
 
 /**
@@ -41,12 +42,11 @@ interface HttpRequest
     val queryParams: Map<String, String>?
     val url: URL?
     val body: JsonElement?
-    val verb: HttpVerb?
+    val method: RequestMethod?
 
-    fun hasBody(): Boolean
-    {
-        return body != null
-    }
+    fun hasBody() = body.notNull
+
+    fun hasMethod() = method.notNull
 
     fun hasQueryParams(): Boolean
     {
@@ -86,7 +86,7 @@ interface HttpRequest
             return false
         }
 
-        if (this.verb != other.verb)
+        if (this.method != other.method)
         {
             return false
         }
@@ -106,7 +106,7 @@ interface HttpRequest
 
         private var url: URL? = null
         private var body: JsonElement? = null
-        private var verb: HttpVerb? = null
+        private var requestMethod: RequestMethod? = null
 
         @Throws(IllegalArgumentException::class)
         fun usingRequestHeaders(requestHeaders: Map<String, String>): Builder
@@ -128,7 +128,6 @@ interface HttpRequest
             return this
         }
 
-        @Throws(IllegalArgumentException::class)
         fun usingUrl(url: URL): Builder
         {
             this.url = url
@@ -141,10 +140,9 @@ interface HttpRequest
             return this
         }
 
-        @Throws(IllegalArgumentException::class)
-        fun usingVerb(verb: HttpVerb): Builder
+        fun usingRequestMethod(method: RequestMethod): Builder
         {
-            this.verb = verb
+            this.requestMethod = method
             return this
         }
 
@@ -152,30 +150,21 @@ interface HttpRequest
         fun build(): HttpRequest
         {
             val url =  this.url
-            val verb = this.verb
             val body = this.body
+            val method = this.requestMethod
 
             return ActualRequestObject(requestHeaders = this.requestHeaders,
                                        queryParams = this.queryParams,
                                        url = url,
                                        body = body,
-                                       verb = verb)
+                                       method = method)
         }
+
 
         override fun toString(): String
         {
-            return "Builder{requestHeaders=$requestHeaders, queryParams=$queryParams, url=$url, body=$body, verb=$verb}"
+            return "Builder(requestHeaders=$requestHeaders, queryParams=$queryParams, url=$url, body=$body, requestMethod=$requestMethod)"
         }
-
-        @Immutable
-        @BuilderPattern(role = PRODUCT)
-        private data class ActualRequestObject(override val requestHeaders: Map<String, String>,
-                                               override val queryParams: Map<String, String>,
-                                               override val url: URL?,
-                                               override val body: JsonElement?,
-                                               override val verb: HttpVerb?): HttpRequest
-
-
         companion object
         {
 
@@ -202,12 +191,23 @@ interface HttpRequest
 
                 builder.url = other.url
                 builder.body = other.body
-                builder.verb = other.verb
+                builder.requestMethod = other.method
 
                 return builder
             }
         }
 
+
+        @Immutable
+        @BuilderPattern(role = PRODUCT)
+        private data class ActualRequestObject(override val requestHeaders: Map<String, String>,
+                                               override val queryParams: Map<String, String>,
+                                               override val url: URL?,
+                                               override val body: JsonElement?,
+                                               override val method: RequestMethod?): HttpRequest
+
+
+        
     }
 
     companion object

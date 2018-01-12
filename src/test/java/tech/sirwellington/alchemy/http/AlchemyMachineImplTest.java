@@ -69,7 +69,7 @@ public class AlchemyMachineImplTest
     private TestPojo pojo;
 
     @Mock
-    private HttpVerb verb;
+    private HttpExecutor verb;
 
     @Mock
     private HttpResponse response;

@@ -34,7 +34,7 @@ import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 
 
-internal enum class HttpMethod
+enum class RequestMethod
 {
 
     GET,
@@ -55,7 +55,7 @@ internal enum class HttpMethod
  */
 @StrategyPattern(role = CLIENT)
 @Internal
-internal class HttpVerbImpl(private val method: HttpMethod, private val requestMapper: AlchemyRequestMapper) : HttpVerb
+internal class HttpExecutorImpl(private val method: RequestMethod, private val requestMapper: AlchemyRequestMapper) : HttpExecutor
 {
 
 
@@ -147,13 +147,13 @@ internal class HttpVerbImpl(private val method: HttpMethod, private val requestM
     companion object
     {
 
-        private val LOG = LoggerFactory.getLogger(HttpVerbImpl::class.java)
+        private val LOG = LoggerFactory.getLogger(HttpExecutorImpl::class.java)
 
         @FactoryMethodPattern(role = FACTORY_METHOD)
         @JvmStatic
-        fun using(method: HttpMethod): HttpVerbImpl
+        fun using(method: RequestMethod): HttpExecutorImpl
         {
-            return HttpVerbImpl(method = method, requestMapper = AlchemyRequestMapper.create())
+            return HttpExecutorImpl(method = method, requestMapper = AlchemyRequestMapper.create())
         }
     }
 

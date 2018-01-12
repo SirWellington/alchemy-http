@@ -34,7 +34,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpVerb.GET)
+                                    .usingVerb(HttpExecutor.GET)
                                     .build()
 
         return stateMachine.jumpToStep3(newRequest)
@@ -44,7 +44,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpVerb.POST)
+                                    .usingVerb(HttpExecutor.POST)
                                     .build()
 
         return stateMachine.jumpToStep2(newRequest)
@@ -54,7 +54,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpVerb.PUT)
+                                    .usingVerb(HttpExecutor.PUT)
                                     .build()
 
         return stateMachine.jumpToStep2(newRequest)
@@ -64,7 +64,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
-                                    .usingVerb(HttpVerb.DELETE)
+                                    .usingVerb(HttpExecutor.DELETE)
                                     .build()
 
         return stateMachine.jumpToStep2(newRequest)

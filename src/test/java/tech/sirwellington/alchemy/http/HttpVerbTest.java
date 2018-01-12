@@ -38,25 +38,25 @@ public class HttpVerbTest
     @Test
     public void testGet()
     {
-        assertNotNull(HttpVerb.Companion.get());
+        assertNotNull(HttpExecutor.Companion.get());
     }
 
     @Test
     public void testPost()
     {
-        assertNotNull(HttpVerb.Companion.post());
+        assertNotNull(HttpExecutor.Companion.post());
     }
 
     @Test
     public void testPut()
     {
-        assertNotNull(HttpVerb.Companion.put());
+        assertNotNull(HttpExecutor.Companion.put());
     }
 
     @Test
     public void testDelete()
     {
-        assertNotNull(HttpVerb.Companion.delete());
+        assertNotNull(HttpExecutor.Companion.delete());
     }
 
 }

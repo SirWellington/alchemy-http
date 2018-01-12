@@ -94,7 +94,7 @@ public class HttpRequestTest
     @Test
     public void testGetVerb()
     {
-        assertThat(instance.getVerb(), is(testRequest.getVerb()));
+        assertThat(instance.getHttpExecutor(), is(testRequest.getHttpExecutor()));
     }
 
     @Test

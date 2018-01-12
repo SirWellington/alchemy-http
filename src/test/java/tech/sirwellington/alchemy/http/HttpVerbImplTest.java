@@ -81,14 +81,14 @@ public class HttpVerbImplTest
 
     private Map<String, String> responseHeaders;
 
-    private HttpVerb instance;
+    private HttpExecutor instance;
 
     private final Gson gson = Constants.INSTANCE.getDefaultGson();
 
     @Before
     public void setUp() throws IOException
     {
-        instance = new HttpVerbImpl(requestMapper);
+        instance = new HttpExecutorImpl(requestMapper);
         verifyZeroInteractions(requestMapper);
 
         when(requestMapper.convertToApacheRequest(request))
@@ -133,16 +133,16 @@ public class HttpVerbImplTest
     @Test
     public void testConstructor() throws Exception
     {
-        assertThrows(() -> new HttpVerbImpl(null)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> new HttpExecutorImpl(null)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void testUsing()
     {
-        HttpVerbImpl result = HttpVerbImpl.Companion.using(requestMapper);
+        HttpExecutorImpl result = HttpExecutorImpl.Companion.using(requestMapper);
         assertThat(result, notNullValue());
 
-        assertThrows(() -> HttpVerbImpl.Companion.using(null))
+        assertThrows(() -> HttpExecutorImpl.Companion.using(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

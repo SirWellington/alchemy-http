@@ -27,37 +27,37 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
  */
 @StrategyPattern(role = INTERFACE)
 @Internal
-interface HttpVerb
+interface HttpExecutor
 {
 
     @Throws(AlchemyHttpException::class)
     fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long = Constants.DEFAULT_TIMEOUT): HttpResponse
 
-    object GET: HttpVerb by get()
-    object POST: HttpVerb by post()
-    object PUT: HttpVerb by put()
-    object DELETE: HttpVerb by delete()
+    object GET: HttpExecutor by get()
+    object POST: HttpExecutor by post()
+    object PUT: HttpExecutor by put()
+    object DELETE: HttpExecutor by delete()
 
     companion object
     {
-        fun get(): HttpVerb
+        fun get(): HttpExecutor
         {
-            return HttpVerbImpl.using(HttpMethod.GET)
+            return HttpExecutorImpl.using(RequestMethod.GET)
         }
 
-        fun post(): HttpVerb
+        fun post(): HttpExecutor
         {
-            return HttpVerbImpl.using(HttpMethod.POST)
+            return HttpExecutorImpl.using(RequestMethod.POST)
         }
 
-        fun put(): HttpVerb
+        fun put(): HttpExecutor
         {
-            return HttpVerbImpl.using(HttpMethod.PUT)
+            return HttpExecutorImpl.using(RequestMethod.PUT)
         }
 
-        fun delete(): HttpVerb
+        fun delete(): HttpExecutor
         {
-            return HttpVerbImpl.using(HttpMethod.DELETE)
+            return HttpExecutorImpl.using(RequestMethod.DELETE)
         }
     }
 }

@@ -44,27 +44,27 @@ class VerbAssertions
 
     private final static Logger LOG = LoggerFactory.getLogger(VerbAssertions.class);
 
-    static void assertGetRequestMade(HttpVerb verb) throws Exception
+    static void assertGetRequestMade(HttpExecutor verb) throws Exception
     {
         assertRequestWith(verb, HttpGet.class);
     }
 
-    static void assertPostRequestMade(HttpVerb verb) throws Exception
+    static void assertPostRequestMade(HttpExecutor verb) throws Exception
     {
         assertRequestWith(verb, HttpPost.class);
     }
 
-    static void assertPutRequestMade(HttpVerb verb) throws Exception
+    static void assertPutRequestMade(HttpExecutor verb) throws Exception
     {
         assertRequestWith(verb, HttpPut.class);
     }
 
-    static void assertDeleteRequestMade(HttpVerb verb) throws Exception
+    static void assertDeleteRequestMade(HttpExecutor verb) throws Exception
     {
         assertRequestWith(verb, HttpDelete.class);
     }
 
-    private static void assertRequestWith(HttpVerb verb, Class<? extends HttpUriRequest> type) throws Exception
+    private static void assertRequestWith(HttpExecutor verb, Class<? extends HttpUriRequest> type) throws Exception
     {
         HttpClient mockClient = mock(HttpClient.class);
         when(mockClient.execute(any(HttpUriRequest.class)))

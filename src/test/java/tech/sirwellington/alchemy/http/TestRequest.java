@@ -44,7 +44,7 @@ class TestRequest implements HttpRequest
     Map<String, String> queryParams = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 6);
     URL url = one(Generators.validUrls());
     JsonElement body = one(Generators.jsonElements());
-    HttpVerb verb = Mockito.mock(HttpVerb.class);
+    HttpExecutor verb = Mockito.mock(HttpExecutor.class);
 
     @Override
     public Map<String, String> getRequestHeaders()
@@ -89,7 +89,7 @@ class TestRequest implements HttpRequest
     }
 
     @Override
-    public HttpVerb getVerb()
+    public HttpExecutor getHttpExecutor()
     {
         return verb;
     }
@@ -136,7 +136,7 @@ class TestRequest implements HttpRequest
         {
             return false;
         }
-        if (!Objects.equals(this.verb, other.getVerb()))
+        if (!Objects.equals(this.verb, other.getHttpExecutor()))
         {
             return false;
         }
@@ -147,7 +147,7 @@ class TestRequest implements HttpRequest
     @Override
     public String toString()
     {
-        return "TestRequest{" + "requestHeaders=" + requestHeaders + ", queryParams=" + queryParams + ", url=" + url + ", body=" + body + ", verb=" + verb + '}';
+        return "TestRequest{" + "requestHeaders=" + requestHeaders + ", queryParams=" + queryParams + ", url=" + url + ", body=" + body + ", httpExecutor=" + verb + '}';
     }
 
 }

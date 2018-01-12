@@ -81,7 +81,7 @@ public class Step1ImplTest
 
         HttpRequest requestMade = requestCaptor.getValue();
         assertRequestMade(requestMade);
-        assertGetRequestMade(requestMade.getVerb());
+        assertGetRequestMade(requestMade.getHttpExecutor());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class Step1ImplTest
 
         HttpRequest requestMade = requestCaptor.getValue();
         assertRequestMade(requestMade);
-        assertPostRequestMade(requestMade.getVerb());
+        assertPostRequestMade(requestMade.getHttpExecutor());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class Step1ImplTest
 
         HttpRequest requestMade = requestCaptor.getValue();
         assertRequestMade(requestMade);
-        assertPutRequestMade(requestMade.getVerb());
+        assertPutRequestMade(requestMade.getHttpExecutor());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class Step1ImplTest
 
         HttpRequest requestMade = requestCaptor.getValue();
         assertRequestMade(requestMade);
-        assertDeleteRequestMade(requestMade.getVerb());
+        assertDeleteRequestMade(requestMade.getHttpExecutor());
     }
 
     @Test

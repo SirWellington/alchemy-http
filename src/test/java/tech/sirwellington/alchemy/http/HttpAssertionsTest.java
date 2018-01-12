@@ -112,11 +112,11 @@ public class HttpAssertionsTest
         AlchemyAssertion<HttpRequest> instance = HttpAssertions.ready();
 
         URL url = one(validUrls());
-        HttpVerb verb = mock(HttpVerb.class);
+        HttpExecutor verb = mock(HttpExecutor.class);
 
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUrl()).thenReturn(url);
-        when(request.getVerb()).thenReturn(verb);
+        when(request.getHttpExecutor()).thenReturn(verb);
 
         instance.check(request);
     }
@@ -132,18 +132,18 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
 
         URL url = one(validUrls());
-        HttpVerb verb = mock(HttpVerb.class);
+        HttpExecutor verb = mock(HttpExecutor.class);
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUrl()).thenReturn(url);
-        when(request.getVerb()).thenReturn(verb);
+        when(request.getHttpExecutor()).thenReturn(verb);
 
-        //Missing verb
-        when(request.getVerb()).thenReturn(null);
+        //Missing httpExecutor
+        when(request.getHttpExecutor()).thenReturn(null);
 
         assertThrows(() -> instance.check(request))
                 .isInstanceOf(FailedAssertionException.class);
 
-        when(request.getVerb()).thenReturn(verb);
+        when(request.getHttpExecutor()).thenReturn(verb);
 
         //Missing URL
         when(request.getUrl()).thenReturn(null);

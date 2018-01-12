@@ -74,7 +74,7 @@ internal object HttpAssertions
                     .usingMessage("Request missing")
                     .isA(nonNullReference())
 
-            checkThat(request.verb)
+            checkThat(request.httpExecutor)
                     .usingMessage("Request missing HTTP Verb")
                     .isA(nonNullReference())
 

@@ -110,7 +110,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
         checkThat(classOfResponseType).isA(validResponseClass())
         checkThat(request).isA(ready())
 
-        val verb = request.verb ?: throw OperationFailedException("Request missing verb")
+        val verb = request.httpExecutor ?: throw OperationFailedException("Request missing httpExecutor")
 
         val response = try
         {
@@ -118,12 +118,12 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
         }
         catch (ex: AlchemyHttpException)
         {
-            LOG.info("Encountered AlchemyHttpException when running verb {} on request {}", verb, request, ex)
+            LOG.info("Encountered AlchemyHttpException when running httpExecutor {} on request {}", verb, request, ex)
             throw ex
         }
         catch (ex: Exception)
         {
-            LOG.error("Failed to execute verb {} on request {}", verb, request, ex)
+            LOG.error("Failed to execute httpExecutor {} on request {}", verb, request, ex)
             throw AlchemyHttpException(request, ex)
         }
 
