@@ -153,6 +153,7 @@ interface AlchemyHttp
          *
          * @return
          */
+        @FactoryMethodPattern(role = Role.FACTORY_METHOD)
         fun newBuilder(): AlchemyHttpBuilder
         {
             return AlchemyHttpBuilder.newInstance()

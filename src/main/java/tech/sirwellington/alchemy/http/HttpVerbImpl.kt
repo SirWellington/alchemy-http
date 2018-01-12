@@ -61,7 +61,7 @@ internal class HttpVerbImpl(private val requestMapper: AlchemyRequestMapper) : H
                 .isA(nonNullReference())
 
         request.requestHeaders
-               .forEach { s, s1 -> apacheRequest.addHeader(s, s1) }
+               ?.forEach { s, s1 -> apacheRequest.addHeader(s, s1) }
 
         val apacheResponse = try
         {

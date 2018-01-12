@@ -37,7 +37,7 @@ internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
 {
 
     @Throws(IllegalArgumentException::class)
-    override fun usingHeader(key: String, value: String?): AlchemyRequest.Step3
+    override fun usingHeader(key: String, value: String): AlchemyRequest.Step3
     {
         checkThat(key)
                 .usingMessage("missing key")

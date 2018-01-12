@@ -30,7 +30,7 @@ import tech.sirwellington.alchemy.arguments.assertions.nonEmptyString
 @Internal
 @BuilderPattern(role = PRODUCT)
 @ThreadSafe
-internal class AlchemyHttpImpl(private val defaultHeaders: Map<String, String>,
+internal class AlchemyHttpImpl(override val defaultHeaders: Map<String, String>,
                                private val stateMachine: AlchemyHttpStateMachine) : AlchemyHttp
 {
 
@@ -59,12 +59,6 @@ internal class AlchemyHttpImpl(private val defaultHeaders: Map<String, String>,
     override fun toString(): String
     {
         return "AlchemyHttp{defaultHeaders=$defaultHeaders, stateMachine=$stateMachine}"
-    }
-
-    override fun getDefaultHeaders(): Map<String, String>
-    {
-        //Already immutable
-        return defaultHeaders
     }
 
 }
