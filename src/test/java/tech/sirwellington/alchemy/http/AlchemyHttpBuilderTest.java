@@ -218,24 +218,24 @@ public class AlchemyHttpBuilderTest
     public void testBuildEdgeCases()
     {
         //Nothing is set
-        instance = Companion.newInstance();
+        instance = AlchemyHttpBuilder.newInstance();
         instance.build();
 
         //No Executor Service set
-        instance = Companion.newInstance().usingApacheHttpClient(apacheHttpClient);
+        instance = AlchemyHttpBuilder.newInstance().usingApacheHttpClient(apacheHttpClient);
         instance.build();
 
         //No Apache Client set
-        instance = Companion.newInstance().usingExecutorService(executor);
+        instance = AlchemyHttpBuilder.newInstance().usingExecutorService(executor);
         instance.build();
     }
 
     @Test
     public void testDefaultIncludesBasicRequestHeaders()
     {
-        instance = Companion.newInstance()
-                            .usingApacheHttpClient(apacheHttpClient)
-                            .usingExecutorService(executor);
+        instance = AlchemyHttpBuilder.newInstance()
+                                     .usingApacheHttpClient(apacheHttpClient)
+                                     .usingExecutorService(executor);
 
         AlchemyHttp result = instance.build();
         assertThat(result, notNullValue());

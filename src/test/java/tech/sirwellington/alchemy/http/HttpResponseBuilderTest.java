@@ -33,7 +33,6 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.http.Generators.jsonNull;
-import static tech.sirwellington.alchemy.http.HttpResponse.Builder.newInstance;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -55,7 +54,7 @@ public class HttpResponseBuilderTest
     @Before
     public void setUp()
     {
-        instance = Companion.newInstance();
+        instance = HttpResponse.Builder.newInstance();
 
         response = new TestResponse();
         responseBody = response.responseBody;

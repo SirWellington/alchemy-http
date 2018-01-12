@@ -17,17 +17,20 @@
 
 package tech.sirwellington.alchemy.http;
 
-    import java.net.URL;
-    import java.util.Map;
-    import java.util.Objects;
+import java.net.URL;
+import java.util.Map;
+import java.util.Objects;
 
-    import com.google.gson.JsonElement;
-    import org.mockito.Mockito;
-    import tech.sirwellington.alchemy.annotations.access.Internal;
-    import tech.sirwellington.alchemy.generator.CollectionGenerators;
-    import tech.sirwellington.alchemy.generator.StringGenerators;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import org.jetbrains.annotations.Nullable;
+import org.mockito.Mockito;
+import sir.wellington.alchemy.collections.maps.Maps;
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.generator.CollectionGenerators;
+import tech.sirwellington.alchemy.generator.StringGenerators;
 
-    import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 
     /**
  *
@@ -53,6 +56,24 @@ class TestRequest implements HttpRequest
     public Map<String, String> getQueryParams()
     {
         return queryParams;
+    }
+
+    @Override
+    public boolean hasBody()
+    {
+        return body != null && body !=JsonNull.INSTANCE;
+    }
+
+    @Override
+    public boolean hasQueryParams()
+    {
+        return Maps.isEmpty(queryParams);
+    }
+
+    @Override
+    public boolean equals(@Nullable HttpRequest other)
+    {
+        return this.equals((Object) other);
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import kotlin.io.ByteStreamsKt;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
@@ -308,7 +309,7 @@ public class AlchemyRequestMapperTest
         assertThat(entity, notNullValue());
         assertThat(entity, instanceOf(StringEntity.class));
 
-        byte[] content = ByteStreams.toByteArray(entity.getContent());
+        byte[] content = ByteStreamsKt.readBytes(entity.getContent(), 1024);
         assertThat(content, notNullValue());
         String stringBody = new String(content, UTF_8);
 

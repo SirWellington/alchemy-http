@@ -332,6 +332,7 @@ interface HttpResponse
         companion object
         {
 
+            @JvmStatic
             @FactoryMethodPattern(role = FACTORY_METHOD)
             fun newInstance(): Builder
             {

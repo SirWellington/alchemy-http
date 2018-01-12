@@ -21,6 +21,7 @@ import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
+import org.jetbrains.annotations.Nullable;
 import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.*;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
@@ -34,7 +35,7 @@ class TestResponse implements HttpResponse
     int statusCode = one(NumberGenerators.integers(200, 500));
     Map<String, String> responseHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 10);
     JsonElement responseBody = one(Generators.jsonElements());
-    private final Gson gson = Constants.INSTANCE.getDefaultGson();
+    private final Gson gson = Constants.getDefaultGson();
 
     TestResponse()
     {
@@ -104,6 +105,12 @@ class TestResponse implements HttpResponse
     }
 
     @Override
+    public boolean equals(@Nullable HttpResponse other)
+    {
+        return this.equals((Object) other);
+    }
+
+    @Override
     public String toString()
     {
         return "TestResponse{" + "statusCode=" + statusCode + ", responseHeaders=" + responseHeaders + ", responseBody=" + responseBody + '}';
@@ -113,13 +120,16 @@ class TestResponse implements HttpResponse
     public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException
     {
         checkThat(this.responseBody)
-                .is(Companion.jsonArray());
+                .is(HttpAssertions.jsonArray());
 
-        Type type = new TypeToken<List<T>>()
-        {
-        }.getType();
+        Type type = new TypeToken<List<T>>() {}.getType();
 
         return gson.fromJson(responseBody, type);
     }
 
+    @Override
+    public boolean isOk()
+    {
+        return statusCode >= 200 && statusCode <= 208;
+    }
 }

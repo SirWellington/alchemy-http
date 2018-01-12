@@ -29,15 +29,19 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 internal object Constants
 {
 
+    @JvmStatic
     val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 
     @Internal
+    @JvmStatic
     val DEFAULT_HEADERS = createDefaultHeaders()
 
+    @JvmStatic
     val defaultGson: Gson = GsonBuilder()
                                 .setDateFormat(DATE_FORMAT)
                                 .create()
 
+    @JvmStatic
     private fun createDefaultHeaders(): Map<String, String>
     {
         val headers = Maps.create<String, String>()
