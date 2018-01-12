@@ -91,17 +91,24 @@ class TestResponse implements HttpResponse
     }
 
     @Override
-    public boolean equals(Object other)
+    public boolean equals(Object o)
     {
-        if (other == null)
+        if (this == o)
+        {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass())
         {
             return false;
         }
-        if (!(other instanceof HttpResponse))
-        {
-            return false;
-        }
-        return this.equals((HttpResponse) other);
+
+        TestResponse that = (TestResponse) o;
+
+        return statusCode == that.statusCode &&
+                Objects.equals(responseHeaders, that.responseHeaders) &&
+                Objects.equals(responseBody, that.responseBody) &&
+                Objects.equals(gson, that.gson);
     }
 
     @Override

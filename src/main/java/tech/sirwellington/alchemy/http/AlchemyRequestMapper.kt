@@ -31,6 +31,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.R
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.http.HttpAssertions.validRequest
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
+import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
 import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
@@ -97,18 +98,20 @@ internal interface AlchemyRequestMapper
         }
 
         @Internal
-        @Throws(URISyntaxException::class, MalformedURLException::class)
+        @Throws(AlchemyHttpException::class, URISyntaxException::class, MalformedURLException::class)
         fun expandUrlFromRequest(@Required request: HttpRequest): URL
         {
             checkThat(request).isA(validRequest())
 
+            val url = request.url ?: throw OperationFailedException("request is missing URL")
+
             return if (!request.hasQueryParams())
             {
-                request.url
+                url
             }
             else
             {
-                val uri = request.url.toURI()
+                val uri = url.toURI()
                 val uriBuilder = URIBuilder(uri)
 
                 request.queryParams?.

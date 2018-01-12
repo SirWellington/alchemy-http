@@ -39,9 +39,9 @@ interface HttpRequest
 
     val requestHeaders: Map<String, String>?
     val queryParams: Map<String, String>?
-    val url: URL
+    val url: URL?
     val body: JsonElement?
-    val verb: HttpVerb
+    val verb: HttpVerb?
 
     fun hasBody(): Boolean
     {
@@ -151,8 +151,8 @@ interface HttpRequest
         @Throws(IllegalArgumentException::class)
         fun build(): HttpRequest
         {
-            val url =  this.url ?: throw IllegalArgumentException("url cannot be missing")
-            val verb = this.verb ?: throw IllegalArgumentException("HTTP Verb cannot be missing")
+            val url =  this.url
+            val verb = this.verb
             val body = this.body
 
             return ActualRequestObject(requestHeaders = this.requestHeaders,
@@ -171,9 +171,9 @@ interface HttpRequest
         @BuilderPattern(role = PRODUCT)
         private data class ActualRequestObject(override val requestHeaders: Map<String, String>,
                                                override val queryParams: Map<String, String>,
-                                               override val url: URL,
+                                               override val url: URL?,
                                                override val body: JsonElement?,
-                                               override val verb: HttpVerb): HttpRequest
+                                               override val verb: HttpVerb?): HttpRequest
 
 
         companion object

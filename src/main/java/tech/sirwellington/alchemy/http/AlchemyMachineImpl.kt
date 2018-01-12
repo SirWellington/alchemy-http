@@ -28,6 +28,7 @@ import tech.sirwellington.alchemy.http.HttpAssertions.okResponse
 import tech.sirwellington.alchemy.http.HttpAssertions.ready
 import tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
+import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
 import java.util.concurrent.Executor
 
 /**
@@ -105,7 +106,7 @@ internal class AlchemyMachineImpl(private val apacheHttpClient: HttpClient,
         checkThat(classOfResponseType).isA(validResponseClass())
         checkThat(request).isA(ready())
 
-        val verb = request.verb
+        val verb = request.verb ?: throw OperationFailedException("Request missing verb")
 
         val response = try
         {

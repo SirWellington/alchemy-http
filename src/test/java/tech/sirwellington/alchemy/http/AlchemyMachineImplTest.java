@@ -290,7 +290,7 @@ public class AlchemyMachineImplTest
                 .thenReturn(null);
 
         assertThrows(() -> instance.executeSync(request, responseClass))
-                .isInstanceOf(AlchemyHttpException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

@@ -82,7 +82,7 @@ internal object HttpAssertions
                     .usingMessage("Request missing URL")
                     .isA(nonNullReference())
 
-            checkThat(request.url.protocol)
+            checkThat(request.url!!.protocol)
                     .isA(stringBeginningWith("http"))
         }
     }
