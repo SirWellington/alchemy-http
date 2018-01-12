@@ -33,7 +33,7 @@ import java.net.URL
 @Internal
 @StepMachineDesign(role = STEP)
 internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
-                         private var request: HttpRequest?) : AlchemyRequest.Step3
+                         private var request: HttpRequest) : AlchemyRequest.Step3
 {
 
     @Throws(IllegalArgumentException::class)
