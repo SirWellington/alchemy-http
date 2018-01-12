@@ -239,17 +239,23 @@ interface AlchemyRequest
     }
 
     @FunctionalInterface
-    interface OnSuccess<ResponseType>
+    interface OnSuccess<in ResponseType>
     {
 
         fun processResponse(response: ResponseType)
 
+
         companion object
         {
+            val NO_OP = INSTANCES.NO_OP
+        }
 
-            val NO_OP = object : OnSuccess<Any>
+        object INSTANCES
+        {
+            @JvmField
+            val NO_OP = object : OnSuccess<Any?>
             {
-                override fun processResponse(response: Any)
+                override fun processResponse(response: Any?)
                 {
 
                 }
