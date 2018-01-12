@@ -15,16 +15,15 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
+import com.google.gson.Gson;
 import org.apache.http.client.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+import org.mockito.*;
 import tech.sirwellington.alchemy.http.AlchemyHttpStateMachine.Builder;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
@@ -33,11 +32,10 @@ import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  *
@@ -108,13 +106,13 @@ public class AlchemyHttpStateMachineTest
     @Test
     public void testBuilder()
     {
-        Builder builder = Builder.newInstance();
+        Builder builder = Builder.Companion.newInstance();
         assertThat(builder, notNullValue());
 
-        AlchemyHttpStateMachine result = Builder.newInstance()
-                .usingApacheHttpClient(apacheClient)
-                .usingExecutorService(executorService)
-                .build();
+        AlchemyHttpStateMachine result = Builder.Companion.newInstance()
+                                                          .usingApacheHttpClient(apacheClient)
+                                                          .usingExecutorService(executorService)
+                                                          .build();
 
         assertThat(result, notNullValue());
 
@@ -126,10 +124,10 @@ public class AlchemyHttpStateMachineTest
     {
         Gson gson = new Gson();
 
-        AlchemyHttpStateMachine result = Builder.newInstance()
-            .usingApacheHttpClient(apacheClient)
-            .usingGson(gson)
-            .build();
+        AlchemyHttpStateMachine result = Builder.Companion.newInstance()
+                                                          .usingApacheHttpClient(apacheClient)
+                                                          .usingGson(gson)
+                                                          .build();
 
         assertThat(result, notNullValue());
     }
@@ -137,7 +135,7 @@ public class AlchemyHttpStateMachineTest
     @Test
     public void testBuilderWithEdgeCases()
     {
-        Builder builder = Builder.newInstance();
+        Builder builder = Builder.Companion.newInstance();
 
         assertThrows(() -> builder.usingApacheHttpClient(null))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -145,7 +143,7 @@ public class AlchemyHttpStateMachineTest
         assertThrows(() -> builder.usingExecutorService(null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(() -> Builder.newInstance().build())
+        assertThrows(() -> Builder.Companion.newInstance().build())
                 .isInstanceOf(IllegalStateException.class);
 
     }
