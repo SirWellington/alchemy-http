@@ -55,27 +55,16 @@ internal enum class HttpMethod
  */
 @StrategyPattern(role = CLIENT)
 @Internal
-internal class HttpVerbImpl(private val method: HttpMethod) : HttpVerb
+internal class HttpVerbImpl(private val method: HttpMethod, private val requestMapper: AlchemyRequestMapper) : HttpVerb
 {
 
 
     @Throws(AlchemyHttpException::class)
     override fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long): HttpResponse
     {
-        val url = AlchemyRequestMapper.expandUrlFromRequest(request)
-        val connection = url.openConnection()
 
-        val http = connection as? HttpURLConnection ?: throw OperationFailedException("URL is not an HTTP URL: [$url]")
-
-        http.doInput = true
+        val http = requestMapper.map(request)
         http.requestMethod = this.method.asString
-        request.requestHeaders?.forEach { key, value -> http.setRequestProperty(key, value) }
-
-        if (request.hasBody())
-        {
-            http.doOutput = true
-            http.setBody(request)
-        }
 
         val json = try
         {
@@ -110,13 +99,13 @@ internal class HttpVerbImpl(private val method: HttpMethod) : HttpVerb
                                         gson: Gson): JsonElement
     {
         val response = try
-        {
-            http.inputStream
-        }
-        catch (ex: SocketTimeoutException)
-        {
-            throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
-        } ?: return JsonNull.INSTANCE
+                       {
+                           http.inputStream
+                       }
+                       catch (ex: SocketTimeoutException)
+                       {
+                           throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
+                       } ?: return JsonNull.INSTANCE
 
         val responseString = try
         {
@@ -124,7 +113,7 @@ internal class HttpVerbImpl(private val method: HttpMethod) : HttpVerb
                 it.bufferedReader(Charsets.UTF_8).readText()
             }
         }
-        catch(ex: Exception)
+        catch (ex: Exception)
         {
             throw OperationFailedException("Failed to read response from server", ex)
         }
@@ -164,25 +153,10 @@ internal class HttpVerbImpl(private val method: HttpMethod) : HttpVerb
         @JvmStatic
         fun using(method: HttpMethod): HttpVerbImpl
         {
-            return HttpVerbImpl(method)
+            return HttpVerbImpl(method = method, requestMapper = AlchemyRequestMapper.create())
         }
     }
 
-    private fun HttpURLConnection.setBody(request: HttpRequest)
-    {
-        val jsonString = request.body?.toString() ?: return
 
-        try
-        {
-            this.outputStream.use { it ->
-                it.bufferedWriter(Charsets.UTF_8).write(jsonString)
-            }
-        }
-        catch (ex: Exception)
-        {
-            LOG.error("Failed to set json request body [{}]", jsonString, ex)
-            throw OperationFailedException(request, "Failed to set json request body [$jsonString]", ex)
-        }
-    }
 
 }

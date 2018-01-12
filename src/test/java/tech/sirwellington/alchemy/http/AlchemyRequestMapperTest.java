@@ -21,16 +21,12 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import io.mikael.urlbuilder.UrlBuilder;
 import kotlin.io.ByteStreamsKt;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.*;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.http.AlchemyRequestMapper.HttpDeleteWithBody;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
@@ -84,11 +80,9 @@ public class AlchemyRequestMapperTest
         instance = AlchemyRequestMapper.Companion.getGET();
         assertThat(instance, notNullValue());
 
-        HttpUriRequest result = instance.convertToApacheRequest(request);
+        HttpURLConnection result = instance.map(request);
         assertThat(result, notNullValue());
-        assertThat(result.getURI(), is(url.toURI()));
-        assertThat(result, instanceOf(HttpGet.class));
-
+        assertThat(result.getURL(), is(url));
     }
 
     @Test
@@ -183,127 +177,6 @@ public class AlchemyRequestMapperTest
         assertThat(result.getURI(), is(expandedUrl.toURI()));
     }
 
-    @Test
-    public void testPut() throws Exception
-    {
-        instance = AlchemyRequestMapper.Companion.getPUT();
-        assertThat(instance, notNullValue());
-
-        HttpUriRequest result = instance.convertToApacheRequest(request);
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(HttpPut.class));
-        assertThat(result.getURI(), is(url.toURI()));
-
-    }
-
-    @DontRepeat
-    @Test
-    public void testPutEdgeConditions()
-    {
-        //Edge Conditions
-        instance = AlchemyRequestMapper.Companion.getPUT();
-
-        assertThrows(() -> instance.convertToApacheRequest(null))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        when(request.getUrl()).thenReturn(null);
-        assertThrows(() -> instance.convertToApacheRequest(request))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        when(request.getUrl())
-                .thenReturn(url)
-                .thenThrow(new RuntimeException());
-        assertThrows(() -> instance.convertToApacheRequest(request))
-                .isInstanceOf(AlchemyHttpException.class);
-    }
-
-    @Test
-    public void testPutWithBody() throws Exception
-    {
-        instance = AlchemyRequestMapper.Companion.getPUT();
-
-        when(request.hasBody()).thenReturn(true);
-
-        HttpUriRequest result = instance.convertToApacheRequest(request);
-        assertThat(result, instanceOf(HttpPut.class));
-
-        HttpPut put = (HttpPut) result;
-        assertEntity(put.getEntity());
-    }
-
-    @Test
-    public void testPutExpandsURL() throws Exception
-    {
-        instance = AlchemyRequestMapper.Companion.getPUT();
-
-        when(request.hasQueryParams())
-                .thenReturn(Boolean.TRUE);
-
-        HttpUriRequest result = instance.convertToApacheRequest(request);
-        assertThat(result.getURI(), is(expandedUrl.toURI()));
-    }
-
-    @Test
-    public void testDelete() throws Exception
-    {
-        instance = AlchemyRequestMapper.Companion.getDELETE();
-        assertThat(instance, notNullValue());
-
-        HttpUriRequest result = instance.convertToApacheRequest(request);
-        assertThat(result, notNullValue());
-        assertThat(result, instanceOf(HttpDelete.class));
-        assertThat(result.getURI(), is(url.toURI()));
-
-    }
-
-    @DontRepeat
-    @Test
-    public void testDeleteEdgeConditions()
-    {
-        //Edge conditions
-        instance = AlchemyRequestMapper.Companion.getDELETE();
-
-        assertThrows(() -> instance.convertToApacheRequest(null))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        when(request.getUrl()).thenReturn(null);
-        assertThrows(() -> instance.convertToApacheRequest(request))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        when(request.getUrl())
-                .thenReturn(url)
-                .thenThrow(new RuntimeException());
-        assertThrows(() -> instance.convertToApacheRequest(request))
-                .isInstanceOf(AlchemyHttpException.class);
-
-    }
-
-    @Test
-    public void testDeleteWithBody() throws Exception
-    {
-        instance = AlchemyRequestMapper.Companion.getDELETE();
-
-        when(request.hasBody()).thenReturn(true);
-
-        HttpUriRequest result = instance.convertToApacheRequest(request);
-        assertThat(result, instanceOf(HttpDeleteWithBody.class));
-
-        HttpDeleteWithBody delete = (HttpDeleteWithBody) result;
-        assertEntity(delete.getEntity());
-    }
-
-    @Test
-    public void testDeleteExpandsURL() throws Exception
-    {
-        instance = AlchemyRequestMapper.Companion.getDELETE();
-
-        when(request.hasQueryParams())
-                .thenReturn(Boolean.TRUE);
-
-        HttpUriRequest result = instance.convertToApacheRequest(request);
-        assertThat(result.getURI(), is(expandedUrl.toURI()));
-    }
-
     private void assertEntity(HttpEntity entity) throws IOException
     {
         assertThat(entity, notNullValue());
@@ -318,19 +191,6 @@ public class AlchemyRequestMapperTest
         assertThat(jsonBody, is(body));
     }
 
-    public void testDeleteWithBodyClass() throws Exception
-    {
-        AlchemyRequestMapper.HttpDeleteWithBody delete;
-        delete = new AlchemyRequestMapper.HttpDeleteWithBody(url.toURI());
-
-        assertThat(delete.getMethod(), is(new HttpDelete().getMethod()));
-
-        HttpEntity entity = mock(HttpEntity.class);
-        delete.setEntity(entity);
-
-        HttpEntity result = delete.getEntity();
-        assertThat(result, is(entity));
-    }
 
     @Test
     public void testExpandUrlFromRequest() throws Exception
@@ -340,8 +200,7 @@ public class AlchemyRequestMapperTest
         assertThat(result, is(url));
 
         //When there are query params
-        when(request.hasQueryParams())
-                .thenReturn(true);
+        when(request.hasQueryParams()).thenReturn(true);
         result = AlchemyRequestMapper.Companion.expandUrlFromRequest(request);
         assertThat(result, is(expandedUrl));
 
@@ -349,11 +208,11 @@ public class AlchemyRequestMapperTest
 
     private URL expandUrl() throws URISyntaxException, MalformedURLException
     {
-        URIBuilder builder = new URIBuilder(url.toURI());
+        UrlBuilder builder = UrlBuilder.fromUrl(url);
 
         queryParams.forEach(builder::addParameter);
 
-        return builder.build().toURL();
+        return builder.toUrl();
     }
 
 }

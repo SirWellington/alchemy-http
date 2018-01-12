@@ -21,6 +21,7 @@ import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
+import tech.sirwellington.alchemy.arguments.assertions.positiveLong
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure
 import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess
 import tech.sirwellington.alchemy.http.HttpAssertions.okResponse
@@ -36,10 +37,14 @@ import java.util.concurrent.Executor
  */
 @Internal
 @StepMachineDesign(role = MACHINE)
-internal class AlchemyMachineImpl(private val async: Executor,
-                                  private val gson: Gson,
-                                  private val timeoutMillis: Long = Constants.DEFAULT_TIMEOUT) : AlchemyHttpStateMachine
+internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: Executor,
+                                                            private val gson: Gson,
+                                                            private val timeoutMillis: Long = Constants.DEFAULT_TIMEOUT) : AlchemyHttpStateMachine
 {
+    init
+    {
+        checkThat(timeoutMillis).isA(positiveLong())
+    }
 
     private val LOG = LoggerFactory.getLogger(AlchemyMachineImpl::class.java)
 

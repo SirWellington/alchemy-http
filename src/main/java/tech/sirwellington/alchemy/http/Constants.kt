@@ -38,7 +38,7 @@ internal object Constants
     val DEFAULT_HEADERS = createDefaultHeaders()
 
     @JvmField
-    val defaultGson: Gson = GsonBuilder()
+    val DEFAULT_GSON: Gson = GsonBuilder()
             .setDateFormat(DATE_FORMAT)
             .create()
 

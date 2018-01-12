@@ -26,6 +26,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
+import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -105,9 +106,7 @@ interface AlchemyHttp
         @FactoryMethodPattern(role = Role.FACTORY_METHOD)
         fun newDefaultInstance(): AlchemyHttp
         {
-            return AlchemyHttpBuilder.newInstance()
-                    .disableAsyncCallbacks()
-                    .build()
+            return newInstance()
         }
 
 
@@ -115,7 +114,7 @@ interface AlchemyHttp
          * Creates a new [AlchemyHttp] instance.
          *
          * @param apacheHttpClient The [Apache Http Client][HttpClient] to use when making requests.
-         * @param executorService  For Async requests, this [ExecutorService] will be used.
+         * @param executor  For Async requests, this [ExecutorService] will be used.
          * @param defaultHeaders   Default Headers are included in every request, unless otherwise specified.
          *
          * @return
@@ -123,15 +122,14 @@ interface AlchemyHttp
          */
         @Throws(IllegalArgumentException::class)
         @JvmOverloads
-        fun newInstance(apacheHttpClient: HttpClient,
-                        executorService: ExecutorService,
-                        defaultHeaders: Map<String, String>,
+        fun newInstance(executor: Executor = SynchronousExecutor.newInstance(),
+                        defaultHeaders: Map<String, String> = emptyMap(),
                         timeout: Int = Constants.DEFAULT_TIMEOUT.toInt(),
                         timeUnit: TimeUnit = MILLISECONDS): AlchemyHttp
         {
 
             return AlchemyHttpBuilder.newInstance()
-                                     .usingExecutorService(executorService)
+                                     .usingExecutor(executor)
                                      .usingDefaultHeaders(defaultHeaders)
                                      .usingTimeout(timeout, timeUnit)
                                      .build()

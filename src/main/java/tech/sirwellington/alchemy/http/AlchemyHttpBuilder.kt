@@ -49,12 +49,12 @@ class AlchemyHttpBuilder
     //Copy from DEFAULT HEADERS
     private val defaultHeaders = Maps.mutableCopyOf(DEFAULT_HEADERS)
 
-    private var gson = Constants.defaultGson
+    private var gson = Constants.DEFAULT_GSON
     private var timeoutMillis = Constants.DEFAULT_TIMEOUT
 
     /**
-     * Directly sets the Executor Service to use for Asynchronous Requests. Asynchronous requests only happen when the
-     * [Callback][AlchemyRequest.Step4.onSuccess]
+     * Directly sets the [Executor] to use for Asynchronous Requests.
+     * Asynchronous requests only happen when a [Callback][AlchemyRequest.Step4.onSuccess]
      * is set on the Request.
      *
      * @param executor
@@ -62,7 +62,7 @@ class AlchemyHttpBuilder
      * @throws IllegalArgumentException
      */
     @Throws(IllegalArgumentException::class)
-    fun usingExecutorService(@Required executor: Executor): AlchemyHttpBuilder
+    fun usingExecutor(@Required executor: Executor): AlchemyHttpBuilder
     {
         this.executor = executor
         return this
@@ -104,12 +104,12 @@ class AlchemyHttpBuilder
 
     fun enableAsyncCallbacks(): AlchemyHttpBuilder
     {
-        return usingExecutorService(Executors.newSingleThreadExecutor())
+        return usingExecutor(Executors.newSingleThreadExecutor())
     }
 
     fun disableAsyncCallbacks(): AlchemyHttpBuilder
     {
-        return usingExecutorService(SynchronousExecutor.newInstance())
+        return usingExecutor(SynchronousExecutor.newInstance())
     }
 
     @Throws(IllegalArgumentException::class)

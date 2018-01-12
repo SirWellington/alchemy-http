@@ -106,7 +106,7 @@ internal interface AlchemyHttpStateMachine
     {
 
         private var executor: Executor = SynchronousExecutor.newInstance()
-        private var gson = Constants.defaultGson
+        private var gson = Constants.DEFAULT_GSON
         private var timeout = Constants.DEFAULT_TIMEOUT
 
         @Throws(IllegalArgumentException::class)

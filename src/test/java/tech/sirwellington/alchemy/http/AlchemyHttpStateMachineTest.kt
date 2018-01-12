@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.Gson
-import org.apache.http.client.HttpClient
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
@@ -76,9 +75,6 @@ class AlchemyHttpStateMachineTest
     private lateinit var requestCaptor: ArgumentCaptor<HttpRequest>
 
     @Mock
-    private lateinit var apacheClient: HttpClient
-
-    @Mock
     private lateinit var executor: Executor
 
     @Mock
@@ -116,7 +112,6 @@ class AlchemyHttpStateMachineTest
         assertThat(builder, notNullValue())
 
         val result = Builder.newInstance()
-                .usingApacheHttpClient(apacheClient)
                 .usingExecutorService(executor)
                 .build()
 
@@ -132,7 +127,6 @@ class AlchemyHttpStateMachineTest
         val gson = Gson()
 
         val result = Builder.newInstance()
-                .usingApacheHttpClient(apacheClient)
                 .usingGson(gson)
                 .build()
 

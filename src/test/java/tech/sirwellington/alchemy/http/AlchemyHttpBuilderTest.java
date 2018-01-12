@@ -131,11 +131,11 @@ public class AlchemyHttpBuilderTest
     @Test
     public void testUsingExecutorService()
     {
-        AlchemyHttpBuilder result = instance.usingExecutorService(executor);
+        AlchemyHttpBuilder result = instance.usingExecutor(executor);
         assertThat(result, notNullValue());
 
         //Edge cases
-        assertThrows(() -> instance.usingExecutorService(null))
+        assertThrows(() -> instance.usingExecutor(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -226,7 +226,7 @@ public class AlchemyHttpBuilderTest
         instance.build();
 
         //No Apache Client set
-        instance = AlchemyHttpBuilder.newInstance().usingExecutorService(executor);
+        instance = AlchemyHttpBuilder.newInstance().usingExecutor(executor);
         instance.build();
     }
 

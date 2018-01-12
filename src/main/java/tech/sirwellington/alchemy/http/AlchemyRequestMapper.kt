@@ -16,14 +16,20 @@
 package tech.sirwellington.alchemy.http
 
 import io.mikael.urlbuilder.UrlBuilder
+import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.arguments.Required
+import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
+import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role.FACTORY_METHOD
+import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role.PRODUCT
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.http.HttpAssertions.validRequest
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
+import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URISyntaxException
 import java.net.URL
@@ -36,6 +42,8 @@ import java.net.URL
 @Internal
 internal interface AlchemyRequestMapper
 {
+
+    fun map(request: HttpRequest) : HttpURLConnection
 
     companion object
     {
@@ -60,6 +68,56 @@ internal interface AlchemyRequestMapper
                 uriBuilder.toUrl()
             }
         }
+
+        @FactoryMethodPattern(role = FACTORY_METHOD)
+        fun create(): AlchemyRequestMapper
+        {
+            return AlchemyRequestMapperImpl
+        }
+    }
+}
+
+@FactoryMethodPattern(role = PRODUCT)
+@StrategyPattern(role = Role.CONCRETE_BEHAVIOR)
+private object AlchemyRequestMapperImpl: AlchemyRequestMapper
+{
+
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+
+    override fun map(request: HttpRequest): HttpURLConnection
+    {
+        val url = AlchemyRequestMapper.expandUrlFromRequest(request)
+        val connection = url.openConnection()
+
+        val http = connection as? HttpURLConnection ?: throw OperationFailedException("URL is not an HTTP URL: [$url]")
+
+        http.doInput = true
+
+        request.requestHeaders?.forEach { key, value -> http.setRequestProperty(key, value) }
+
+        if (request.hasBody())
+        {
+            http.doOutput = true
+            http.setBody(request)
+        }
+
+        return http
     }
 
+    private fun HttpURLConnection.setBody(request: HttpRequest)
+    {
+        val jsonString = request.body?.toString() ?: return
+
+        try
+        {
+            this.outputStream.use { it ->
+                it.bufferedWriter(Charsets.UTF_8).write(jsonString)
+            }
+        }
+        catch (ex: Exception)
+        {
+            LOG.error("Failed to set json request body [{}]", jsonString, ex)
+            throw OperationFailedException(request, "Failed to set json request body [$jsonString]", ex)
+        }
+    }
 }

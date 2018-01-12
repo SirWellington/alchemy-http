@@ -18,7 +18,6 @@ package tech.sirwellington.alchemy.http;
 import java.util.concurrent.Executor;
 
 import com.google.gson.Gson;
-import org.apache.http.client.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,9 +42,6 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 @RunWith(AlchemyTestRunner.class)
 public class AlchemyMachineImplTest
 {
-
-    @Mock
-    private HttpClient apacheClient;
 
     @Mock
     private Executor executor;
@@ -81,11 +77,11 @@ public class AlchemyMachineImplTest
     @Before
     public void setUp() throws Exception
     {
-        gson = Constants.INSTANCE.getDefaultGson();
+        gson = Constants.DEFAULT_GSON;
         request = new TestRequest();
 
-        instance = new AlchemyMachineImpl(apacheClient, executor, gson);
-        verifyZeroInteractions(apacheClient, executor);
+        instance = new AlchemyMachineImpl(executor, gson);
+        verifyZeroInteractions(executor);
 
         setupVerb();
         setupResponse();
@@ -102,7 +98,7 @@ public class AlchemyMachineImplTest
 
     private void setupVerb()
     {
-        when(verb.execute(apacheClient, gson, request))
+        when(verb.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(response);
 
         request.verb = this.verb;
@@ -112,16 +108,13 @@ public class AlchemyMachineImplTest
     @Test
     public void testConstructor()
     {
-        assertThrows(() -> new AlchemyMachineImpl(null, null, null))
+        assertThrows(() -> new AlchemyMachineImpl(null, null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(() -> new AlchemyMachineImpl(apacheClient, null, null))
+        assertThrows(() -> new AlchemyMachineImpl(executor, null, null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(() -> new AlchemyMachineImpl(null, executor, null))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        assertThrows(() -> new AlchemyMachineImpl(null, null, gson))
+        assertThrows(() -> new AlchemyMachineImpl(executor, gson, -1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -251,7 +244,7 @@ public class AlchemyMachineImplTest
     public void testExecuteSyncWhenVerbFails()
     {
 
-        when(verb.execute(apacheClient, gson, request))
+        when(verb.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(new RuntimeException());
 
         assertThrows(() -> instance.executeSync(request))
@@ -260,7 +253,7 @@ public class AlchemyMachineImplTest
         //Reset and do another assertion
         reset(verb);
 
-        when(verb.execute(apacheClient, gson, request))
+        when(verb.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(new AlchemyHttpException(request));
 
         assertThrows(() -> instance.executeSync(request))
@@ -286,7 +279,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteWhenVerbReturnsNullResponse()
     {
-        when(verb.execute(apacheClient, gson, request))
+        when(verb.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(null);
 
         assertThrows(() -> instance.executeSync(request, responseClass))
@@ -341,7 +334,7 @@ public class AlchemyMachineImplTest
     {
         AlchemyHttpException ex = new AlchemyHttpException();
 
-        when(verb.execute(apacheClient, gson, request))
+        when(verb.execute(request, gson, Constants.DEFAULT_TIMEOUT))
                 .thenThrow(ex);
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
@@ -358,7 +351,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteAsyncWhenRuntimeExceptionHappens()
     {
-        when(verb.execute(apacheClient, gson, request))
+        when(verb.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(new RuntimeException());
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);

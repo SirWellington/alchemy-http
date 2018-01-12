@@ -18,7 +18,6 @@ package tech.sirwellington.alchemy.http;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.http.client.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,9 +41,6 @@ public class AlchemyHttpTest
 
     @Mock
     private AlchemyHttpStateMachine stateMachine;
-
-    @Mock
-    private HttpClient apacheClient;
 
     @Mock
     private ExecutorService executorService;
@@ -87,24 +83,10 @@ public class AlchemyHttpTest
     }
 
     @Test
-    public void testNewInstanceWithApacheHttpClient()
-    {
-        AlchemyHttp result = AlchemyHttp.Companion.newInstanceWithApacheHttpClient(apacheClient);
-        assertThat(result, notNullValue());
-
-        //Edge cases
-        assertThrows(() ->
-        {
-            AlchemyHttp.Companion.newInstanceWithApacheHttpClient(null);
-        }).isInstanceOf(IllegalArgumentException.class);
-
-    }
-
-    @Test
     public void testNewInstance()
     {
 
-        AlchemyHttp result = AlchemyHttp.Companion.newInstance(apacheClient, executorService, defaultHeaders);
+        AlchemyHttp result = AlchemyHttp.Companion.newInstance(executorService, defaultHeaders);
         assertThat(result, notNullValue());
 
         //Edge cases
