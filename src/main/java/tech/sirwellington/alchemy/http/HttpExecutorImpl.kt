@@ -55,7 +55,7 @@ enum class RequestMethod
  */
 @StrategyPattern(role = CLIENT)
 @Internal
-internal class HttpExecutorImpl(private val method: RequestMethod, private val requestMapper: AlchemyRequestMapper) : HttpExecutor
+internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper) : HttpExecutor
 {
 
 
@@ -64,7 +64,6 @@ internal class HttpExecutorImpl(private val method: RequestMethod, private val r
     {
 
         val http = requestMapper.map(request)
-        http.requestMethod = this.method.asString
 
         val json = try
         {
