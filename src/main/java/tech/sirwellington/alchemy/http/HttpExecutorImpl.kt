@@ -68,11 +68,11 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         }
 
         return Builder.newInstance()
-                .withResponseBody(json)
-                .withStatusCode(http.responseCode)
-                .withResponseHeaders(extractHeadersFrom(http))
-                .usingGson(gson)
-                .build()
+                      .withResponseBody(json)
+                      .withStatusCode(http.responseCode)
+                      .withResponseHeaders(extractHeadersFrom(http))
+                      .usingGson(gson)
+                      .build()
     }
 
     @Throws(AlchemyHttpException::class)
