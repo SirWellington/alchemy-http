@@ -38,6 +38,7 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -67,7 +68,7 @@ public class Step3ImplTest
     @Before
     public void setUp() throws MalformedURLException
     {
-        url = one(INSTANCE.validUrls());
+        url = one(validUrls());
 
         request = HttpRequest.Builder.Companion.newInstance()
                                                .usingUrl(url)

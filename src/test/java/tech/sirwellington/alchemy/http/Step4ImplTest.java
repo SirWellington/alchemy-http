@@ -31,6 +31,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -83,7 +84,7 @@ public class Step4ImplTest
     @Test
     public void testAt()
     {
-        URL url = one(INSTANCE.validUrls());
+        URL url = one(validUrls());
 
         instance.at(url);
 

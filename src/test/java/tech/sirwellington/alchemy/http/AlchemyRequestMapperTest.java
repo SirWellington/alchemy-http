@@ -33,6 +33,8 @@ import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
+import static tech.sirwellington.alchemy.http.Generators.jsonElements;
+import static tech.sirwellington.alchemy.http.Generators.validUrls;
 
 /**
  *
@@ -64,8 +66,9 @@ public class AlchemyRequestMapperTest
     @Before
     public void setUp() throws Exception
     {
-        body = one(INSTANCE.jsonElements());
+        body = one(jsonElements());
         queryParams = mapOf(alphabeticStrings(10), alphabeticStrings(10), 10);
+        url = one(validUrls());
         expandedUrl = expandUrl();
 
         when(request.getUrl()).thenReturn(url);
@@ -75,6 +78,7 @@ public class AlchemyRequestMapperTest
 
         instance = AlchemyRequestMapper.Companion.create();
     }
+
 
     @Test
     public void testMap() throws Exception
@@ -110,16 +114,23 @@ public class AlchemyRequestMapperTest
         assertThat(result.getURL(), is(expandedUrl.toURI()));
     }
 
+    @DontRepeat
     @Test
-    public void testExpandUrlFromRequest() throws Exception
+    public void testExpandUrlFromRequestWhenNoQueryParams() throws Exception
     {
-        //When no queryparams
+        when(request.hasQueryParams()).thenReturn(false);
+
         URL result = AlchemyRequestMapper.Companion.expandUrlFromRequest(request);
         assertThat(result, is(url));
+    }
 
+    @Test
+    public void testExpandUrlFromRequestWhenQueryParamsPresent() throws Exception
+    {
         //When there are query params
         when(request.hasQueryParams()).thenReturn(true);
-        result = AlchemyRequestMapper.Companion.expandUrlFromRequest(request);
+
+        URL result = AlchemyRequestMapper.Companion.expandUrlFromRequest(request);
         assertThat(result, is(expandedUrl));
     }
 

@@ -33,6 +33,7 @@ import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
+import static tech.sirwellington.alchemy.http.Generators.jsonElements;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -174,7 +175,7 @@ public class HttpResponseTest
     {
         do
         {
-            second.responseBody = one(INSTANCE.jsonElements());
+            second.responseBody = one(jsonElements());
         }
         while (second.responseBody.equals(first.responseBody));
     }

@@ -60,10 +60,12 @@ internal interface AlchemyRequestMapper
             }
             else
             {
-                val uriBuilder = UrlBuilder.fromUrl(url)
+                var uriBuilder = UrlBuilder.fromUrl(url)
 
                 request.queryParams?.
-                        forEach { param, value -> uriBuilder.addParameter(param, value) }
+                        forEach { param, value ->
+                            uriBuilder = uriBuilder.addParameter(param, value)
+                        }
 
                 uriBuilder.toUrl()
             }

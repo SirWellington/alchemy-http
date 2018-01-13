@@ -44,6 +44,8 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.http.Generators.jsonElements;
+import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -64,8 +66,16 @@ public class HttpExecutorImplTest
     @Mock
     private HttpURLConnection httpConnection;
 
+    @Mock
+    private OutputStream output;
+
+    @Mock
+    private InputStream input;
+
     private JsonElement responseBody;
     private String responseString;
+
+
     private Map<String, String> responseHeaders;
     private Gson gson = Constants.INSTANCE.DEFAULT_GSON;
     private long timeout;
@@ -96,13 +106,15 @@ public class HttpExecutorImplTest
 
     private void setupResponseBody() throws IOException
     {
-        responseBody = one(INSTANCE.jsonElements());
+        responseBody = one(jsonElements());
         responseString = responseBody.toString();
 
         byte[] bytes = responseString.getBytes(Charsets.UTF_8);
-        InputStream istream = new ByteArrayInputStream(bytes);
+        input = new ByteArrayInputStream(bytes);
+        input = spy(input);
 
-        when(httpConnection.getInputStream()).thenReturn(istream);
+        when(httpConnection.getInputStream()).thenReturn(input);
+        when(httpConnection.getOutputStream()).thenReturn(output);
         when(httpConnection.getContentType()).thenReturn(ContentTypes.APPLICATION_JSON);
     }
 
@@ -227,7 +239,7 @@ public class HttpExecutorImplTest
         JsonParser parser = new JsonParser();
 
         System.out.println("performance test");
-        String body = one(INSTANCE.jsonObjects()).toString();
+        String body = one(jsonObjects()).toString();
 
         long time = time(() -> parser.parse(body));
         System.out.println("Parser took " + time);
@@ -266,7 +278,7 @@ public class HttpExecutorImplTest
     @Test
     public void compareGsonMethods()
     {
-        responseBody = one(INSTANCE.jsonObjects());
+        responseBody = one(jsonObjects());
 
         String text = responseBody.toString();
 
