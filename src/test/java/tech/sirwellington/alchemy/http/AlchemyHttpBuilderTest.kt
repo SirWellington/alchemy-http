@@ -134,6 +134,8 @@ class AlchemyHttpBuilderTest
     @Test
     fun testUsingDefaultHeaders()
     {
+        instance = AlchemyHttpBuilder.newInstance()
+
         val headers = CollectionGenerators.mapOf(alphabeticStrings(),
                                                  asString(smallPositiveIntegers()),
                                                  100)
@@ -143,7 +145,9 @@ class AlchemyHttpBuilderTest
 
         val http = result.build()
         assertThat(http, notNullValue())
-        assertThat(http.defaultHeaders, equalTo(headers))
+
+        val expected = headers + Constants.DEFAULT_HEADERS
+        assertThat(http.defaultHeaders, equalTo(expected))
 
         //Empty headers is ok
         instance.usingDefaultHeaders(emptyMap())
@@ -178,7 +182,8 @@ class AlchemyHttpBuilderTest
 
         val result = instance.build()
         assertThat(result, notNullValue())
-        assertThat(result.defaultHeaders, equalTo<Map<String, String>>(defaultHeaders))
+        val expectedHeaders = this.defaultHeaders + Constants.DEFAULT_HEADERS
+        assertThat(result.defaultHeaders, equalTo(expectedHeaders))
     }
 
     @Test
