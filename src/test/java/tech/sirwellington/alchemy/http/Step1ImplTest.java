@@ -31,7 +31,6 @@ import static org.mockito.Answers.RETURNS_SMART_NULLS;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.BinaryGenerators.binary;
-import static tech.sirwellington.alchemy.http.VerbAssertions.*;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -77,11 +76,13 @@ public class Step1ImplTest
     {
         instance.get();
 
-        verify(stateMachine). jumpToStep3(requestCaptor.capture());
+        verify(stateMachine).jumpToStep3(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
-        assertRequestMade(requestMade);
-        assertGetRequestMade(requestMade.getHttpExecutor());
+        HttpRequest passedRequest = requestCaptor.getValue();
+        assertThat(passedRequest, notNullValue());
+        assertThat(passedRequest.getMethod(), equalTo(RequestMethod.GET));
+        assertThat(passedRequest.getRequestHeaders(), equalTo(this.request.getRequestHeaders()));
+
     }
 
     @Test
@@ -91,9 +92,11 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
-        assertRequestMade(requestMade);
-        assertPostRequestMade(requestMade.getHttpExecutor());
+        HttpRequest passedRequest = requestCaptor.getValue();
+        assertThat(passedRequest, notNullValue());
+        assertThat(passedRequest.getMethod(), equalTo(RequestMethod.POST));
+        assertThat(passedRequest.getRequestHeaders(), equalTo(this.request.getRequestHeaders()));
+
     }
 
     @Test
@@ -103,9 +106,10 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
-        assertRequestMade(requestMade);
-        assertPutRequestMade(requestMade.getHttpExecutor());
+        HttpRequest passedRequest = requestCaptor.getValue();
+        assertThat(passedRequest, notNullValue());
+        assertThat(passedRequest.getMethod(), equalTo(RequestMethod.PUT));
+        assertThat(passedRequest.getRequestHeaders(), equalTo(this.request.getRequestHeaders()));
     }
 
     @Test
@@ -115,9 +119,11 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
-        assertRequestMade(requestMade);
-        assertDeleteRequestMade(requestMade.getHttpExecutor());
+        HttpRequest passedRequest = requestCaptor.getValue();
+        assertThat(passedRequest, notNullValue());
+        assertThat(passedRequest.getMethod(), equalTo(RequestMethod.DELETE));
+        assertThat(passedRequest.getRequestHeaders(), equalTo(this.request.getRequestHeaders()));
+
     }
 
     @Test
@@ -139,12 +145,6 @@ public class Step1ImplTest
         assertThat(toString, containsString(request.toString()));
         assertThat(toString, containsString(stateMachine.toString()));
 
-    }
-
-    private void assertRequestMade(HttpRequest requestMade)
-    {
-        assertThat(requestMade, notNullValue());
-        assertThat(requestMade, not(sameInstance(request)));
     }
 
 }
