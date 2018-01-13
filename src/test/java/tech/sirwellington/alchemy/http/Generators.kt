@@ -41,7 +41,7 @@ import java.net.URL
  */
 @Internal
 @NonInstantiable
-internal object Generators
+object Generators
 {
 
     private val LOG = LoggerFactory.getLogger(Generators::class.java)
