@@ -59,7 +59,7 @@ internal object Constants
 
         headers["Accept"] = "${ContentTypes.APPLICATION_JSON}, ${ContentTypes.PLAIN_TEXT}"
         headers["User-Agent"] = "Alchemy HTTP"
-        headers["Content-Type"] = "application/json"
+        headers["Content-Type"] = ContentTypes.APPLICATION_JSON
 
         return Maps.immutableCopyOf(headers)
     }
