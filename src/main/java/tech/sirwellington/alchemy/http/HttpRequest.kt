@@ -173,7 +173,7 @@ interface HttpRequest
         {
             val url =  this.url
             val body = this.body
-            val method = this.requestMethod
+            val method = this.requestMethod ?: Constants.DEFAULT_REQUEST_METHOD
 
             return ActualRequestObject(requestHeaders = this.requestHeaders,
                                        queryParams = this.queryParams,

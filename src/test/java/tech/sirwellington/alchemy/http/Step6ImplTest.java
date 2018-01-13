@@ -33,7 +33,6 @@ import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
- *
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
@@ -89,9 +88,8 @@ public class Step6ImplTest
 
     }
 
-    @Repeat
     @Test
-    public void testAt()
+    public void testAtWithBadArgs()
     {
         //Edge cases
         assertThrows(() -> instance.at(""))
@@ -99,6 +97,13 @@ public class Step6ImplTest
 
         assertThrows(() -> instance.at((URL) null))
                 .isInstanceOf(IllegalArgumentException.class);
+
+    }
+
+    @Repeat(50)
+    @Test
+    public void testAt() throws Exception
+    {
 
         instance.at(url);
 
