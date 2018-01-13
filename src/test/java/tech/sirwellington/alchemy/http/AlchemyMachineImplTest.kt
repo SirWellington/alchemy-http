@@ -119,10 +119,6 @@ class AlchemyMachineImplTest
     {
         val step1 = instance.begin(mockRequest)
         assertThat(step1, notNullValue())
-
-        //Edge cases
-        assertThrows { instance.begin(null as HttpRequest) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
@@ -131,9 +127,6 @@ class AlchemyMachineImplTest
         val step2 = instance.jumpToStep2(mockRequest)
         assertThat(step2, notNullValue())
 
-        //Edge cases
-        assertThrows { instance.jumpToStep2(null as HttpRequest) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
@@ -142,9 +135,6 @@ class AlchemyMachineImplTest
         val step3 = instance.jumpToStep3(mockRequest)
         assertThat(step3, notNullValue())
 
-        //Edge cases
-        assertThrows { instance.jumpToStep3(null as HttpRequest) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
@@ -152,13 +142,6 @@ class AlchemyMachineImplTest
     {
         val step4 = instance.jumpToStep4(mockRequest, responseClass)
         assertThat(step4, notNullValue())
-
-        //Edge cases
-        assertThrows { instance.jumpToStep4(null as HttpRequest, null as Class<TestPojo>) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.jumpToStep4(mockRequest, null as Class<TestPojo>) }
-                .isInstanceOf(IllegalArgumentException::class.java)
 
         assertThrows { instance.jumpToStep4(mockRequest, Void::class.java) }
                 .isInstanceOf(IllegalArgumentException::class.java)
@@ -195,7 +178,7 @@ class AlchemyMachineImplTest
 
         val result = instance.executeSync(request)
 
-        assertThat(result, equalTo<HttpResponse>(response))
+        assertThat(result, equalTo(response))
     }
 
     @Repeat(200)
@@ -212,7 +195,7 @@ class AlchemyMachineImplTest
     fun testExecuteSyncWhenHttpExecutorFails()
     {
 
-        whenever(httpExecutor.execute(eq<TestRequest>(request), eq(gson), anyLong()))
+        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(RuntimeException())
 
         assertThrows { instance.executeSync(request) }
@@ -221,7 +204,7 @@ class AlchemyMachineImplTest
         //Reset and do another assertion
         reset(httpExecutor)
 
-        whenever(httpExecutor.execute(eq<TestRequest>(request), eq(gson), anyLong()))
+        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(AlchemyHttpException(request))
 
         assertThrows { instance.executeSync(request) }
@@ -231,12 +214,6 @@ class AlchemyMachineImplTest
     @Test
     fun testExecuteSyncWithBadArguments()
     {
-        assertThrows { instance.executeSync(null as HttpRequest) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.executeSync(null as HttpRequest, null as Class<*>) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
         assertThrows { instance.executeSync(mockRequest, Void::class.java) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
@@ -247,7 +224,7 @@ class AlchemyMachineImplTest
     @Test
     fun testExecuteWhenHttpExecutorReturnsNullResponse()
     {
-        whenever(httpExecutor.execute(eq<TestRequest>(request), eq(gson), anyLong()))
+        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(null)
 
         assertThrows { instance.executeSync(request, responseClass) }
@@ -320,7 +297,7 @@ class AlchemyMachineImplTest
     @Test
     fun testExecuteAsyncWhenRuntimeExceptionHappens()
     {
-        whenever(httpExecutor.execute(eq<TestRequest>(request), eq(gson), anyLong()))
+        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(RuntimeException())
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure)
@@ -355,18 +332,6 @@ class AlchemyMachineImplTest
     @Test
     fun testExecuteAsyncWithBadArgs()
     {
-
-        assertThrows { instance.executeAsync(mockRequest, responseClass, onSuccess, null as OnFailure) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.executeAsync(mockRequest, responseClass, null as OnSuccess<TestPojo>, onFailure) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.executeAsync(mockRequest, null as Class<TestPojo>, onSuccess, onFailure) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.executeAsync(null as HttpRequest, responseClass, onSuccess, onFailure) }
-                .isInstanceOf(IllegalArgumentException::class.java)
 
         assertThrows { instance.executeAsync(mockRequest, Void::class.java, mock { }, onFailure) }
                 .isInstanceOf(IllegalArgumentException::class.java)
