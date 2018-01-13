@@ -15,6 +15,8 @@
  */
 package tech.sirwellington.alchemy.http
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import com.nhaarman.mockito_kotlin.argumentCaptor
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.notNullValue
@@ -23,7 +25,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
@@ -61,7 +62,7 @@ class Step3ImplTest
     private lateinit var request: HttpRequest
 
     @Captor
-    private lateinit var requestCaptor: ArgumentCaptor<HttpRequest>
+    private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
     @Mock
     private lateinit var onSuccess: OnSuccess<*>
@@ -83,6 +84,8 @@ class Step3ImplTest
         instance = Step3Impl(stateMachine, request)
 
         verifyZeroInteractions(stateMachine)
+
+        requestCaptor = argumentCaptor()
     }
 
     @DontRepeat
@@ -115,9 +118,9 @@ class Step3ImplTest
 
         instance.at(url)
 
-        verify<AlchemyHttpStateMachine>(stateMachine).executeSync(requestCaptor.capture())
+        verify(stateMachine).executeSync(requestCaptor.capture())
 
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         assertThat(requestMade, notNullValue())
         assertThat(requestMade, not(sameInstance(request)))
         assertThat(requestMade.requestHeaders, equalTo((expectedHeaders)))
@@ -130,7 +133,7 @@ class Step3ImplTest
     @Test
     fun testUsingQueryParam()
     {
-        val amount = one<Int>(integers(5, 20))
+        val amount = one(integers(5, 20))
 
         val strings = CollectionGenerators.mapOf(alphabeticStrings(),
                                                  hexadecimalString(10),
@@ -168,10 +171,10 @@ class Step3ImplTest
         instance.at(url)
 
         verify(stateMachine).executeSync(requestCaptor.capture())
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         assertThat(requestMade, notNullValue())
         assertThat(requestMade.queryParams, equalTo(expected))
-        assertThat(requestMade, not(sameInstance<HttpRequest>(request)))
+        assertThat(requestMade, not(sameInstance(request)))
     }
 
     @DontRepeat
@@ -210,16 +213,13 @@ class Step3ImplTest
     fun testAt()
     {
         //Edge Cases
-        assertThrows { instance.at((null as URL)) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
         assertThrows { instance.at("") }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
         instance.at(url)
-        verify<AlchemyHttpStateMachine>(stateMachine).executeSync(requestCaptor.capture())
+        verify(stateMachine).executeSync(requestCaptor.capture())
 
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         assertThat(requestMade, notNullValue())
         assertThat(requestMade.url, equalTo(url))
         assertThat(requestMade, not(sameInstance(request)))
@@ -228,8 +228,6 @@ class Step3ImplTest
     @Test
     fun testOnSuccess()
     {
-        assertThrows { instance.onSuccess(null as OnSuccess<HttpResponse>) }
-                .isInstanceOf(IllegalArgumentException::class.java)
 
         instance.onSuccess(onSuccess as OnSuccess<HttpResponse>)
 

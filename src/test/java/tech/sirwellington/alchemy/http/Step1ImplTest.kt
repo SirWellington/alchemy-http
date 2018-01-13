@@ -15,6 +15,8 @@
  */
 package tech.sirwellington.alchemy.http
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import com.nhaarman.mockito_kotlin.argumentCaptor
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
@@ -23,15 +25,12 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers.RETURNS_SMART_NULLS
-import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
 import tech.sirwellington.alchemy.generator.BinaryGenerators.Companion.binary
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import java.io.IOException
 
@@ -46,12 +45,12 @@ class Step1ImplTest
     @Mock(answer = RETURNS_SMART_NULLS)
     private lateinit var stateMachine: AlchemyHttpStateMachine
 
-    private lateinit var  request: HttpRequest
+    private lateinit var request: HttpRequest
 
     @Captor
-    private lateinit var  requestCaptor: ArgumentCaptor<HttpRequest>
+    private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
-    private lateinit var  instance: Step1Impl
+    private lateinit var instance: Step1Impl
 
     @Before
     fun setUp()
@@ -61,15 +60,8 @@ class Step1ImplTest
                 .build()
 
         instance = Step1Impl(stateMachine, request)
-    }
 
-    @DontRepeat
-    @Test
-    fun testConstructor()
-    {
-        assertThrows { Step1Impl(null as AlchemyHttpStateMachine, request) }
-        assertThrows { Step1Impl(stateMachine, null as HttpRequest) }
-
+        requestCaptor = argumentCaptor<HttpRequest>()
     }
 
     @Test
@@ -80,7 +72,7 @@ class Step1ImplTest
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture())
 
-        val passedRequest = requestCaptor.value
+        val passedRequest = requestCaptor.firstValue
         assertThat(passedRequest, notNullValue())
         assertThat(passedRequest.method, equalTo(RequestMethod.GET))
         assertThat(passedRequest.requestHeaders, equalTo(this.request.requestHeaders))
@@ -93,9 +85,9 @@ class Step1ImplTest
     {
         instance.post()
 
-        verify<AlchemyHttpStateMachine>(stateMachine).jumpToStep2(requestCaptor.capture())
+        verify(stateMachine).jumpToStep2(requestCaptor.capture())
 
-        val passedRequest = requestCaptor.value
+        val passedRequest = requestCaptor.firstValue
         assertThat(passedRequest, notNullValue())
         assertThat(passedRequest.method, equalTo(RequestMethod.POST))
         assertThat(passedRequest.requestHeaders, equalTo(this.request.requestHeaders))
@@ -110,7 +102,7 @@ class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture())
 
-        val passedRequest = requestCaptor.value
+        val passedRequest = requestCaptor.firstValue
         assertThat(passedRequest, notNullValue())
         assertThat(passedRequest.method, equalTo(RequestMethod.PUT))
         assertThat(passedRequest.requestHeaders, equalTo(this.request.requestHeaders))
@@ -122,9 +114,9 @@ class Step1ImplTest
     {
         instance.delete()
 
-        verify<AlchemyHttpStateMachine>(stateMachine).jumpToStep2(requestCaptor.capture())
+        verify(stateMachine).jumpToStep2(requestCaptor.capture())
 
-        val passedRequest = requestCaptor.value
+        val passedRequest = requestCaptor.firstValue
         assertThat(passedRequest, notNullValue())
         assertThat(passedRequest.method, equalTo(RequestMethod.DELETE))
         assertThat(passedRequest.requestHeaders, equalTo(this.request.requestHeaders))

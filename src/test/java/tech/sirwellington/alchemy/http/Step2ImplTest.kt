@@ -17,13 +17,14 @@ package tech.sirwellington.alchemy.http
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import com.nhaarman.mockito_kotlin.argumentCaptor
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
@@ -49,7 +50,7 @@ class Step2ImplTest
     private lateinit var request: HttpRequest
 
     @Captor
-    private lateinit var requestCaptor: ArgumentCaptor<HttpRequest>
+    private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
     private lateinit var expectedBody: JsonElement
 
@@ -66,6 +67,8 @@ class Step2ImplTest
         instance = Step2Impl(request, stateMachine, gson)
 
         expectedBody = one(jsonObjects())
+
+        requestCaptor = argumentCaptor()
     }
 
     @DontRepeat
@@ -77,7 +80,7 @@ class Step2ImplTest
         verify(stateMachine).jumpToStep3(requestCaptor.capture())
 
         expectedBody = JsonNull.INSTANCE
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         verifyRequestMade(requestMade)
     }
 
@@ -89,7 +92,7 @@ class Step2ImplTest
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture())
 
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         verifyRequestMade(requestMade)
     }
 
@@ -111,15 +114,8 @@ class Step2ImplTest
         verify(stateMachine).jumpToStep3(requestCaptor.capture())
 
         expectedBody = gson.toJsonTree(pojo)
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         verifyRequestMade(requestMade)
-    }
-
-    @Test
-    fun testObjectBodyWhenNull()
-    {
-        assertThrows { instance.body(null as String) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     private fun verifyRequestMade(requestMade: HttpRequest)

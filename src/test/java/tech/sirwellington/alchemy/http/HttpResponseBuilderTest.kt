@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.http
 
-import com.google.gson.Gson
 import com.google.gson.JsonElement
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
@@ -79,9 +78,6 @@ class HttpResponseBuilderTest
     {
         val result = instance.usingGson(gson)
         assertThat(result, notNullValue())
-
-        assertThrows { instance.usingGson(null as Gson) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
@@ -91,9 +87,6 @@ class HttpResponseBuilderTest
         assertThat(result, notNullValue())
 
         instance.withResponseBody(one(jsonNull()))
-
-        assertThrows { instance.withResponseBody(null as JsonElement) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
@@ -138,8 +131,8 @@ class HttpResponseBuilderTest
         instance.copyFrom(response)
 
         val result = instance.build()
-        assertThat(result, equalTo<HttpResponse>(response))
-        assertThat<TestResponse>(response, equalTo(result))
+        assertThat<HttpResponse>(result, equalTo(response))
+        assertThat(response, equalTo(result))
     }
 
     @Test

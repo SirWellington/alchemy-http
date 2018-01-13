@@ -15,6 +15,8 @@
  */
 package tech.sirwellington.alchemy.http
 
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.Matchers.equalTo
@@ -26,9 +28,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.ArgumentMatchers.eq
+
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.doThrow
