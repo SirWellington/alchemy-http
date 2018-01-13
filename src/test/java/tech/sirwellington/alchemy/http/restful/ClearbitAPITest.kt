@@ -24,6 +24,8 @@ import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
 import tech.sirwellington.alchemy.arguments.assertions.validURL
 import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.http.AlchemyHttp
+import tech.sirwellington.alchemy.http.restful.Clearbit.AutocompleteResponse
+import tech.sirwellington.alchemy.http.restful.Clearbit.Endpoints
 import tech.sirwellington.alchemy.test.hamcrest.nonEmptyString
 import tech.sirwellington.alchemy.test.hamcrest.notEmpty
 import tech.sirwellington.alchemy.test.hamcrest.notNull
@@ -31,19 +33,29 @@ import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import javax.swing.ImageIcon
 import kotlin.test.assertFalse
 
+
+private object Clearbit
+{
+    object Endpoints
+    {
+
+        const val AUTOCOMPLETE = "https://autocomplete.clearbit.com/v1/companies/suggest"
+        const val LOGO = "https://logo.clearbit.com"
+    }
+
+    data class AutocompleteResponse(val name: String,
+                                    val domain: String,
+                                    val logo: String)
+
+
+}
+
 @RunWith(AlchemyTestRunner::class)
 @IntegrationTest
 class ClearbitAPITest
 {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
-
-    private object Endpoints
-    {
-        const val AUTOCOMPLETE = "https://autocomplete.clearbit.com/v1/companies/suggest"
-        const val LOGO = "https://logo.clearbit.com"
-        const val RISK = "https://risk.clearbit.com/v1/calculate"
-    }
 
     private val http = AlchemyHttp.newBuilder().build()
 
@@ -74,6 +86,16 @@ class ClearbitAPITest
         testDownloadedLogo(response)
     }
 
+    @Test
+    fun testAutocomplete()
+    {
+        testAutocompleteWithText("Am")
+        testAutocompleteWithText("Cen")
+        testAutocompleteWithText("Goo")
+        testAutocompleteWithText("Ver")
+    }
+
+
     private fun testDownloadedLogo(response: ByteArray)
     {
         assertThat(response, notNull)
@@ -83,14 +105,6 @@ class ClearbitAPITest
         LOG.info("Downloaded logo: [${image.description}, ${image.iconWidth}x${image.iconHeight}]")
     }
 
-    @Test
-    fun testAutocomplete()
-    {
-        testAutocompleteWithText("Am")
-        testAutocompleteWithText("Cen")
-        testAutocompleteWithText("Goo")
-        testAutocompleteWithText("Ver")
-    }
 
     private fun testAutocompleteWithText(text: String)
     {
@@ -115,9 +129,5 @@ class ClearbitAPITest
         }
     }
 
-
-    data class AutocompleteResponse(val name: String,
-                                    val domain: String,
-                                    val logo: String)
 
 }
