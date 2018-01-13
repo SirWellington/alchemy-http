@@ -33,8 +33,6 @@ import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.http.Generators.jsonElements;
-import static tech.sirwellington.alchemy.http.Generators.validUrls;
 
 /**
  *
@@ -66,9 +64,8 @@ public class AlchemyRequestMapperTest
     @Before
     public void setUp() throws Exception
     {
-        body = one(jsonElements());
-        queryParams = mapOf(alphabeticStrings(), alphabeticStrings(), 10);
-        url = one(validUrls());
+        body = one(INSTANCE.jsonElements());
+        queryParams = mapOf(alphabeticStrings(10), alphabeticStrings(10), 10);
         expandedUrl = expandUrl();
 
         when(request.getUrl()).thenReturn(url);
@@ -130,7 +127,10 @@ public class AlchemyRequestMapperTest
     {
         UrlBuilder builder = UrlBuilder.fromUrl(url);
 
-        queryParams.forEach(builder::addParameter);
+        for(Map.Entry<String, String> param : queryParams.entrySet())
+        {
+            builder = builder.addParameter(param.getKey(), param.getValue());
+        }
 
         return builder.toUrl();
     }

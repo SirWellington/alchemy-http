@@ -32,7 +32,6 @@ import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
-import static tech.sirwellington.alchemy.http.Generators.jsonNull;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -93,7 +92,7 @@ public class HttpResponseBuilderTest
         HttpResponse.Builder result = instance.withResponseBody(responseBody);
         assertThat(result, notNullValue());
 
-        instance.withResponseBody(one(jsonNull()));
+        instance.withResponseBody(one(INSTANCE.jsonNull()));
 
         assertThrows(() -> instance.withResponseBody(null))
                 .isInstanceOf(IllegalArgumentException.class);

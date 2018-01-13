@@ -52,6 +52,12 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         val http = requestMapper.map(request)
         http.connectTimeout = timeoutMillis.toInt()
 
+        if (request.hasBody())
+        {
+            http.doOutput = true
+            http.setBody(request)
+        }
+
         val json = try
         {
             extractJsonFromResponse(request, http, gson)
@@ -134,6 +140,24 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
 
         return headers.map { it.key to it.value.joinToString(separator = ", ") }
                       .toMap()
+    }
+
+
+    private fun HttpURLConnection.setBody(request: HttpRequest)
+    {
+        val jsonString = request.body?.toString() ?: return
+
+        try
+        {
+            this.outputStream.use { it ->
+                it.bufferedWriter(Charsets.UTF_8).write(jsonString)
+            }
+        }
+        catch (ex: Exception)
+        {
+            LOG.error("Failed to set json request body [{}]", jsonString, ex)
+            throw OperationFailedException(request, "Failed to set json request body [$jsonString]", ex)
+        }
     }
 
 

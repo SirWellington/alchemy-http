@@ -29,7 +29,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
-import static tech.sirwellington.alchemy.http.Generators.validUrls;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -64,7 +63,7 @@ public class Step6ImplTest
     public void setUp()
     {
         responseClass = Integer.class;
-        url = one(validUrls());
+        url = one(INSTANCE.validUrls());
 
         instance = new Step6Impl(stateMachine, request, responseClass, onSuccess, onFailure);
         verifyZeroInteractions(stateMachine, request, onSuccess, onFailure);

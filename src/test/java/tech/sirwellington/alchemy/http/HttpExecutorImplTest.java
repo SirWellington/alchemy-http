@@ -44,8 +44,6 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.http.Generators.jsonElements;
-import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -98,7 +96,7 @@ public class HttpExecutorImplTest
 
     private void setupResponseBody() throws IOException
     {
-        responseBody = one(jsonElements());
+        responseBody = one(INSTANCE.jsonElements());
         responseString = responseBody.toString();
 
         byte[] bytes = responseString.getBytes(Charsets.UTF_8);
@@ -229,7 +227,7 @@ public class HttpExecutorImplTest
         JsonParser parser = new JsonParser();
 
         System.out.println("performance test");
-        String body = one(jsonObjects()).toString();
+        String body = one(INSTANCE.jsonObjects()).toString();
 
         long time = time(() -> parser.parse(body));
         System.out.println("Parser took " + time);
@@ -268,7 +266,7 @@ public class HttpExecutorImplTest
     @Test
     public void compareGsonMethods()
     {
-        responseBody = one(jsonObjects());
+        responseBody = one(INSTANCE.jsonObjects());
 
         String text = responseBody.toString();
 

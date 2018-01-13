@@ -36,7 +36,7 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.http.Generators.*;
+import static tech.sirwellington.alchemy.http.Generators.INSTANCE;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -113,7 +113,7 @@ public class HttpAssertionsTest
     {
         AlchemyAssertion<HttpRequest> instance = HttpAssertions.ready();
 
-        URL url = one(validUrls());
+        URL url = one(INSTANCE.validUrls());
 
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUrl()).thenReturn(url);
@@ -132,7 +132,7 @@ public class HttpAssertionsTest
         assertThrows(() -> instance.check(null))
                 .isInstanceOf(FailedAssertionException.class);
 
-        URL url = one(validUrls());
+        URL url = one(INSTANCE.validUrls());
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUrl()).thenReturn(url);
         when(request.getMethod()).thenReturn(requestMethod);
@@ -201,14 +201,14 @@ public class HttpAssertionsTest
         AlchemyAssertion<JsonElement> instance = HttpAssertions.jsonArray();
         assertThat(instance, notNullValue());
 
-        JsonArray valid = one(jsonArrays());
+        JsonArray valid = one(INSTANCE.jsonArrays());
         instance.check(valid);
 
-        JsonObject object = one(jsonObjects());
+        JsonObject object = one(INSTANCE.jsonObjects());
         assertThrows(() -> instance.check(object))
                 .isInstanceOf(FailedAssertionException.class);
 
-        JsonPrimitive primitive = one(jsonPrimitives());
+        JsonPrimitive primitive = one(INSTANCE.jsonPrimitives());
         assertThrows(() -> instance.check(primitive))
                 .isInstanceOf(FailedAssertionException.class);
 

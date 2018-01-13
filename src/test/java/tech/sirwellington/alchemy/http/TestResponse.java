@@ -35,7 +35,7 @@ class TestResponse implements HttpResponse
 
     int statusCode = one(NumberGenerators.integers(200, 500));
     Map<String, String> responseHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 10);
-    JsonElement responseBody = one(Generators.jsonElements());
+    JsonElement responseBody = one(Generators.INSTANCE.jsonElements());
     private final Gson gson = Constants.DEFAULT_GSON;
 
     TestResponse()

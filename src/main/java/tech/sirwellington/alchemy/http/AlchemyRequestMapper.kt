@@ -91,34 +91,18 @@ private object AlchemyRequestMapperImpl: AlchemyRequestMapper
 
         val http = connection as? HttpURLConnection ?: throw OperationFailedException("URL is not an HTTP URL: [$url]")
 
-        http.doInput = true
         http.requestMethod = request.method.asString
 
-        request.requestHeaders?.forEach { key, value -> http.setRequestProperty(key, value) }
+        http.doInput = true
 
         if (request.hasBody())
         {
             http.doOutput = true
-            http.setBody(request)
         }
+
+        request.requestHeaders?.forEach { key, value -> http.setRequestProperty(key, value) }
 
         return http
     }
 
-    private fun HttpURLConnection.setBody(request: HttpRequest)
-    {
-        val jsonString = request.body?.toString() ?: return
-
-        try
-        {
-            this.outputStream.use { it ->
-                it.bufferedWriter(Charsets.UTF_8).write(jsonString)
-            }
-        }
-        catch (ex: Exception)
-        {
-            LOG.error("Failed to set json request body [{}]", jsonString, ex)
-            throw OperationFailedException(request, "Failed to set json request body [$jsonString]", ex)
-        }
-    }
 }

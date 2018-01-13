@@ -27,7 +27,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
-import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
@@ -61,7 +60,7 @@ public class Step2ImplTest
 
         instance = new Step2Impl(request, stateMachine, gson);
 
-        expectedBody = one(jsonObjects());
+        expectedBody = one(INSTANCE.jsonObjects());
     }
 
     @DontRepeat

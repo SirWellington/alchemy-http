@@ -42,8 +42,8 @@ class TestRequest implements HttpRequest
 
     Map<String, String> requestHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 20);
     Map<String, String> queryParams = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 6);
-    URL url = one(Generators.validUrls());
-    JsonElement body = one(Generators.jsonElements());
+    URL url = one(Generators.INSTANCE.validUrls());
+    JsonElement body = one(Generators.INSTANCE.jsonElements());
     RequestMethod method = Constants.DEFAULT_REQUEST_METHOD;
 
     @Override
