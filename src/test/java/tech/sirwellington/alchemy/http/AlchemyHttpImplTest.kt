@@ -15,6 +15,8 @@
  */
 package tech.sirwellington.alchemy.http
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyZeroInteractions
 import org.hamcrest.Matchers.equalTo
@@ -26,9 +28,7 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers
-import org.mockito.Captor
 import org.mockito.Mock
 import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
@@ -50,8 +50,7 @@ class AlchemyHttpImplTest
     @Mock
     private lateinit var  stateMachine: AlchemyHttpStateMachine
 
-    @Captor
-    private lateinit var  requestCaptor: ArgumentCaptor<HttpRequest>
+    private lateinit var  requestCaptor: KArgumentCaptor<HttpRequest>
 
     private lateinit var  defaultHeaders: Map<String, String>
 
@@ -65,6 +64,8 @@ class AlchemyHttpImplTest
 
         instance = AlchemyHttpImpl(defaultHeaders, stateMachine)
         verifyZeroInteractions(stateMachine)
+
+        requestCaptor = argumentCaptor()
     }
 
     @Test
@@ -72,11 +73,11 @@ class AlchemyHttpImplTest
     {
         val result = instance.go()
 
-        verify<AlchemyHttpStateMachine>(stateMachine).begin(requestCaptor.capture())
+        verify(stateMachine).begin(requestCaptor.capture())
 
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         assertThat(requestMade, notNullValue())
-        assertThat<Map<String, String>>(requestMade.requestHeaders, equalTo(defaultHeaders))
+        assertThat(requestMade.requestHeaders, equalTo(defaultHeaders))
     }
 
     @Test
@@ -92,7 +93,7 @@ class AlchemyHttpImplTest
         result.go()
         verify(stateMachine).begin(requestCaptor.capture())
 
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         assertThat(requestMade, notNullValue())
 
         val expectedHeaders = Maps.mutableCopyOf(defaultHeaders)
@@ -121,7 +122,7 @@ class AlchemyHttpImplTest
     fun testGo()
     {
         val result = instance.go()
-        verify<AlchemyHttpStateMachine>(stateMachine).begin(ArgumentMatchers.any(HttpRequest::class.java))
+        verify(stateMachine).begin(ArgumentMatchers.any(HttpRequest::class.java))
     }
 
     @Test

@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.http
 
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -27,7 +28,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import tech.sirwellington.alchemy.generator.CollectionGenerators
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
@@ -102,7 +102,7 @@ class AlchemyHttpTest
     @Test
     fun testGo()
     {
-        whenever(stateMachine.begin(Mockito.any())).thenReturn(step1)
+        whenever(stateMachine.begin(any())).thenReturn(step1)
 
         val step = instance.go()
 
