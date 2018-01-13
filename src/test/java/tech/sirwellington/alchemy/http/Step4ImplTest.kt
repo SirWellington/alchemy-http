@@ -24,7 +24,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
@@ -79,11 +79,11 @@ class Step4ImplTest
 
         instance.at(url)
 
-        verify<AlchemyHttpStateMachine>(stateMachine).executeSync(requestCaptor.capture(), ArgumentMatchers.eq<Class<TestPojo>>(responseClass))
+        verify(stateMachine).executeSync(requestCaptor.capture(), eq(responseClass))
 
         val requestMade = requestCaptor.value
         assertThat(requestMade, notNullValue())
-        assertThat(requestMade, not(sameInstance<HttpRequest>(request)))
+        assertThat(requestMade, not(sameInstance(request)))
         assertThat(requestMade.url, equalTo(url))
     }
 

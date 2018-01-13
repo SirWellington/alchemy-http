@@ -100,7 +100,7 @@ public class Step2ImplTest
     public void testObjectBody()
     {
 
-        TestPojo pojo = TestPojo.generate();
+        TestPojo pojo = TestPojo.Companion.generate();
 
         instance.body(pojo);
 

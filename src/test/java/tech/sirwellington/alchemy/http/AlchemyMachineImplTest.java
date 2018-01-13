@@ -96,7 +96,7 @@ public class AlchemyMachineImplTest
 
     private void setupResponse()
     {
-        pojo = TestPojo.generate();
+        pojo = TestPojo.Companion.generate();
 
         when(response.isOk()).thenReturn(true);
         when(response.bodyAs(responseClass))
