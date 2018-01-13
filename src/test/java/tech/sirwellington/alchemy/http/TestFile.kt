@@ -37,6 +37,7 @@ internal object TestFile
     private val LOG = LoggerFactory.getLogger(TestFile::class.java)
 
     @Throws(IOException::class)
+    @JvmStatic
     fun writeToTempFile(binary: ByteArray): File
     {
         checkThat(binary).isA(nonNullReference())
