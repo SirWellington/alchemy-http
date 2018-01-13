@@ -19,6 +19,7 @@ package tech.sirwellington.alchemy.http.restful
 import com.natpryce.hamkrest.assertion.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
 import tech.sirwellington.alchemy.http.AlchemyHttp
 import tech.sirwellington.alchemy.test.hamcrest.notEmpty
@@ -34,6 +35,8 @@ import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 class DomainsDBTest
 {
 
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+
     private val ENDPOINT = "https://api.domainsdb.info/search"
     private val http = AlchemyHttp.newBuilder().build()
 
@@ -41,6 +44,20 @@ class DomainsDBTest
                             val time: Int?,
                             val domains: List<String>?)
 
+    @Test
+    fun testCensio()
+    {
+        val url = ENDPOINT
+
+        val response = http.go()
+                           .get()
+                           .usingQueryParam("query", "censio")
+                           .usingQueryParam("tld", "love")
+                           .expecting(ResponseBody::class.java)
+                           .at(url)
+
+        checkResponse(response)
+    }
 
     @Test
     fun testFacebook()
@@ -74,6 +91,8 @@ class DomainsDBTest
 
     private fun checkResponse(response: ResponseBody)
     {
+        LOG.info("Received response: [$response]")
+
         assertThat(response, notNull)
         assertThat(response.total, notNull)
         assertThat(response.time, notNull)
