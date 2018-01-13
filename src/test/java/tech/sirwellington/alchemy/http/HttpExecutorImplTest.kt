@@ -97,7 +97,7 @@ class HttpExecutorImplTest
         verifyZeroInteractions(requestMapper)
 
         timeout = NumberGenerators.smallPositiveLongs().get()
-        whenever(requestMapper.map(request!!)).thenReturn(httpConnection)
+        whenever(requestMapper.map(request)).thenReturn(httpConnection)
 
         setupResponse()
     }
@@ -162,7 +162,7 @@ class HttpExecutorImplTest
     @Throws(IOException::class)
     fun testExecute()
     {
-        val response = instance.execute(request!!, gson, timeout)
+        val response = instance.execute(request, gson, timeout)
 
         assertThat(response, notNullValue())
         assertThat(response.statusCode(), equalTo(httpConnection.responseCode))
@@ -180,14 +180,14 @@ class HttpExecutorImplTest
     fun testExecuteWithBadArgs()
     {
         assertThrows { instance.execute(null!!, gson, 1L) }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThrows { instance.execute(request!!, null!!, 1L) }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThrows { instance.execute(request!!, gson, -1L) }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { instance.execute(request, null!!, 1L) }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { instance.execute(request, gson, -1L) }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun testExecuteWhenRequestMapperReturnsNull()
     {
-        whenever(requestMapper.map(request!!)).thenReturn(null)
+        whenever(requestMapper.map(request)).thenReturn(null)
         assertThrows { instance.execute(request, gson, timeout) }
     }
 
@@ -198,7 +198,7 @@ class HttpExecutorImplTest
         whenever(httpConnection.inputStream)
                 .thenThrow(SocketTimeoutException::class.java)
 
-        assertThrows { instance.execute(request!!, gson, timeout) }
+        assertThrows { instance.execute(request, gson, timeout) }
                 .isInstanceOf(AlchemyHttpException::class.java)
     }
 
@@ -209,7 +209,7 @@ class HttpExecutorImplTest
         whenever(httpConnection.inputStream)
                 .thenReturn(null)
 
-        val response = instance.execute(request!!, gson, timeout)
+        val response = instance.execute(request, gson, timeout)
         assertThat(response, notNullValue())
         assertThat(response.body(), equalTo<JsonElement>(JsonNull.INSTANCE))
     }
@@ -222,7 +222,7 @@ class HttpExecutorImplTest
         val istream = ByteArrayInputStream(binary)
         whenever(httpConnection.inputStream).thenReturn(istream)
 
-        val response = instance.execute(request!!, gson, timeout)
+        val response = instance.execute(request, gson, timeout)
         assertThat(response, notNullValue())
         assertThat(response.body(), equalTo<JsonElement>(JsonNull.INSTANCE))
     }
@@ -233,7 +233,7 @@ class HttpExecutorImplTest
     {
         whenever(httpConnection.contentType).thenReturn(ContentTypes.PLAIN_TEXT)
 
-        val response = instance.execute(request!!, gson, timeout)
+        val response = instance.execute(request, gson, timeout)
         assertThat(response, notNullValue())
         assertTrue(response.isOk)
 
