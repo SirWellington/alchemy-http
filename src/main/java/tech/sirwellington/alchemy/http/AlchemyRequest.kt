@@ -205,6 +205,7 @@ interface AlchemyRequest
 
         @Throws(IllegalArgumentException::class)
         fun <ResponseType> expecting(classOfResponseType: Class<ResponseType>): Step4<ResponseType>
+
     }
 
     interface Step4<ResponseType>

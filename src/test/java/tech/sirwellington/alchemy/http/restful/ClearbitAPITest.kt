@@ -21,7 +21,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
+import tech.sirwellington.alchemy.arguments.assertions.validURL
+import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.http.AlchemyHttp
+import tech.sirwellington.alchemy.test.hamcrest.nonEmptyString
+import tech.sirwellington.alchemy.test.hamcrest.notEmpty
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import javax.swing.ImageIcon
@@ -78,4 +82,42 @@ class ClearbitAPITest
         val image = ImageIcon(response)
         LOG.info("Downloaded logo: [${image.description}, ${image.iconWidth}x${image.iconHeight}]")
     }
+
+    @Test
+    fun testAutocomplete()
+    {
+        testAutocompleteWithText("Am")
+        testAutocompleteWithText("Cen")
+        testAutocompleteWithText("Goo")
+        testAutocompleteWithText("Ver")
+    }
+
+    private fun testAutocompleteWithText(text: String)
+    {
+        val url = Endpoints.AUTOCOMPLETE
+
+        val response = http.go()
+                           .get()
+                           .usingQueryParam("query", text)
+                           .expecting(Array<AutocompleteResponse>::class.java)
+                           .at(url)
+                           .toList()
+
+        assertThat(response, notNull)
+        assertThat(response, notEmpty)
+
+        response.forEach {
+            assertThat(it.name, nonEmptyString)
+            assertThat(it.domain, nonEmptyString)
+            assertThat(it.logo, nonEmptyString)
+
+            checkThat(it.logo).isA(validURL())
+        }
+    }
+
+
+    data class AutocompleteResponse(val name: String,
+                                    val domain: String,
+                                    val logo: String)
+
 }
