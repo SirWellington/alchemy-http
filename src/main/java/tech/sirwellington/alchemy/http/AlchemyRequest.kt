@@ -41,6 +41,27 @@ interface AlchemyRequest
     {
 
         /**
+         * Convenience method for [`download(URL)`][download].
+         *
+         * @throws IllegalArgumentException If [url] cannot be converted to a [URL].
+         *
+         */
+        @Throws(IllegalArgumentException::class)
+        fun download(@NonEmpty url: String): ByteArray
+        {
+            val _url = try
+            {
+                URL(url)
+            }
+            catch (ex: Exception)
+            {
+                throw IllegalArgumentException("not a valid URL: [$url]")
+            }
+
+            return download(_url)
+        }
+
+        /**
          * Directly download the content served by this URL.
          *
          * @param url The URL to download

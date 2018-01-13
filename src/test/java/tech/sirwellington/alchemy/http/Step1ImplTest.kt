@@ -135,6 +135,19 @@ class Step1ImplTest
     }
 
     @Test
+    fun testDownloadString()
+    {
+        val binary = one(binary(10_000))
+        val tempFile = TestFile.writeToTempFile(binary)
+
+        val urlString = tempFile.toURI().toURL().toString()
+
+        val download = instance.download(urlString)
+
+        assertThat(download, equalTo(binary))
+    }
+
+    @Test
     fun testToString()
     {
         val toString = instance.toString()
