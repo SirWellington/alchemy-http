@@ -16,10 +16,45 @@
 
 package tech.sirwellington.alchemy.http.restful
 
+import com.natpryce.hamkrest.assertion.assertThat
+import org.junit.Test
 import org.junit.runner.RunWith
+import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
+import tech.sirwellington.alchemy.generator.PeopleGenerators
+import tech.sirwellington.alchemy.http.AlchemyHttpBuilder
+import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import kotlin.test.assertTrue
 
 @RunWith(AlchemyTestRunner::class)
 @IntegrationTest
 class NumValidateTest
+{
+
+    private val ENDPOINT = "https://numvalidate.com/api/validate"
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+
+    private val http = AlchemyHttpBuilder.newInstance().build()
+
+    @Repeat(5)
+    @Test
+    fun testPhone()
+    {
+        val url = ENDPOINT
+        val phone = PeopleGenerators.phoneNumberStrings().get()
+
+        val response = http.go()
+                           .get()
+                           .usingQueryParam("number", phone)
+                           .at(url)
+
+        assertThat(response, notNull)
+        assertTrue { response.body().isJsonObject }
+
+        val json = response.body().asJsonObject
+
+        LOG.info("Received response for phone number [$phone] | [$json]")
+    }
+}
