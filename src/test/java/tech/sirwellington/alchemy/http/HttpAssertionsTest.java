@@ -27,8 +27,7 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.StringGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -47,6 +46,9 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 @RunWith(AlchemyTestRunner.class)
 public class HttpAssertionsTest
 {
+
+    @GenerateEnum
+    private RequestMethod requestMethod;
 
     @Before
     public void setUp()
@@ -112,11 +114,10 @@ public class HttpAssertionsTest
         AlchemyAssertion<HttpRequest> instance = HttpAssertions.ready();
 
         URL url = one(validUrls());
-        HttpExecutor verb = mock(HttpExecutor.class);
 
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUrl()).thenReturn(url);
-        when(request.getHttpExecutor()).thenReturn(verb);
+        when(request.getMethod()).thenReturn(requestMethod);
 
         instance.check(request);
     }
@@ -132,18 +133,17 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
 
         URL url = one(validUrls());
-        HttpExecutor verb = mock(HttpExecutor.class);
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUrl()).thenReturn(url);
-        when(request.getHttpExecutor()).thenReturn(verb);
+        when(request.getMethod()).thenReturn(requestMethod);
 
-        //Missing httpExecutor
-        when(request.getHttpExecutor()).thenReturn(null);
+        //Missing Request Method
+        when(request.getMethod()).thenReturn(null);
 
         assertThrows(() -> instance.check(request))
                 .isInstanceOf(FailedAssertionException.class);
 
-        when(request.getHttpExecutor()).thenReturn(verb);
+        when(request.getMethod()).thenReturn(requestMethod);
 
         //Missing URL
         when(request.getUrl()).thenReturn(null);
@@ -167,7 +167,7 @@ public class HttpAssertionsTest
         AlchemyAssertion<String> instance = HttpAssertions.validContentType();
         assertThat(instance, notNullValue());
 
-        AlchemyGenerator<String> validTypes = StringGenerators.stringsFromFixedList("application/json", "text/plain");
+        AlchemyGenerator<String> validTypes = StringGenerators.stringsFromFixedList(ContentTypes.APPLICATION_JSON, ContentTypes.PLAIN_TEXT);
 
         String contentType = one(validTypes);
 

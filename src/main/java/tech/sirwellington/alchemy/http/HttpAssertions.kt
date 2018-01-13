@@ -96,12 +96,12 @@ internal object HttpAssertions
                     .usingMessage("missing Content-Type")
                     .isA(nonEmptyString())
 
-            if (contentType.contains("application/json"))
+            if (contentType.contains(ContentTypes.APPLICATION_JSON))
             {
                 return@assertion
             }
 
-            if (contentType.contains("text/plain"))
+            if (contentType.contains(ContentTypes.PLAIN_TEXT))
             {
                 return@assertion
             }

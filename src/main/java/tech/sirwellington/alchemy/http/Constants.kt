@@ -72,4 +72,5 @@ object ContentTypes
 
     @JvmField
     val PLAIN_TEXT = "text/plain"
+
 }

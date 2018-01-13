@@ -24,8 +24,7 @@ import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
@@ -92,9 +91,9 @@ public class HttpRequestTest
     }
 
     @Test
-    public void testGetVerb()
+    public void testGetRequestMethod() throws Exception
     {
-        assertThat(instance.getHttpExecutor(), is(testRequest.getHttpExecutor()));
+        assertThat(instance.getMethod(), equalTo(testRequest.method));
     }
 
     @Test
