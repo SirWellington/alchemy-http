@@ -16,10 +16,66 @@
 
 package tech.sirwellington.alchemy.http.restful
 
+import com.natpryce.hamkrest.assertion.assertThat
+import org.junit.Test
 import org.junit.runner.RunWith
+import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
+import tech.sirwellington.alchemy.http.AlchemyHttp
+import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+import javax.swing.ImageIcon
+import kotlin.test.assertFalse
 
 @RunWith(AlchemyTestRunner::class)
 @IntegrationTest
 class ClearbitAPITest
+{
+
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+
+    private object Endpoints
+    {
+        const val AUTOCOMPLETE = "https://autocomplete.clearbit.com/v1/companies/suggest"
+        const val LOGO = "https://logo.clearbit.com"
+        const val RISK = "https://risk.clearbit.com/v1/calculate"
+    }
+
+    private val http = AlchemyHttp.newBuilder().build()
+
+    @Test
+    fun testGetGoogleLogo()
+    {
+        val url = "${Endpoints.LOGO}/google.com"
+
+        val response = http.go().download(url)
+        testDownloadedLogo(response)
+    }
+
+    @Test
+    fun testGetAmazonLogo()
+    {
+        val url = "${Endpoints.LOGO}/amazon.com"
+
+        val response = http.go().download(url)
+        testDownloadedLogo(response)
+    }
+
+    @Test
+    fun testGithubLogo()
+    {
+        val url = "${Endpoints.LOGO}/github.com"
+
+        val response = http.go().download(url)
+        testDownloadedLogo(response)
+    }
+
+    private fun testDownloadedLogo(response: ByteArray)
+    {
+        assertThat(response, notNull)
+        assertFalse { response.isEmpty() }
+
+        val image = ImageIcon(response)
+        LOG.info("Downloaded logo: [${image.description}, ${image.iconWidth}x${image.iconHeight}]")
+    }
+}
