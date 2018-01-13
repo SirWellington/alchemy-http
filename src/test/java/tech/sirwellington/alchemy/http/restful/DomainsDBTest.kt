@@ -16,8 +16,13 @@
 
 package tech.sirwellington.alchemy.http.restful
 
+import com.natpryce.hamkrest.assertion.assertThat
+import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
+import tech.sirwellington.alchemy.http.AlchemyHttp
+import tech.sirwellington.alchemy.test.hamcrest.notEmpty
+import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 
 /**
@@ -29,4 +34,50 @@ import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 class DomainsDBTest
 {
 
+    private val ENDPOINT = "https://api.domainsdb.info/search"
+    private val http = AlchemyHttp.newBuilder().build()
+
+    data class ResponseBody(val total: Int?,
+                            val time: Int?,
+                            val domains: List<String>?)
+
+
+    @Test
+    fun testFacebook()
+    {
+        val url = ENDPOINT
+
+        val response = http.go()
+                           .get()
+                           .usingQueryParam("query", "facebook")
+                           .usingQueryParam("tld", "com")
+                           .expecting(ResponseBody::class.java)
+                           .at(url)
+
+        checkResponse(response)
+    }
+
+    @Test
+    fun testAmazon()
+    {
+        val url = ENDPOINT
+
+        val response = http.go()
+                           .get()
+                           .usingQueryParam("query", "Google")
+                           .usingQueryParam("told", "com")
+                           .expecting(ResponseBody::class.java)
+                           .at(url)
+
+        checkResponse(response)
+    }
+
+    private fun checkResponse(response: ResponseBody)
+    {
+        assertThat(response, notNull)
+        assertThat(response.total, notNull)
+        assertThat(response.time, notNull)
+        assertThat(response.domains, notNull)
+        assertThat(response.domains!!, notEmpty)
+    }
 }
