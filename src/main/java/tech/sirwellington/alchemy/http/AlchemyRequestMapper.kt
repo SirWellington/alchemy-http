@@ -92,8 +92,7 @@ private object AlchemyRequestMapperImpl: AlchemyRequestMapper
         val http = connection as? HttpURLConnection ?: throw OperationFailedException("URL is not an HTTP URL: [$url]")
 
         http.doInput = true
-        //Defaults to GET if method not set
-        http.requestMethod = request.method?.asString ?: RequestMethod.GET.asString
+        http.requestMethod = request.method.asString
 
         request.requestHeaders?.forEach { key, value -> http.setRequestProperty(key, value) }
 

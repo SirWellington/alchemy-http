@@ -49,7 +49,7 @@ public class Step2ImplTest
 
     private JsonElement expectedBody;
 
-    private final Gson gson = Constants.INSTANCE.getDefaultGson();
+    private final Gson gson = Constants.INSTANCE.DEFAULT_GSON;
 
     private Step2Impl instance;
 

@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.Gson
+import com.natpryce.hamkrest.assertion.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
@@ -35,7 +36,7 @@ import tech.sirwellington.alchemy.http.AlchemyRequest.Step4
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step5
 import tech.sirwellington.alchemy.http.AlchemyRequest.Step6
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
+import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
 import java.util.concurrent.Executor
@@ -137,9 +138,8 @@ class AlchemyHttpStateMachineTest
     fun testBuilderWithEdgeCases()
     {
 
-        assertThrows { Builder.newInstance().build() }
-                .isInstanceOf(IllegalStateException::class.java)
-
+        val result = Builder.newInstance().build();
+        assertThat(result, notNull)
     }
 
     internal open inner class TestImpl : AlchemyHttpStateMachine

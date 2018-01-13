@@ -139,10 +139,10 @@ public class HttpVerbImplTest
     @Test
     public void testUsing()
     {
-        HttpExecutorImpl result = HttpExecutorImpl.Companion.using(requestMapper);
+        HttpExecutorImpl result = HttpExecutorImpl.Companion.create(requestMapper);
         assertThat(result, notNullValue());
 
-        assertThrows(() -> HttpExecutorImpl.Companion.using(null))
+        assertThrows(() -> HttpExecutorImpl.Companion.create(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -28,6 +28,7 @@ import tech.sirwellington.alchemy.http.exceptions.JsonException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.http.HttpAssertions.jsonArray;
 
 class TestResponse implements HttpResponse
 {
@@ -35,7 +36,7 @@ class TestResponse implements HttpResponse
     int statusCode = one(NumberGenerators.integers(200, 500));
     Map<String, String> responseHeaders = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 10);
     JsonElement responseBody = one(Generators.jsonElements());
-    private final Gson gson = Constants.getDefaultGson();
+    private final Gson gson = Constants.DEFAULT_GSON;
 
     TestResponse()
     {
@@ -130,8 +131,7 @@ class TestResponse implements HttpResponse
     @Override
     public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException
     {
-        checkThat(this.responseBody)
-                .is(HttpAssertions.jsonArray());
+        checkThat(this.responseBody).is(jsonArray());
 
         Type type = new TypeToken<List<T>>() {}.getType();
 

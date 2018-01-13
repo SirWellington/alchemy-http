@@ -69,7 +69,7 @@ public class AlchemyMachineImplTest
     private TestPojo pojo;
 
     @Mock
-    private HttpExecutor verb;
+    private HttpExecutor httpExecutor;
 
     @Mock
     private HttpResponse response;
@@ -98,10 +98,10 @@ public class AlchemyMachineImplTest
 
     private void setupVerb()
     {
-        when(verb.execute(eq(request), eq(gson), anyLong()))
+        when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(response);
 
-        request.verb = this.verb;
+        request.httpExecutor = this.httpExecutor;
 
     }
 
@@ -244,16 +244,16 @@ public class AlchemyMachineImplTest
     public void testExecuteSyncWhenVerbFails()
     {
 
-        when(verb.execute(eq(request), eq(gson), anyLong()))
+        when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(new RuntimeException());
 
         assertThrows(() -> instance.executeSync(request))
                 .isInstanceOf(AlchemyHttpException.class);
 
         //Reset and do another assertion
-        reset(verb);
+        reset(httpExecutor);
 
-        when(verb.execute(eq(request), eq(gson), anyLong()))
+        when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(new AlchemyHttpException(request));
 
         assertThrows(() -> instance.executeSync(request))
@@ -279,7 +279,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteWhenVerbReturnsNullResponse()
     {
-        when(verb.execute(eq(request), eq(gson), anyLong()))
+        when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(null);
 
         assertThrows(() -> instance.executeSync(request, responseClass))
@@ -334,7 +334,7 @@ public class AlchemyMachineImplTest
     {
         AlchemyHttpException ex = new AlchemyHttpException();
 
-        when(verb.execute(request, gson, Constants.DEFAULT_TIMEOUT))
+        when(httpExecutor.execute(request, gson, Constants.DEFAULT_TIMEOUT))
                 .thenThrow(ex);
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
@@ -351,7 +351,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteAsyncWhenRuntimeExceptionHappens()
     {
-        when(verb.execute(eq(request), eq(gson), anyLong()))
+        when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(new RuntimeException());
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);

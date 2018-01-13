@@ -28,7 +28,6 @@ import tech.sirwellington.alchemy.http.HttpAssertions.okResponse
 import tech.sirwellington.alchemy.http.HttpAssertions.ready
 import tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
-import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
 import java.util.concurrent.Executor
 
 /**
@@ -39,6 +38,7 @@ import java.util.concurrent.Executor
 @StepMachineDesign(role = MACHINE)
 internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: Executor,
                                                             private val gson: Gson,
+                                                            private val httpExecutor: HttpExecutor,
                                                             private val timeoutMillis: Long = Constants.DEFAULT_TIMEOUT) : AlchemyHttpStateMachine
 {
     init
@@ -110,20 +110,18 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
         checkThat(classOfResponseType).isA(validResponseClass())
         checkThat(request).isA(ready())
 
-        val verb = request.httpExecutor ?: throw OperationFailedException("Request missing httpExecutor")
-
         val response = try
         {
-            verb.execute(request, gson)
+            httpExecutor.execute(request, gson)
         }
         catch (ex: AlchemyHttpException)
         {
-            LOG.info("Encountered AlchemyHttpException when running httpExecutor {} on request {}", verb, request, ex)
+            LOG.info("Encountered AlchemyHttpException when running httpExecutor on request {}", request, ex)
             throw ex
         }
         catch (ex: Exception)
         {
-            LOG.error("Failed to execute httpExecutor {} on request {}", verb, request, ex)
+            LOG.error("Failed to execute request {}", request, ex)
             throw AlchemyHttpException(request, ex)
         }
 

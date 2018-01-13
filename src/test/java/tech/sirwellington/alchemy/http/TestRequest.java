@@ -23,8 +23,8 @@ import java.util.Objects;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mockito.Mockito;
 import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
@@ -44,7 +44,7 @@ class TestRequest implements HttpRequest
     Map<String, String> queryParams = CollectionGenerators.mapOf(StringGenerators.alphabeticStrings(), StringGenerators.alphabeticStrings(), 6);
     URL url = one(Generators.validUrls());
     JsonElement body = one(Generators.jsonElements());
-    HttpExecutor verb = Mockito.mock(HttpExecutor.class);
+    RequestMethod method = Constants.DEFAULT_REQUEST_METHOD;
 
     @Override
     public Map<String, String> getRequestHeaders()
@@ -88,10 +88,17 @@ class TestRequest implements HttpRequest
         return body;
     }
 
+    @NotNull
     @Override
-    public HttpExecutor getHttpExecutor()
+    public RequestMethod getMethod()
     {
-        return verb;
+        return method;
+    }
+
+    @Override
+    public boolean hasMethod()
+    {
+        return Objects.nonNull(method);
     }
 
     @Override
@@ -102,7 +109,7 @@ class TestRequest implements HttpRequest
         hash = 19 * hash + Objects.hashCode(this.queryParams);
         hash = 19 * hash + Objects.hashCode(this.url);
         hash = 19 * hash + Objects.hashCode(this.body);
-        hash = 19 * hash + Objects.hashCode(this.verb);
+        hash = 19 * hash + Objects.hashCode(this.method);
         return hash;
     }
 
@@ -136,7 +143,7 @@ class TestRequest implements HttpRequest
         {
             return false;
         }
-        if (!Objects.equals(this.verb, other.getHttpExecutor()))
+        if (!Objects.equals(this.method, other.getMethod()))
         {
             return false;
         }
@@ -144,10 +151,16 @@ class TestRequest implements HttpRequest
         return true;
     }
 
+
     @Override
     public String toString()
     {
-        return "TestRequest{" + "requestHeaders=" + requestHeaders + ", queryParams=" + queryParams + ", url=" + url + ", body=" + body + ", httpExecutor=" + verb + '}';
+        return "TestRequest{" +
+                "requestHeaders=" + requestHeaders +
+                ", queryParams=" + queryParams +
+                ", url=" + url +
+                ", body=" + body +
+                ", method=" + method +
+                '}';
     }
-
 }

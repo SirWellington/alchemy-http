@@ -22,14 +22,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
-import org.apache.http.client.HttpClient;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.generator.NumberGenerators;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -52,21 +51,23 @@ public class AlchemyHttpBuilderTest
     @Mock
     private ExecutorService executor;
 
-    @Mock
-    private HttpClient apacheHttpClient;
 
     private Map<String, String> defaultHeaders;
 
     private AlchemyHttpBuilder instance;
 
+    @GenerateLong(min = 100)
+    private Long timeout;
+
     @Before
     public void setUp()
     {
         defaultHeaders = mapOf(alphabeticStrings(), alphabeticStrings(), 20);
+        timeout = NumberGenerators.longs(100, 2000).get();
 
         instance = new AlchemyHttpBuilder()
-                .usingApacheHttpClient(apacheHttpClient)
-                .usingExecutorService(executor)
+                .usingTimeout(Math.toIntExact(timeout), TimeUnit.MILLISECONDS)
+                .usingExecutor(executor)
                 .usingDefaultHeaders(defaultHeaders);
     }
 
@@ -75,18 +76,6 @@ public class AlchemyHttpBuilderTest
     {
         instance = AlchemyHttpBuilder.Companion.newInstance();
         assertThat(instance, notNullValue());
-    }
-
-    @Test
-    public void testUsingApacheHttpClient()
-    {
-        AlchemyHttpBuilder result = instance.usingApacheHttpClient(apacheHttpClient);
-        assertThat(result, notNullValue());
-
-        //Edge cases
-        assertThrows(() -> instance.usingApacheHttpClient(null))
-                .isInstanceOf(IllegalArgumentException.class);
-
     }
 
     @Repeat(50)
@@ -222,10 +211,10 @@ public class AlchemyHttpBuilderTest
         instance.build();
 
         //No Executor Service set
-        instance = AlchemyHttpBuilder.newInstance().usingApacheHttpClient(apacheHttpClient);
+        instance = AlchemyHttpBuilder.newInstance();
         instance.build();
 
-        //No Apache Client set
+        //No Timeout
         instance = AlchemyHttpBuilder.newInstance().usingExecutor(executor);
         instance.build();
     }
@@ -234,8 +223,7 @@ public class AlchemyHttpBuilderTest
     public void testDefaultIncludesBasicRequestHeaders()
     {
         instance = AlchemyHttpBuilder.newInstance()
-                                     .usingApacheHttpClient(apacheHttpClient)
-                                     .usingExecutorService(executor);
+                                     .usingExecutor(executor);
 
         AlchemyHttp result = instance.build();
         assertThat(result, notNullValue());

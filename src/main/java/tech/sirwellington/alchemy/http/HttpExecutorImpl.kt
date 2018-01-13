@@ -42,7 +42,6 @@ import java.net.SocketTimeoutException
 internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper) : HttpExecutor
 {
 
-
     @Throws(AlchemyHttpException::class)
     override fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long): HttpResponse
     {
@@ -137,7 +136,7 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         @FactoryMethodPattern(role = FACTORY_METHOD)
         @JvmStatic
         @JvmOverloads
-        fun using(requestMapper: AlchemyRequestMapper = AlchemyRequestMapper.create()): HttpExecutorImpl
+        fun create(requestMapper: AlchemyRequestMapper = AlchemyRequestMapper.create()): HttpExecutorImpl
         {
             return HttpExecutorImpl(requestMapper)
         }

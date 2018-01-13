@@ -77,7 +77,7 @@ public class Step1ImplTest
     {
         instance.get();
 
-        verify(stateMachine).jumpToStep3(requestCaptor.capture());
+        verify(stateMachine). jumpToStep3(requestCaptor.capture());
 
         HttpRequest requestMade = requestCaptor.getValue();
         assertRequestMade(requestMade);
