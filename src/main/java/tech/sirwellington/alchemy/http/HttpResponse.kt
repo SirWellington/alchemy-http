@@ -172,8 +172,8 @@ interface HttpResponse
         fun copyFrom(other: HttpResponse): Builder
         {
             return this.withResponseBody(other.body())
-                    .withStatusCode(other.statusCode())
-                    .withResponseHeaders(other.responseHeaders())
+                       .withStatusCode(other.statusCode())
+                       .withResponseHeaders(other.responseHeaders())
         }
 
         @Throws(IllegalArgumentException::class)
@@ -215,10 +215,10 @@ interface HttpResponse
                     .throwing { ex -> IllegalStateException("Invalid status code supplied", ex) }
                     .isA(validHttpStatusCode())
 
-            return Impl(statusCode,
-                        unmodifiableMap(responseHeaders),
-                        gson,
-                        responseBody)
+            return ActualResponseImpl(statusCode,
+                                      unmodifiableMap(responseHeaders),
+                                      gson,
+                                      responseBody)
         }
 
         //==============================================================================================
@@ -226,10 +226,10 @@ interface HttpResponse
         //==============================================================================================
         @Immutable
         @BuilderPattern(role = PRODUCT)
-        private data class Impl constructor(private val statusCode: Int,
-                                       private val responseHeaders: Map<String, String>,
-                                       private val gson: Gson,
-                                       private val responseBody: JsonElement) : HttpResponse
+        private data class ActualResponseImpl constructor(private val statusCode: Int,
+                                                          private val responseHeaders: Map<String, String>,
+                                                          private val gson: Gson,
+                                                          private val responseBody: JsonElement) : HttpResponse
         {
 
             override fun statusCode(): Int
@@ -294,6 +294,12 @@ interface HttpResponse
                     throw JsonException("Failed to parse json to class: " + classOfT, ex)
                 }
 
+            }
+
+            override fun equals(other: Any?): Boolean
+            {
+                val other = other as? HttpResponse ?: return false
+                return this.equals(other)
             }
 
         }

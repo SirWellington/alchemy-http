@@ -23,11 +23,11 @@ import com.google.gson.JsonElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
@@ -57,7 +57,7 @@ public class HttpResponseBuilderTest
         instance = HttpResponse.Builder.newInstance();
 
         response = new TestResponse();
-        responseBody = response.responseBody;
+        responseBody = response.getResponseBody();
     }
 
     @Test
@@ -102,7 +102,7 @@ public class HttpResponseBuilderTest
     @Test
     public void testWithResponseHeaders()
     {
-        HttpResponse.Builder result = instance.withResponseHeaders(response.responseHeaders);
+        HttpResponse.Builder result = instance.withResponseHeaders(response.getResponseHeaders());
         assertThat(result, notNullValue());
 
         //Empty Map is ok
@@ -115,8 +115,8 @@ public class HttpResponseBuilderTest
     {
         HttpResponse result = instance
                 .withResponseBody(responseBody)
-                .withResponseHeaders(response.responseHeaders)
-                .withStatusCode(response.statusCode)
+                .withResponseHeaders(response.getResponseHeaders())
+                .withStatusCode(response.getStatusCode())
                 .build();
 
         assertThat(result, notNullValue());
@@ -129,7 +129,7 @@ public class HttpResponseBuilderTest
     public void testBuildMissingStatusCode()
     {
         instance.withResponseBody(responseBody)
-                .withResponseHeaders(response.responseHeaders);
+                .withResponseHeaders(response.getResponseHeaders());
 
         assertThrows(() -> instance.build())
                 .isInstanceOf(IllegalStateException.class);
@@ -141,21 +141,26 @@ public class HttpResponseBuilderTest
         instance.copyFrom(response);
 
         HttpResponse result = instance.build();
-        assertThat(result, is(response));
-        assertThat(response, is(result));
+        assertThat(result, equalTo(response));
+        assertThat(response, equalTo(result));
+    }
 
+    @Test
+    public void testSetResponseHeadersWithBadArgs() throws Exception
+    {
+        assertThrows(() -> response.setResponseHeaders(null));
     }
 
     @Test
     public void testMergeFromEdgeCases()
     {
-        Map<String,String> headers = response.responseHeaders;
-        response.responseHeaders = null;
+        Map<String,String> headers = response.getResponseHeaders();
+        response.setResponseHeaders(Maps.emptyMap());
         HttpResponse result = instance.copyFrom(response).build();
         assertThat(result, notNullValue());
 
-        response.responseHeaders = headers;
-        response.statusCode = one(negativeIntegers());
+        response.setResponseHeaders(headers);
+        response.setStatusCode(one(negativeIntegers()));
         assertThrows(() -> instance.copyFrom(response))
                 .isInstanceOf(IllegalArgumentException.class);
     }

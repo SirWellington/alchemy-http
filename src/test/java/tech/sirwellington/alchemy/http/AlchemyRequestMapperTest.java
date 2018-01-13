@@ -40,7 +40,7 @@ import static tech.sirwellington.alchemy.http.Generators.validUrls;
  *
  * @author SirWellington
  */
-@Repeat(100)
+@Repeat(50)
 @RunWith(AlchemyTestRunner.class)
 public class AlchemyRequestMapperTest
 {
@@ -111,7 +111,7 @@ public class AlchemyRequestMapperTest
                 .thenReturn(Boolean.TRUE);
 
         HttpURLConnection result = instance.map(request);
-        assertThat(result.getURL(), is(expandedUrl.toURI()));
+        assertThat(result.getURL(), equalTo(expandedUrl));
     }
 
     @DontRepeat
