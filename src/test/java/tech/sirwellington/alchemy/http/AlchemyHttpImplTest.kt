@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.http
 
 import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyZeroInteractions
@@ -28,7 +29,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
@@ -122,7 +122,7 @@ class AlchemyHttpImplTest
     fun testGo()
     {
         val result = instance.go()
-        verify(stateMachine).begin(ArgumentMatchers.any(HttpRequest::class.java))
+        verify(stateMachine).begin(any())
     }
 
     @Test
