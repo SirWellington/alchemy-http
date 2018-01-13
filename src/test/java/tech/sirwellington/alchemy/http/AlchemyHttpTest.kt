@@ -148,7 +148,10 @@ class AlchemyHttpTest
                 .build()
 
         assertThat(client, notNullValue())
-        assertThat(client.defaultHeaders, equalTo(defaultHeaders))
+
+        defaultHeaders.forEach { key, value ->
+            assertTrue(client.defaultHeaders[key] == value)
+        }
     }
 
 }
