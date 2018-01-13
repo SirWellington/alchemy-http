@@ -25,7 +25,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
@@ -61,7 +60,6 @@ class Step3ImplTest
 
     private lateinit var request: HttpRequest
 
-    @Captor
     private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
     @Mock
@@ -88,22 +86,12 @@ class Step3ImplTest
         requestCaptor = argumentCaptor()
     }
 
-    @DontRepeat
-    @Test
-    fun testConstructor()
-    {
-        assertThrows { Step3Impl(stateMachine, null as HttpRequest) }
-        assertThrows { Step3Impl(null as AlchemyHttpStateMachine, request) }
-    }
 
     @Test
     fun testUsingHeader()
     {
         //Edge Cases
         assertThrows { instance.usingHeader("", "") }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.usingHeader(null as String, "") }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
         //Happy cases
@@ -182,16 +170,7 @@ class Step3ImplTest
     fun testUsingQueryParamEdgeCases()
     {
         //Edge cases
-        assertThrows { instance.usingQueryParam(null as String, "") }
-
-        assertThrows { instance.usingQueryParam(null as String, 1) }
-
-        assertThrows { instance.usingQueryParam(null as String, true) }
-
         assertThrows { instance.usingQueryParam("", "") }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.usingQueryParam("", (null as Number)) }
                 .isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -238,9 +217,6 @@ class Step3ImplTest
     fun testExpecting()
     {
         //Sad Cases
-        assertThrows { instance.expecting(null as Class<String>) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
         assertThrows { instance.expecting(Void::class.java) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 

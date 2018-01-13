@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.http
 
 import com.nhaarman.mockito_kotlin.KArgumentCaptor
 import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.eq
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.notNullValue
@@ -25,8 +26,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.eq
-import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
@@ -37,7 +36,6 @@ import tech.sirwellington.alchemy.http.Generators.validUrls
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import java.net.URL
 
 /**
  *
@@ -53,7 +51,6 @@ class Step4ImplTest
     @Mock
     private lateinit var request: HttpRequest
 
-    @Captor
     private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
     @Mock
@@ -96,18 +93,12 @@ class Step4ImplTest
     {
         assertThrows { instance.at("") }
                 .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.at((null as URL)) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun testOnSuccess()
     {
         //Edge cases
-        assertThrows { instance.onSuccess(null as OnSuccess<TestPojo>) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
         instance.onSuccess(onSuccess)
 
         verify(stateMachine).jumpToStep5(request, responseClass, onSuccess)

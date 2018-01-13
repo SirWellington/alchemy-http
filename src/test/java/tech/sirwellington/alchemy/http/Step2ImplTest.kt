@@ -25,7 +25,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
@@ -49,7 +48,6 @@ class Step2ImplTest
 
     private lateinit var request: HttpRequest
 
-    @Captor
     private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
     private lateinit var expectedBody: JsonElement

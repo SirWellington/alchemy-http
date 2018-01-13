@@ -25,7 +25,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers.RETURNS_SMART_NULLS
-import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
@@ -47,7 +46,6 @@ class Step1ImplTest
 
     private lateinit var request: HttpRequest
 
-    @Captor
     private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
     private lateinit var instance: Step1Impl
