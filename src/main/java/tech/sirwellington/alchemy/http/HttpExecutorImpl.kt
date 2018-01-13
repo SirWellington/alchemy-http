@@ -45,8 +45,8 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
     @Throws(AlchemyHttpException::class)
     override fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long): HttpResponse
     {
-
         val http = requestMapper.map(request)
+        http.connectTimeout = timeoutMillis.toInt()
 
         val json = try
         {
@@ -88,6 +88,11 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
        {
            throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
        }
+        catch (ex: Exception)
+        {
+            LOG.error("Failed to make request [$request]", ex)
+            throw OperationFailedException("Request failed [$request]", ex)
+        }
 
         if (response == null) return JsonNull.INSTANCE
 

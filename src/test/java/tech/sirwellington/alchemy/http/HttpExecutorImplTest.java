@@ -15,35 +15,32 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.io.IOException;
-import java.util.*;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.util.List;
+import java.util.Map;
 
 import com.google.gson.*;
-import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHeader;
+import kotlin.text.Charsets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import sir.wellington.alchemy.collections.lists.Lists;
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.http.exceptions.JsonException;
+import sir.wellington.alchemy.collections.maps.Maps;
+import tech.sirwellington.alchemy.generator.NumberGenerators;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static java.lang.System.currentTimeMillis;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
-import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.*;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
+import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.http.Generators.jsonElements;
 import static tech.sirwellington.alchemy.http.Generators.jsonObjects;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
@@ -61,72 +58,65 @@ public class HttpExecutorImplTest
     private AlchemyRequestMapper requestMapper;
 
     @Mock
-    private HttpClient apacheClient;
-
-    @Mock
     private HttpRequest request;
 
     @Mock
-    private HttpUriRequest apacheRequest;
-
-    @Mock
-    private CloseableHttpResponse apacheResponse;
-
-    @Mock
-    private StatusLine statusLine;
-
-    private HttpEntity entity;
+    private HttpURLConnection httpConnection;
 
     private JsonElement responseBody;
+    private String responseString;
 
     private Map<String, String> responseHeaders;
 
     private HttpExecutor instance;
 
-    private final Gson gson = Constants.INSTANCE.getDefaultGson();
+    private final Gson gson = Constants.INSTANCE.DEFAULT_GSON;
 
     @Before
     public void setUp() throws IOException
     {
         instance = new HttpExecutorImpl(requestMapper);
+
         verifyZeroInteractions(requestMapper);
 
-        when(requestMapper.convertToApacheRequest(request))
-                .thenReturn(apacheRequest);
+        when(requestMapper.map(request)).thenReturn(httpConnection);
 
-        responseBody = one(jsonElements());
-
-        entity = new StringEntity(responseBody.toString(), ContentType.APPLICATION_JSON);
 
         setupResponse();
     }
 
     public void setupResponse() throws IOException
     {
-        when(apacheResponse.getEntity())
-                .thenReturn(entity);
-
-        when(apacheResponse.getStatusLine())
-                .thenReturn(statusLine);
-
-        when(statusLine.getStatusCode())
-                .thenReturn(one(integers(200, 209)));
-
-        when(apacheClient.execute(apacheRequest))
-                .thenReturn(apacheResponse);
-
+        setupResponseBody();
         setupResponseHeaders();
+        when(httpConnection.getResponseCode()).thenReturn(200);
+
+    }
+
+    private void setupResponseBody() throws IOException
+    {
+        responseBody = one(jsonElements());
+
+        responseString = responseBody.toString();
+
+        byte[] bytes = responseString.getBytes(Charsets.UTF_8);
+        InputStream istream = new ByteArrayInputStream(bytes);
+
+        when(httpConnection.getInputStream()).thenReturn(istream);
     }
 
     public void setupResponseHeaders()
     {
         responseHeaders = mapOf(alphabeticStrings(), hexadecimalString(10), 15);
-        List<Header> headers = Lists.create();
-        responseHeaders.forEach((k, v) -> headers.add(new BasicHeader(k, v)));
 
-        Header[] headerArray = headers.toArray(new Header[headers.size()]);
-        when(apacheResponse.getAllHeaders())
-                .thenReturn(headerArray);
+        Map<String, List<String>> headers = Maps.create();
+
+        for (Map.Entry<String, String> header : responseHeaders.entrySet())
+        {
+            headers.put(header.getKey(), Lists.createFrom(header.getValue()));
+        }
+
+        when(httpConnection.getHeaderFields()).thenReturn(headers);
     }
 
     @DontRepeat
@@ -137,7 +127,7 @@ public class HttpExecutorImplTest
     }
 
     @Test
-    public void testUsing()
+    public void testCreate()
     {
         HttpExecutorImpl result = HttpExecutorImpl.Companion.create(requestMapper);
         assertThat(result, notNullValue());
@@ -149,16 +139,17 @@ public class HttpExecutorImplTest
     @Test
     public void testExecute() throws IOException
     {
-        HttpResponse response = instance.execute(apacheClient, gson, request);
+        long timeout = NumberGenerators.smallPositiveLongs().get();
+        HttpResponse response = instance.execute(request, gson, timeout);
 
         assertThat(response, notNullValue());
-        assertThat(response.statusCode(), is(statusLine.getStatusCode()));
+        assertThat(response.statusCode(), is(httpConnection.getResponseCode()));
         assertThat(response.isOk(), is(true));
         assertThat(response.body(), is(responseBody));
         assertThat(response.responseHeaders(), is(responseHeaders));
         assertThat(response.bodyAsString(), is(responseBody.toString()));
 
-        verify(apacheResponse).close();
+        verify(httpConnection).setConnectTimeout((int) timeout);
     }
 
     //Edge Cases
@@ -166,180 +157,22 @@ public class HttpExecutorImplTest
     @Test
     public void testExecuteWithBadArgs()
     {
-        assertThrows(() -> instance.execute(null, gson, request)).isInstanceOf(IllegalArgumentException.class);
-        assertThrows(() -> instance.execute(apacheClient, null, request)).isInstanceOf(IllegalArgumentException.class);
-        assertThrows(() -> instance.execute(apacheClient, gson, null)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> instance.execute(null, gson, 1L)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> instance.execute(request, null, 1L)).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> instance.execute(request, gson, -1L)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void testExecuteWhenRequestMapperReturnsNull()
     {
-        when(requestMapper.convertToApacheRequest(request))
-                .thenReturn(null);
-
-        assertThrows(() -> instance.execute(apacheClient, gson, request))
-                .isInstanceOf(AlchemyHttpException.class);
+        when(requestMapper.map(request)).thenReturn(null);
+        assertThrows(() -> instance.execute(Mockito.any(), Mockito.any(), Mockito.anyLong()));
     }
 
-    @Test
-    public void testExecuteWhenApacheClientThrows() throws IOException
-    {
-        when(apacheClient.execute(apacheRequest))
-                .thenThrow(new IOException());
 
-        assertThrows(() -> instance.execute(apacheClient, gson, request))
-                .isInstanceOf(AlchemyHttpException.class);
-    }
-
-    @DontRepeat
-    @Test
-    public void testExecuteWhenResponseIsNull() throws IOException
-    {
-        when(apacheClient.execute(apacheRequest))
-                .thenReturn(null);
-
-        assertThrows(() -> instance.execute(apacheClient, gson, request))
-                .isInstanceOf(AlchemyHttpException.class);
-
-    }
-
-    @DontRepeat
-    @Test
-    public void testExecuteWhenEntityIsNull()
-    {
-        when(apacheResponse.getEntity())
-                .thenReturn(null);
-
-        HttpResponse result = instance.execute(apacheClient, gson, request);
-        assertThat(result, notNullValue());
-        assertThat(result.body(), is(JsonNull.INSTANCE));
-    }
-
-    @DontRepeat
-    @Test
-    public void testExecuteWhenReadingEntityFails() throws IOException
-    {
-        HttpEntity badEntity = mock(HttpEntity.class);
-        when(apacheResponse.getEntity())
-                .thenReturn(badEntity);
-
-        when(badEntity.getContent())
-                .thenThrow(new IOException());
-
-        assertThrows(() -> instance.execute(apacheClient, gson, request))
-                .isInstanceOf(AlchemyHttpException.class);
-    }
-
-    @DontRepeat
-    @Test
-    public void testExecuteWhenBodyIsEmpty() throws Exception
-    {
-        entity = new StringEntity("");
-        when(apacheResponse.getEntity())
-                .thenReturn(entity);
-
-        HttpResponse result = instance.execute(apacheClient, gson, request);
-        assertThat(result.body(), instanceOf(JsonNull.class));
-    }
-
-    /*
-     * We are no longer sure if an invalid content type should constitute a failure.
-     *
-     */
-    @Test
-    public void testExecuteWhenContentTypeInvalid() throws IOException
-    {
-        List<ContentType> invalidContentTypes = Arrays.asList(ContentType.APPLICATION_ATOM_XML,
-                                                              ContentType.TEXT_HTML,
-                                                              ContentType.TEXT_XML,
-                                                              ContentType.APPLICATION_XML,
-                                                              ContentType.APPLICATION_OCTET_STREAM,
-                                                              ContentType.create(one(alphabeticStrings())));
-
-        ContentType invalidContentType = Lists.oneOf(invalidContentTypes);
-
-        String string = one(alphanumericStrings());
-        entity = new StringEntity(string, invalidContentType);
-
-        when(apacheResponse.getEntity()) .thenReturn(entity);
-
-        HttpResponse result = instance.execute(apacheClient, gson, request);
-        assertThat(result.bodyAsString(), is(string));
-        verify(apacheResponse).close();
-    }
-
-    @DontRepeat
-    @Test
-    public void testExecuteWhenNoResponseHeaders() throws Exception
-    {
-        when(apacheResponse.getAllHeaders())
-                .thenReturn(null);
-
-        HttpResponse result = instance.execute(apacheClient, gson, request);
-        assertThat(result.responseHeaders(), notNullValue());
-        assertThat(result.responseHeaders().isEmpty(), is(true));
-    }
-
-    @Test
-    public void testExecuteWhenEntityIsNotJson()
-    {
-        String html = String.format("<%s>%s</%s>",
-                                    "someTag",
-                                    one(hexadecimalString(100)),
-                                    "someTag");
-        entity = new StringEntity(html, ContentType.APPLICATION_JSON);
-
-        when(apacheResponse.getEntity())
-                .thenReturn(entity);
-
-        assertThrows(() -> instance.execute(apacheClient, gson, request))
-                .isInstanceOf(JsonException.class);
-    }
-
-    @Test
-    public void testExecuteWhenEntityIsText()
-    {
-        String text = one(alphabeticStrings());
-        entity = new StringEntity(text, ContentType.TEXT_PLAIN);
-        when(apacheResponse.getEntity())
-                .thenReturn(entity);
-
-        HttpResponse result = instance.execute(apacheClient, gson, request);
-        assertThat(result, notNullValue());
-        assertThat(result.bodyAsString(), is(text));
-        JsonElement asJSON = result.body();
-        assertThat(asJSON.isJsonPrimitive(), is(true));
-        assertThat(asJSON.getAsJsonPrimitive().isString(), is(true));
-    }
-
-    @Test
-    public void testWhenDuplicateValuesInAHeader()
-    {
-        String headerName = one(alphabeticStrings());
-        List<String> headerValues = listOf(alphabeticStrings(), 5);
-
-        List<Header> headers = Lists.create();
-
-        for(String value : headerValues)
-        {
-            headers.add(new BasicHeader(headerName, value));
-        }
-
-        Header[] headerArray = headers.toArray(new Header[0]);
-
-        when(apacheResponse.getAllHeaders())
-            .thenReturn(headerArray);
-
-        HttpResponse response = instance.execute(apacheClient, gson, request);
-
-        Map<String, String> responseHeaders = response.responseHeaders();
-        assertThat(responseHeaders, notNullValue());
-        assertThat(responseHeaders.containsKey(headerName), is(true));
-
-        String resultValue = responseHeaders.get(headerName);
-        headerValues.forEach(value -> assertThat(resultValue, containsString(value)));
-
-    }
+    //=============================================
+    // PERFORMANCE TESTS
+    //=============================================
 
     @DontRepeat
     @Test
@@ -369,7 +202,7 @@ public class HttpExecutorImplTest
         };
 
         time = time(task);
-        System.out.printf("Parser took %dms accross %d runs\n", time, iterations);
+        System.out.printf("Parser took %dms across %d runs\n", time, iterations);
 
         task = () ->
         {
@@ -380,8 +213,7 @@ public class HttpExecutorImplTest
         };
 
         time = time(task);
-        System.out.printf("Gson took %dms accross %d runs\n", time, iterations);
-
+        System.out.printf("Gson took %dms across %d runs\n", time, iterations);
     }
 
     @DontRepeat
@@ -397,7 +229,6 @@ public class HttpExecutorImplTest
 
         boolean equals = fromJson.equals(toJsonTree);
         System.out.println("Equal? " + equals);
-
     }
 
     private static long time(Runnable task)
