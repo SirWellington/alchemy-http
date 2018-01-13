@@ -22,7 +22,8 @@ import org.mockito.Mock;
 import tech.sirwellington.alchemy.http.AlchemyRequest.*;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
@@ -91,7 +92,8 @@ public class Step5ImplTest
     public void testToString()
     {
         String toString = instance.toString();
-        assertThat(Strings.INSTANCE.isNullOrEmpty(toString), is(false));
+        assertThat(toString, notNullValue());
+        assertFalse(toString.isEmpty());
     }
 
 }

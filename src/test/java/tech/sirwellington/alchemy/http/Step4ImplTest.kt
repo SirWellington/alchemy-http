@@ -15,6 +15,8 @@
  */
 package tech.sirwellington.alchemy.http
 
+import com.nhaarman.mockito_kotlin.KArgumentCaptor
+import com.nhaarman.mockito_kotlin.argumentCaptor
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.notNullValue
@@ -23,7 +25,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Captor
 import org.mockito.Mock
@@ -53,7 +54,7 @@ class Step4ImplTest
     private lateinit var request: HttpRequest
 
     @Captor
-    private lateinit var requestCaptor: ArgumentCaptor<HttpRequest>
+    private lateinit var requestCaptor: KArgumentCaptor<HttpRequest>
 
     @Mock
     private lateinit var onSuccess: OnSuccess<TestPojo>
@@ -69,6 +70,8 @@ class Step4ImplTest
 
         instance = Step4Impl(stateMachine, request, responseClass)
         verifyZeroInteractions(stateMachine)
+
+        requestCaptor = argumentCaptor()
     }
 
     @Repeat
@@ -81,7 +84,7 @@ class Step4ImplTest
 
         verify(stateMachine).executeSync(requestCaptor.capture(), eq(responseClass))
 
-        val requestMade = requestCaptor.value
+        val requestMade = requestCaptor.firstValue
         assertThat(requestMade, notNullValue())
         assertThat(requestMade, not(sameInstance(request)))
         assertThat(requestMade.url, equalTo(url))

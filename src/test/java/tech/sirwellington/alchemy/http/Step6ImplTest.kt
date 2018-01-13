@@ -77,10 +77,6 @@ class Step6ImplTest
         //Edge cases
         assertThrows { instance.at("") }
                 .isInstanceOf(IllegalArgumentException::class.java)
-
-        assertThrows { instance.at((null as URL)) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-
     }
 
     @Repeat(50)
