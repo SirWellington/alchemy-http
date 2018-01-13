@@ -130,7 +130,7 @@ public class Step1ImplTest
     public void testDownload() throws IOException
     {
         byte[] bytes = one(binary(100_000));
-        File tempFile = TestFile.writeToTempFile(bytes);
+        File tempFile = TestFile.Companion.writeToTempFile(bytes);
 
         URL url = tempFile.toURI().toURL();
 
