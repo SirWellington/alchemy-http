@@ -52,27 +52,27 @@ public class HttpRequestTest
     @Test
     public void testGetRequestHeaders()
     {
-        assertThat(instance.getRequestHeaders(), is(testRequest.requestHeaders));
+        assertThat(instance.getRequestHeaders(), is(testRequest.getRequestHeaders()));
     }
 
     @Test
     public void testGetQueryParams()
     {
-        assertThat(instance.getQueryParams(), is(testRequest.queryParams));
+        assertThat(instance.getQueryParams(), is(testRequest.getQueryParams()));
     }
 
     @Test
     public void testHasQueryParams()
     {
-        testRequest.queryParams = null;
+        testRequest.setQueryParams(null);
         instance = HttpRequest.Companion.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(false));
 
-        testRequest.queryParams = Collections.emptyMap();
+        testRequest.setQueryParams(Collections.emptyMap());
         instance = HttpRequest.Companion.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(false));
 
-        testRequest.queryParams = mapOf(alphabeticStrings(), alphabeticStrings(), 10);
+        testRequest.setQueryParams(mapOf(alphabeticStrings(), alphabeticStrings(), 10));
         instance = HttpRequest.Companion.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), is(true));
 
@@ -87,19 +87,19 @@ public class HttpRequestTest
     @Test
     public void testGetBody()
     {
-        assertThat(instance.getBody(), is(testRequest.body));
+        assertThat(instance.getBody(), is(testRequest.getBody()));
     }
 
     @Test
     public void testGetRequestMethod() throws Exception
     {
-        assertThat(instance.getMethod(), equalTo(testRequest.method));
+        assertThat(instance.getMethod(), equalTo(testRequest.getMethod()));
     }
 
     @Test
     public void testHasBody()
     {
-        assertThat(instance.getBody(), is(testRequest.body));
+        assertThat(instance.getBody(), is(testRequest.getBody()));
     }
 
     @Test
