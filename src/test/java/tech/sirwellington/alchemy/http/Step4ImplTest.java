@@ -84,13 +84,6 @@ public class Step4ImplTest
     @Test
     public void testAt()
     {
-        //Edge cases
-        assertThrows(() -> instance.at(""))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        assertThrows(() -> instance.at((URL) null))
-                .isInstanceOf(IllegalArgumentException.class);
-
         URL url = one(validUrls());
 
         instance.at(url);
@@ -101,6 +94,16 @@ public class Step4ImplTest
         assertThat(requestMade, notNullValue());
         assertThat(requestMade, not(sameInstance(request)));
         assertThat(requestMade.getUrl(), is(url));
+    }
+
+    @Test
+    public void testAtWithBadArgs() throws Exception
+    {
+        assertThrows(() -> instance.at(""))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> instance.at((URL) null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
