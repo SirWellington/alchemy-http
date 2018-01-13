@@ -240,7 +240,7 @@ class Step3ImplTest
     fun testExpecting()
     {
         //Sad Cases
-        assertThrows { instance.expecting<Any>(null) }
+        assertThrows { instance.expecting(null as Class<String>) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
         assertThrows { instance.expecting(Void::class.java) }

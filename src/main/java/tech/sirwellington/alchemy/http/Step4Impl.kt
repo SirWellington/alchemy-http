@@ -29,7 +29,9 @@ import java.net.URL
  */
 @Internal
 @StepMachineDesign(role = STEP)
-internal class Step4Impl<ResponseType>(private val stateMachine: AlchemyHttpStateMachine, private val request: HttpRequest, private val classOfResponseType: Class<ResponseType>) : AlchemyRequest.Step4<ResponseType>
+internal class Step4Impl<ResponseType>(private val stateMachine: AlchemyHttpStateMachine,
+                                       private val request: HttpRequest,
+                                       private val classOfResponseType: Class<ResponseType>) : AlchemyRequest.Step4<ResponseType>
 {
 
     init
