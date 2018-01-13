@@ -302,6 +302,12 @@ interface HttpResponse
                 return this.equals(other)
             }
 
+            override fun toString(): String
+            {
+                return "ActualResponseImpl(statusCode=$statusCode, responseHeaders=$responseHeaders, responseBody=$responseBody)"
+            }
+
+
         }
 
         companion object
