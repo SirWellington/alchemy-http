@@ -28,7 +28,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
 import sir.wellington.alchemy.collections.lists.Lists
@@ -92,8 +91,7 @@ class HttpExecutorImplTest
     @Throws(IOException::class)
     fun setUp()
     {
-        instance = HttpExecutorImpl(requestMapper!!)
-
+        instance = HttpExecutorImpl(requestMapper)
         verifyZeroInteractions(requestMapper)
 
         timeout = NumberGenerators.smallPositiveLongs().get()
@@ -119,7 +117,6 @@ class HttpExecutorImplTest
 
         val bytes = responseString.toByteArray(Charsets.UTF_8)
         input = ByteArrayInputStream(bytes)
-        input = spy(input!!)
 
         whenever(httpConnection.inputStream).thenReturn(input)
         whenever(httpConnection.outputStream).thenReturn(output)
@@ -138,14 +135,6 @@ class HttpExecutorImplTest
         }
 
         whenever(httpConnection.headerFields).thenReturn(headers)
-    }
-
-    @DontRepeat
-    @Test
-    @Throws(Exception::class)
-    fun testConstructor()
-    {
-        assertThrows { HttpExecutorImpl(null!!) }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
@@ -179,9 +168,9 @@ class HttpExecutorImplTest
     @Test
     fun testExecuteWithBadArgs()
     {
-        assertThrows { instance.execute(null!!, gson, 1L) }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThrows { instance.execute(request, null!!, 1L) }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThrows { instance.execute(request, gson, -1L) }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { instance.execute(null!!, gson, 1L) }
+        assertThrows { instance.execute(request, null!!, 1L) }
+        assertThrows { instance.execute(request, gson, -1L) }
     }
 
     @Test
