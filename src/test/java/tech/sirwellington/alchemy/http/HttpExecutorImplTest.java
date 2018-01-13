@@ -54,7 +54,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
  */
 @RunWith(AlchemyTestRunner.class)
 @Repeat(100)
-public class HttpVerbImplTest
+public class HttpExecutorImplTest
 {
 
     @Mock
