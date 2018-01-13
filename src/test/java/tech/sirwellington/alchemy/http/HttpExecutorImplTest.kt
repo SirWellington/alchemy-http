@@ -144,7 +144,6 @@ class HttpExecutorImplTest
         assertThat(result, notNullValue())
 
         assertThrows { HttpExecutorImpl.create(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
