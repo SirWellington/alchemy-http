@@ -49,7 +49,7 @@ public class AlchemyMachineImplTest
     @Captor
     private ArgumentCaptor<Runnable> taskCaptor;
 
-    private Gson gson;
+    private Gson gson = Constants.DEFAULT_GSON;
 
     @Mock
     private HttpRequest mockRequest;
@@ -62,15 +62,15 @@ public class AlchemyMachineImplTest
     @Mock
     private OnFailure onFailure;
 
-    private final Class<TestPojo> responseClass = TestPojo.class;
-
-    private TestPojo pojo;
-
     @Mock
     private HttpExecutor httpExecutor;
 
     @Mock
     private HttpResponse response;
+
+    private final Class<TestPojo> responseClass = TestPojo.class;
+    private TestPojo pojo;
+
 
     private AlchemyHttpStateMachine instance;
 
@@ -78,14 +78,20 @@ public class AlchemyMachineImplTest
     @Before
     public void setUp() throws Exception
     {
-        gson = Constants.DEFAULT_GSON;
         request = new TestRequest();
 
-        instance = new AlchemyMachineImpl(executor, gson);
-        verifyZeroInteractions(executor);
+        instance = new AlchemyMachineImpl(executor, gson, httpExecutor);
+        verifyZeroInteractions(executor, httpExecutor);
 
-        setupVerb();
+        setupExecutor();
         setupResponse();
+    }
+
+    private void setupExecutor()
+    {
+        when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
+                .thenReturn(response);
+
     }
 
     private void setupResponse()
@@ -97,26 +103,21 @@ public class AlchemyMachineImplTest
                 .thenReturn(pojo);
     }
 
-    private void setupVerb()
-    {
-        when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
-                .thenReturn(response);
-
-        request.httpExecutor = this.httpExecutor;
-
-    }
-
     @Test
     public void testConstructor()
     {
-        assertThrows(() -> new AlchemyMachineImpl(null, null))
+        assertThrows(() -> new AlchemyMachineImpl(null, null, null))
                 .isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() -> new AlchemyMachineImpl(executor, null, null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(() -> new AlchemyMachineImpl(executor, gson, -1))
+        assertThrows(() -> new AlchemyMachineImpl(executor, gson, null))
                 .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> new AlchemyMachineImpl(executor, gson, httpExecutor, -1L))
+                .isInstanceOf(IllegalArgumentException.class);
+
     }
 
     @Test
@@ -242,7 +243,7 @@ public class AlchemyMachineImplTest
     }
 
     @Test
-    public void testExecuteSyncWhenVerbFails()
+    public void testExecuteSyncWhenHttpExecutorFails()
     {
 
         when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
@@ -278,7 +279,7 @@ public class AlchemyMachineImplTest
     }
 
     @Test
-    public void testExecuteWhenVerbReturnsNullResponse()
+    public void testExecuteWhenHttpExecutorReturnsNullResponse()
     {
         when(httpExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(null);

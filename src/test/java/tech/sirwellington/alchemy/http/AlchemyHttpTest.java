@@ -16,17 +16,18 @@
 package tech.sirwellington.alchemy.http;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
@@ -43,11 +44,17 @@ public class AlchemyHttpTest
     private AlchemyHttpStateMachine stateMachine;
 
     @Mock
-    private ExecutorService executorService;
+    private Executor executor;
 
     private Map<String, String> defaultHeaders;
 
-    private AlchemyHttp instance;
+    @GenerateString
+    private String headerKey;
+
+    @GenerateString
+    private String headerValue;
+
+    private AlchemyHttpImpl instance;
 
     @Before
     public void setUp()
@@ -63,16 +70,31 @@ public class AlchemyHttpTest
     @Test
     public void testUsingDefaultHeader()
     {
+        AlchemyHttp result = instance.usingDefaultHeader(headerKey, headerValue);
+        assertThat(result, notNullValue());
+        assertTrue(result.getDefaultHeaders().containsKey(headerKey));
+        assertEquals(result.getDefaultHeaders().get(headerKey), headerValue);
+    }
+
+    @Test
+    public void testUsingDefaultHeaderWithEmptyKey() throws Exception
+    {
+        assertThrows(() -> instance.usingDefaultHeader("", headerValue))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void testGetDefaultHeaders()
     {
+        Map<String, String> result = instance.getDefaultHeaders();
+        assertThat(result, equalTo(defaultHeaders));
     }
 
     @Test
     public void testGo()
     {
+        AlchemyRequest.Step1 step = instance.go();
+        assertThat(step, notNullValue());
     }
 
     @Test
@@ -86,28 +108,28 @@ public class AlchemyHttpTest
     public void testNewInstance()
     {
 
-        AlchemyHttp result = AlchemyHttp.Companion.newInstance(executorService, defaultHeaders);
+        AlchemyHttp result = AlchemyHttp.Companion.newInstance(executor, defaultHeaders);
         assertThat(result, notNullValue());
 
         //Edge cases
         assertThrows(() ->
         {
-            AlchemyHttp.Companion.newInstance(null, null, null);
+            AlchemyHttp.Companion.newInstance(null, null, 0, null);
         }).isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() ->
         {
-            AlchemyHttp.Companion.newInstance(apacheClient, null, null);
+            AlchemyHttp.Companion.newInstance(executor, null, 0, null);
         }).isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() ->
         {
-            AlchemyHttp.Companion.newInstance(apacheClient, executorService, null);
+            AlchemyHttp.Companion.newInstance(executor, defaultHeaders, -1, TimeUnit.SECONDS);
         }).isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() ->
         {
-            AlchemyHttp.Companion.newInstance(apacheClient, null, defaultHeaders);
+            AlchemyHttp.Companion.newInstance(executor, defaultHeaders, 1, null);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -117,11 +139,13 @@ public class AlchemyHttpTest
         AlchemyHttpBuilder result = AlchemyHttp.Companion.newBuilder();
         assertThat(result, notNullValue());
 
-        AlchemyHttp client = result.usingApacheHttpClient(apacheClient)
-                .usingExecutorService(executorService)
-                .usingDefaultHeaders(defaultHeaders)
-                .build();
+        AlchemyHttp client = result
+                                .usingExecutor(executor)
+                                .usingDefaultHeaders(defaultHeaders)
+                                .build();
+
         assertThat(client, notNullValue());
+        assertThat(client.getDefaultHeaders(), equalTo(defaultHeaders));
     }
 
 }
