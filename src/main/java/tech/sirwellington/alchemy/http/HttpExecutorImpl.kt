@@ -78,11 +78,11 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         }
 
         return Builder.newInstance()
-                      .withResponseBody(json)
-                      .withStatusCode(http.responseCode)
-                      .withResponseHeaders(extractHeadersFrom(http))
-                      .usingGson(gson)
-                      .build()
+                .withResponseBody(json)
+                .withStatusCode(http.responseCode)
+                .withResponseHeaders(extractHeadersFrom(http))
+                .usingGson(gson)
+                .build()
     }
 
     @Throws(AlchemyHttpException::class)
@@ -91,17 +91,18 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
                                         gson: Gson): JsonElement
     {
         val response = try
-       {
-           http.inputStream
-       }
-       catch (ex: SocketTimeoutException)
-       {
-           throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
-       }
+        {
+            http.inputStream
+        }
+        catch (ex: SocketTimeoutException)
+        {
+            throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
+        }
         catch (ex: Exception)
         {
-            LOG.error("Failed to make request [$request]", ex)
-            throw OperationFailedException("Request failed [$request]", ex)
+            val errorMessage = http.errorStream?.use { it.reader().readText() }
+            LOG.error("Failed to make request [$request] | {}", errorMessage, ex)
+            throw OperationFailedException("Request failed [$request] | $errorMessage", ex)
         }
 
         if (response == null) return JsonNull.INSTANCE
@@ -139,7 +140,7 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         val headers = http.headerFields?.toMutableMap() ?: return emptyMap()
 
         return headers.map { it.key to it.value.joinToString(separator = ", ") }
-                      .toMap()
+                .toMap()
     }
 
 
@@ -174,7 +175,6 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
             return HttpExecutorImpl(requestMapper)
         }
     }
-
 
 
 }

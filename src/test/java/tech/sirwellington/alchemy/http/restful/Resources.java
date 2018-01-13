@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.http.restful
+package tech.sirwellington.alchemy.http.restful;
 
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.http.AlchemyHttp;
 
-@RunWith(AlchemyTestRunner::class)
-@IntegrationTest
-class WordnikAPITest
+/**
+ * @author SirWellington
+ */
+final class Resources
+{
+
+    private static final Logger LOG = LoggerFactory.getLogger(Resources.class);
+
+
+    static final AlchemyHttp http = AlchemyHttp.Companion.newDefaultInstance();
+}

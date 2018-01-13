@@ -117,7 +117,6 @@ class AlchemyHttpBuilder
     {
         checkThat(defaultHeaders).isA(nonNullReference())
 
-        this.defaultHeaders.clear()
         this.defaultHeaders.putAll(defaultHeaders)
         return this
     }
