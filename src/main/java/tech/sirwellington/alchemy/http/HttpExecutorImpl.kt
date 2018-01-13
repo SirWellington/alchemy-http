@@ -26,6 +26,8 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role.FACTORY_METHOD
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT
+import tech.sirwellington.alchemy.arguments.assertions.positiveLong
+import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.http.HttpResponse.Builder
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.exceptions.JsonException
@@ -45,6 +47,8 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
     @Throws(AlchemyHttpException::class)
     override fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long): HttpResponse
     {
+        checkThat(timeoutMillis).isA(positiveLong())
+
         val http = requestMapper.map(request)
         http.connectTimeout = timeoutMillis.toInt()
 

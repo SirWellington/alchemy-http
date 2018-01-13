@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import sir.wellington.alchemy.collections.lists.Lists;
 import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.NumberGenerators;
@@ -169,7 +168,7 @@ public class HttpExecutorImplTest
     public void testExecuteWhenRequestMapperReturnsNull()
     {
         when(requestMapper.map(request)).thenReturn(null);
-        assertThrows(() -> instance.execute(Mockito.any(), Mockito.any(), Mockito.anyLong()));
+        assertThrows(() -> instance.execute(request, gson, timeout));
     }
 
     @Test
@@ -213,7 +212,10 @@ public class HttpExecutorImplTest
         HttpResponse response = instance.execute(request, gson, timeout);
         assertThat(response, notNullValue());
         assertTrue(response.isOk());
-        assertThat(response.body(), equalTo(responseBody));
+
+        JsonElement expected = new JsonPrimitive(responseBody.toString());
+        JsonElement result = response.body();
+        assertThat(result, equalTo(expected));
     }
 
     //=============================================
