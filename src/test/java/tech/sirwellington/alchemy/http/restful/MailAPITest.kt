@@ -20,42 +20,6 @@ import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 
-/**
- *
- * @author SirWellington
- */
-@RunWith(AlchemyTestRunner::class)
-@IntegrationTest
-class DomainsDBTest
-{
-
-}
-
-
-@RunWith(AlchemyTestRunner::class)
-@IntegrationTest
-class ClearbitAPITest
-
 @RunWith(AlchemyTestRunner::class)
 @IntegrationTest
 class MailAPITest
-
-@RunWith(AlchemyTestRunner::class)
-@IntegrationTest
-class NumValidateTest
-
-@RunWith(AlchemyTestRunner::class)
-@IntegrationTest
-class LanguageDetectAPI
-
-
-@RunWith(AlchemyTestRunner::class)
-@IntegrationTest
-class WordnikAPITest
-
-
-@RunWith(AlchemyTestRunner::class)
-@IntegrationTest
-class ShoutCloutAPITest
-
-
