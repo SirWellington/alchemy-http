@@ -114,7 +114,7 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
             return JsonNull.INSTANCE
         }
 
-        return if (contentType.contains("application/json"))
+        return if (contentType.contains(ContentTypes.APPLICATION_JSON))
         {
             gson.fromJson(responseString, JsonElement::class.java)
         }

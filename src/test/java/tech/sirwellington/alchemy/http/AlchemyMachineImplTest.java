@@ -51,8 +51,6 @@ public class AlchemyMachineImplTest
 
     private Gson gson;
 
-    private AlchemyHttpStateMachine instance;
-
     @Mock
     private HttpRequest mockRequest;
 
@@ -73,6 +71,9 @@ public class AlchemyMachineImplTest
 
     @Mock
     private HttpResponse response;
+
+    private AlchemyHttpStateMachine instance;
+
 
     @Before
     public void setUp() throws Exception

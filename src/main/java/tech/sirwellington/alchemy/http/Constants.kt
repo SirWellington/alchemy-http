@@ -57,10 +57,19 @@ internal object Constants
     {
         val headers = Maps.create<String, String>()
 
-        headers["Accept"] = "application/json, text/plain"
+        headers["Accept"] = "${ContentTypes.APPLICATION_JSON}, ${ContentTypes.PLAIN_TEXT}"
         headers["User-Agent"] = "Alchemy HTTP"
         headers["Content-Type"] = "application/json"
 
         return Maps.immutableCopyOf(headers)
     }
+}
+
+object ContentTypes
+{
+    @JvmField
+    val APPLICATION_JSON = "application/json"
+
+    @JvmField
+    val PLAIN_TEXT = "text/plain"
 }

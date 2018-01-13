@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.http;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +31,15 @@ import org.mockito.Mockito;
 import sir.wellington.alchemy.collections.lists.Lists;
 import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.NumberGenerators;
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static java.lang.System.currentTimeMillis;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
@@ -65,12 +69,12 @@ public class HttpExecutorImplTest
 
     private JsonElement responseBody;
     private String responseString;
-
     private Map<String, String> responseHeaders;
+    private Gson gson = Constants.INSTANCE.DEFAULT_GSON;
+    private long timeout;
 
     private HttpExecutor instance;
 
-    private final Gson gson = Constants.INSTANCE.DEFAULT_GSON;
 
     @Before
     public void setUp() throws IOException
@@ -79,8 +83,8 @@ public class HttpExecutorImplTest
 
         verifyZeroInteractions(requestMapper);
 
+        timeout = NumberGenerators.smallPositiveLongs().get();
         when(requestMapper.map(request)).thenReturn(httpConnection);
-
 
         setupResponse();
     }
@@ -96,13 +100,13 @@ public class HttpExecutorImplTest
     private void setupResponseBody() throws IOException
     {
         responseBody = one(jsonElements());
-
         responseString = responseBody.toString();
 
         byte[] bytes = responseString.getBytes(Charsets.UTF_8);
         InputStream istream = new ByteArrayInputStream(bytes);
 
         when(httpConnection.getInputStream()).thenReturn(istream);
+        when(httpConnection.getContentType()).thenReturn(ContentTypes.APPLICATION_JSON);
     }
 
     public void setupResponseHeaders()
@@ -139,7 +143,6 @@ public class HttpExecutorImplTest
     @Test
     public void testExecute() throws IOException
     {
-        long timeout = NumberGenerators.smallPositiveLongs().get();
         HttpResponse response = instance.execute(request, gson, timeout);
 
         assertThat(response, notNullValue());
@@ -169,6 +172,49 @@ public class HttpExecutorImplTest
         assertThrows(() -> instance.execute(Mockito.any(), Mockito.any(), Mockito.anyLong()));
     }
 
+    @Test
+    public void testWhenRequestTimesOut() throws Exception
+    {
+        when(httpConnection.getInputStream())
+                .thenThrow(SocketTimeoutException.class);
+
+        assertThrows(() -> instance.execute(request, gson, timeout))
+                .isInstanceOf(AlchemyHttpException.class);
+    }
+
+    @Test
+    public void testWhenResponseBodyIsNull() throws Exception
+    {
+        when(httpConnection.getInputStream())
+                .thenReturn(null);
+
+        HttpResponse response = instance.execute(request, gson, timeout);
+        assertThat(response, notNullValue());
+        assertThat(response.body(), equalTo(JsonNull.INSTANCE));
+    }
+
+    @Test
+    public void testWhenResponseBodyIsEmpty() throws Exception
+    {
+        byte[] binary = "".getBytes(Charsets.UTF_8);
+        InputStream istream = new ByteArrayInputStream(binary);
+        when(httpConnection.getInputStream()).thenReturn(istream);
+
+        HttpResponse response = instance.execute(request, gson, timeout);
+        assertThat(response, notNullValue());
+        assertThat(response.body(), equalTo(JsonNull.INSTANCE));
+    }
+
+    @Test
+    public void testWhenResponseContentTypeIsNotJson() throws Exception
+    {
+        when(httpConnection.getContentType()).thenReturn(ContentTypes.PLAIN_TEXT);
+
+        HttpResponse response = instance.execute(request, gson, timeout);
+        assertThat(response, notNullValue());
+        assertTrue(response.isOk());
+        assertThat(response.body(), equalTo(responseBody));
+    }
 
     //=============================================
     // PERFORMANCE TESTS
