@@ -22,12 +22,13 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.mockito.*;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
@@ -42,6 +43,9 @@ public class AlchemyHttpTest
 
     @Mock
     private AlchemyHttpStateMachine stateMachine;
+
+    @Mock
+    private AlchemyRequest.Step1 step1;
 
     @Mock
     private Executor executor;
@@ -93,8 +97,20 @@ public class AlchemyHttpTest
     @Test
     public void testGo()
     {
+        when(stateMachine.begin(Mockito.any())).thenReturn(step1);
+
         AlchemyRequest.Step1 step = instance.go();
-        assertThat(step, notNullValue());
+
+        assertThat(step, equalTo(step1));
+
+        ArgumentCaptor<HttpRequest> captor = ArgumentCaptor.forClass(HttpRequest.class);
+
+        verify(stateMachine).begin(captor.capture());
+
+        HttpRequest request = captor.getValue();
+        assertThat(request, notNullValue());
+        assertThat(request.getMethod(), notNullValue());
+        assertThat(request.getRequestHeaders(), notNullValue());
     }
 
     @Test
