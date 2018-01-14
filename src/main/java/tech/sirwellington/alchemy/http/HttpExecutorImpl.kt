@@ -35,7 +35,9 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.exceptions.JsonException
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
 import java.net.HttpURLConnection
+import java.net.SocketException
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 /**
  *
@@ -103,6 +105,14 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         {
             throw AlchemyConnectionException(request, "HTTP request to [${request.url}] timed out", ex)
         }
+        catch(ex: SocketException)
+        {
+            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
+        }
+        catch (ex: UnknownHostException)
+        {
+            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
+        }
         catch (ex: Exception)
         {
             LOG.error("Failed to make request [$request]", ex)
@@ -116,6 +126,14 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
             rawResponse.use {
                 it.bufferedReader(Charsets.UTF_8).readText()
             }
+        }
+        catch (ex: SocketException)
+        {
+            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
+        }
+        catch (ex: UnknownHostException)
+        {
+            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
         }
         catch (ex: Exception)
         {
@@ -173,6 +191,14 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
                 val bytes = jsonString.toByteArray(Charsets.UTF_8)
                 it.write(bytes)
             }
+        }
+        catch (ex: SocketException)
+        {
+            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
+        }
+        catch (ex: UnknownHostException)
+        {
+            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
         }
         catch (ex: Exception)
         {

@@ -102,7 +102,9 @@ private object AlchemyRequestMapperImpl: AlchemyRequestMapper
             http.doOutput = true
         }
 
-        request.requestHeaders?.forEach { key, value -> http.setRequestProperty(key, value) }
+        request.requestHeaders?.onEach { (key, value) ->
+            http.setRequestProperty(key, value)
+        }
 
         return http
     }

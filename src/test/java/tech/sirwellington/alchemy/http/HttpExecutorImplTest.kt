@@ -39,6 +39,7 @@ import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeti
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.hexadecimalString
 import tech.sirwellington.alchemy.http.Generators.jsonElements
 import tech.sirwellington.alchemy.http.Generators.jsonObjects
+import tech.sirwellington.alchemy.http.Generators.validUrls
 import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -101,7 +102,7 @@ class HttpExecutorImplTest
     }
 
     @Throws(IOException::class)
-    fun setupResponse()
+    private fun setupResponse()
     {
         setupResponseBody()
         setupResponseHeaders()
@@ -123,7 +124,7 @@ class HttpExecutorImplTest
         whenever(httpConnection.contentType).thenReturn(ContentTypes.APPLICATION_JSON)
     }
 
-    fun setupResponseHeaders()
+    private fun setupResponseHeaders()
     {
         responseHeaders = CollectionGenerators.mapOf(alphabeticStrings(), hexadecimalString(10), 15)
 
@@ -155,8 +156,8 @@ class HttpExecutorImplTest
         assertThat(response, notNullValue())
         assertThat(response.statusCode(), equalTo(httpConnection.responseCode))
         assertThat(response.isOk, equalTo(true))
-        assertThat(response.body(), equalTo<JsonElement>(responseBody))
-        assertThat(response.responseHeaders(), equalTo<Map<String, String>>(responseHeaders))
+        assertThat(response.body(), equalTo(responseBody))
+        assertThat(response.responseHeaders(), equalTo(responseHeaders))
         assertThat(response.bodyAsString(), equalTo(responseBody.toString()))
 
         verify(httpConnection).connectTimeout = timeout.toInt()
@@ -167,8 +168,6 @@ class HttpExecutorImplTest
     @Test
     fun testExecuteWithBadArgs()
     {
-        assertThrows { instance.execute(null!!, gson, 1L) }
-        assertThrows { instance.execute(request, null!!, 1L) }
         assertThrows { instance.execute(request, gson, -1L) }
     }
 
@@ -228,6 +227,21 @@ class HttpExecutorImplTest
         val expected = JsonPrimitive(responseBody.toString())
         val result = response.body()
         assertThat(result, equalTo<JsonElement>(expected))
+    }
+
+    @Repeat(5)
+    @Test
+    fun testWhenConnectionFails()
+    {
+        val url = validUrls().get()
+        request = HttpRequest.Builder.from(request).usingUrl(url).build()
+
+        val realConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
+
+        whenever(requestMapper.map(request)).thenReturn(realConnection)
+
+        assertThrows { instance.execute(request, gson) }
+                .isInstanceOf(AlchemyConnectionException::class.java)
     }
 
     //=============================================
