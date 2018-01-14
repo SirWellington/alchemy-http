@@ -39,7 +39,7 @@ import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeti
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.hexadecimalString
 import tech.sirwellington.alchemy.http.Generators.jsonElements
 import tech.sirwellington.alchemy.http.Generators.jsonObjects
-import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
+import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -187,7 +187,7 @@ class HttpExecutorImplTest
                 .thenThrow(SocketTimeoutException::class.java)
 
         assertThrows { instance.execute(request, gson, timeout) }
-                .isInstanceOf(AlchemyHttpException::class.java)
+                .isInstanceOf(AlchemyConnectionException::class.java)
     }
 
     @Test
