@@ -95,7 +95,7 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
                                         http: HttpURLConnection,
                                         gson: Gson): JsonElement
     {
-        val response = try
+        val rawResponse = try
         {
             http.inputStream
         }
@@ -105,22 +105,21 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         }
         catch (ex: Exception)
         {
-            val errorMessage = http.errorStream?.use { it.reader().readText() }
-            LOG.error("Failed to make request [$request] | {}", errorMessage, ex)
-            throw OperationFailedException(request, "Request failed [$request] | $errorMessage", ex)
+            LOG.error("Failed to make request [$request]", ex)
+            http.errorStream ?: throw OperationFailedException(request, "Request failed [$request] |", ex)
         }
 
-        if (response == null) return JsonNull.INSTANCE
+        if (rawResponse == null) return JsonNull.INSTANCE
 
         val responseString = try
         {
-            response.use {
+            rawResponse.use {
                 it.bufferedReader(Charsets.UTF_8).readText()
             }
         }
         catch (ex: Exception)
         {
-            throw OperationFailedException(request, "Failed to read response from server", ex)
+            throw OperationFailedException(request, "Failed to read raw response from server", ex)
         }
         finally
         {

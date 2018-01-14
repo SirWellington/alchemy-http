@@ -215,10 +215,10 @@ interface HttpResponse
                     .throwing { ex -> IllegalStateException("Invalid status code supplied", ex) }
                     .isA(validHttpStatusCode())
 
-            return ActualResponseImpl(statusCode,
-                                      unmodifiableMap(responseHeaders),
-                                      gson,
-                                      responseBody)
+            return ActualResponseObject(statusCode,
+                                        unmodifiableMap(responseHeaders),
+                                        gson,
+                                        responseBody)
         }
 
         //==============================================================================================
@@ -226,10 +226,10 @@ interface HttpResponse
         //==============================================================================================
         @Immutable
         @BuilderPattern(role = PRODUCT)
-        private data class ActualResponseImpl constructor(private val statusCode: Int,
-                                                          private val responseHeaders: Map<String, String>,
-                                                          private val gson: Gson,
-                                                          private val responseBody: JsonElement) : HttpResponse
+        private data class ActualResponseObject constructor(private val statusCode: Int,
+                                                            private val responseHeaders: Map<String, String>,
+                                                            private val gson: Gson,
+                                                            private val responseBody: JsonElement) : HttpResponse
         {
 
             override fun statusCode(): Int
@@ -304,7 +304,7 @@ interface HttpResponse
 
             override fun toString(): String
             {
-                return "ActualResponseImpl(statusCode=$statusCode, responseHeaders=$responseHeaders, responseBody=$responseBody)"
+                return "ActualResponseObject(statusCode=$statusCode, responseHeaders=$responseHeaders, responseBody=$responseBody)"
             }
 
 
