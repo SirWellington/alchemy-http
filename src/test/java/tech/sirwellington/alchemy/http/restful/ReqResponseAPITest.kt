@@ -80,11 +80,8 @@ class ReqResponseAPITest
         LOG.info("POST @ [$url] prduced | [$response]")
 
         assertThat(response, notNull)
-        assertThat(response.name, equalTo(request.name))
-        assertThat(response.job, equalTo(request.job))
         assertFalse { response.id.isEmptyOrNull }
         assertFalse { response.createdAt.isEmptyOrNull }
-
     }
 
     @Test
