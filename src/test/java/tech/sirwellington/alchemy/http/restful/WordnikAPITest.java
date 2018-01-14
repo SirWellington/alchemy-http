@@ -31,7 +31,6 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.*;
 
 /**
  * @author SirWellington
@@ -105,12 +104,12 @@ public class WordnikAPITest
         LOG.info("Token status: [{}]", json);
     }
 
-    @Test
+    @Test(expected = AlchemyHttpException.class)
     public void testWhenNotFound() throws Exception
     {
         String url = ENDPOINT + "/unknown";
 
-        assertThrows(() -> http.go().get().at(url)).isInstanceOf(AlchemyHttpException.class);
+        http.go().get().at(url);
     }
 
 }
