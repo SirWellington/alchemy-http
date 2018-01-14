@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
 import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
@@ -62,15 +63,16 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         {
             extractJsonFromResponse(request, http, gson)
         }
-        catch (ex: JsonParseException)
-        {
-            LOG.error("Could not parse Response from Request {} as JSON", request, ex)
-            throw JsonException(request, "Failed to parse Json", ex)
-        }
         catch (ex: Exception)
         {
             LOG.error("Could not parse Response from Request {}", request, ex)
-            throw OperationFailedException(request, ex)
+
+            // If it already is one of our exception types,
+            // don't wrap it and just pass it up.
+            if (ex is AlchemyHttpException)
+                throw ex
+            else
+                throw OperationFailedException(request, ex)
         }
         finally
         {
@@ -125,13 +127,24 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
             return JsonNull.INSTANCE
         }
 
-        return if (contentType.contains(ContentTypes.APPLICATION_JSON))
+        return try
         {
-            gson.fromJson(responseString, JsonElement::class.java)
+            if (contentType.contains(ContentTypes.APPLICATION_JSON))
+            {
+                gson.fromJson(responseString, JsonElement::class.java)
+            }
+            else
+            {
+                gson.toJsonTree(responseString)
+            }
         }
-        else
+        catch (ex: Exception)
         {
-            gson.toJsonTree(responseString)
+            throw when (ex)
+            {
+                is JsonSyntaxException, is JsonParseException -> JsonException(ex)
+                else                                          -> OperationFailedException(ex)
+            }
         }
     }
 
