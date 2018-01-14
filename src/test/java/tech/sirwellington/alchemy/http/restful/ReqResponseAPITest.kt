@@ -144,6 +144,8 @@ class ReqResponseAPITest
         }
         catch (ex: AlchemyHttpException)
         {
+            assertThat(ex.request, notNull)
+            assertThat(ex.response, notNull)
             LOG.info("Received response: [${ex.response}]")
             return
         }
