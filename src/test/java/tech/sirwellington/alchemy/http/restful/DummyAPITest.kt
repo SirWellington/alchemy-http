@@ -17,6 +17,7 @@
 package tech.sirwellington.alchemy.http.restful
 
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.slf4j.LoggerFactory
@@ -63,6 +64,9 @@ class DummyAPITest
                 .at(url)
 
         assertThat(response, notNull)
+        assertThat(response.userId, equalTo(request.userId))
+        assertThat(response.title, equalTo(request.title))
+        assertThat(response.body, equalTo(request.body))
 
         LOG.info("Received response from [$url] | [$response]")
     }
