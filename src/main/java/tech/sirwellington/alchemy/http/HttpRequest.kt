@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.http
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonNull
 import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable
 import tech.sirwellington.alchemy.annotations.concurrency.Mutable
@@ -66,7 +67,7 @@ interface HttpRequest
     val body: JsonElement?
     val method: RequestMethod
 
-    fun hasBody() = body.notNull
+    fun hasBody() = body.notNull && body !is JsonNull
 
     fun hasMethod() = method.notNull
 
