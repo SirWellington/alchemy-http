@@ -30,6 +30,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.R
 import tech.sirwellington.alchemy.arguments.assertions.positiveLong
 import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.http.HttpResponse.Builder
+import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.exceptions.JsonException
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException
@@ -100,7 +101,7 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         }
         catch (ex: SocketTimeoutException)
         {
-            throw OperationFailedException(request, "HTTP request to [${request.url}] timed out", ex)
+            throw AlchemyConnectionException(request, "HTTP request to [${request.url}] timed out", ex)
         }
         catch (ex: Exception)
         {
