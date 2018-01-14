@@ -77,9 +77,11 @@ class ReqResponseAPITest
                 .expecting(CreateUserResponse::class.java)
                 .at(url)
 
-        LOG.info("POST @ [$url] prduced | [$response]")
+        LOG.info("POST @ [$url] produced | [$response]")
 
         assertThat(response, notNull)
+        assertThat(response.name, equalTo(request.name))
+        assertThat(response.job, equalTo(request.job))
         assertFalse { response.id.isEmptyOrNull }
         assertFalse { response.createdAt.isEmptyOrNull }
     }
@@ -99,6 +101,8 @@ class ReqResponseAPITest
         LOG.info("PUT request @ [$url] produced response [$response]")
 
         assertThat(response, notNull)
+        assertThat(response.name, equalTo(request.name))
+        assertThat(response.job, equalTo(request.job))
         assertFalse { response.updatedAt.isEmptyOrNull }
     }
 

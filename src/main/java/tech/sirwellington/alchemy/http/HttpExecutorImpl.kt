@@ -121,6 +121,10 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         {
             throw OperationFailedException(request, "Failed to read response from server", ex)
         }
+        finally
+        {
+            http.disconnect()
+        }
 
         val contentType = http.contentType ?: ""
 
@@ -166,7 +170,8 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         try
         {
             this.outputStream.use { it ->
-                it.bufferedWriter(Charsets.UTF_8).write(jsonString)
+                val bytes = jsonString.toByteArray(Charsets.UTF_8)
+                it.write(bytes)
             }
         }
         catch (ex: Exception)
