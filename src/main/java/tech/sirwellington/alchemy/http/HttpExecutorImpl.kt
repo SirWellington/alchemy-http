@@ -70,7 +70,9 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
             // If it already is one of our exception types,
             // don't wrap it and just pass it up.
             if (ex is AlchemyHttpException)
+            {
                 throw ex
+            }
             else
                 throw OperationFailedException(request, ex)
         }
@@ -98,13 +100,13 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         }
         catch (ex: SocketTimeoutException)
         {
-            throw OperationFailedException("HTTP request to [${request.url}] timed out", ex)
+            throw OperationFailedException(request, "HTTP request to [${request.url}] timed out", ex)
         }
         catch (ex: Exception)
         {
             val errorMessage = http.errorStream?.use { it.reader().readText() }
             LOG.error("Failed to make request [$request] | {}", errorMessage, ex)
-            throw OperationFailedException("Request failed [$request] | $errorMessage", ex)
+            throw OperationFailedException(request, "Request failed [$request] | $errorMessage", ex)
         }
 
         if (response == null) return JsonNull.INSTANCE
@@ -117,7 +119,7 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         }
         catch (ex: Exception)
         {
-            throw OperationFailedException("Failed to read response from server", ex)
+            throw OperationFailedException(request, "Failed to read response from server", ex)
         }
 
         val contentType = http.contentType ?: ""
@@ -142,8 +144,8 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         {
             throw when (ex)
             {
-                is JsonSyntaxException, is JsonParseException -> JsonException(ex)
-                else                                          -> OperationFailedException(ex)
+                is JsonSyntaxException, is JsonParseException -> JsonException(request, ex)
+                else                                          -> OperationFailedException(request, ex)
             }
         }
     }
