@@ -23,8 +23,10 @@ import org.junit.runner.RunWith
 import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.smallPositiveIntegers
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.http.AlchemyHttpBuilder
+import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.kotlin.extensions.isEmptyOrNull
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -32,6 +34,7 @@ import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 
 /**
@@ -46,6 +49,7 @@ class ReqResponseAPITest
 
     companion object
     {
+
         private const val ENDPOINT = "https://reqres.in"
 
         private val http = AlchemyHttpBuilder.newInstance().build()
@@ -113,14 +117,42 @@ class ReqResponseAPITest
         val url = "$ENDPOINT/api/users/$userId"
 
         val response = http.go()
-                           .delete()
-                           .nothing()
-                           .at(url)
+                .delete()
+                .nothing()
+                .at(url)
 
         LOG.info("DELETE request @[$url] produced | [$response]")
 
         assertThat(response, notNull)
         assertTrue { response.isOk }
         assertThat(response.statusCode(), equalTo(204))
+    }
+
+    @Test
+    fun testWithInvalidBody()
+    {
+
+        val url = "$ENDPOINT/api/users"
+        val body = one(alphabeticStrings())
+
+        try
+        {
+            val response = http.go()
+                    .post()
+                    .body(body)
+                    .at(url)
+        }
+        catch (ex: AlchemyHttpException)
+        {
+            LOG.info("Received response: [${ex.response}]")
+            return
+        }
+        catch (ex: Exception)
+        {
+            throw ex
+        }
+
+        fail("Expected exception here")
+
     }
 }
