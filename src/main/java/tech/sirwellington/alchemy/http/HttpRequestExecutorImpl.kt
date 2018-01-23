@@ -26,7 +26,6 @@ import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role.FACTORY_METHOD
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern
-import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR
 import tech.sirwellington.alchemy.arguments.assertions.positiveLong
 import tech.sirwellington.alchemy.arguments.checkThat
@@ -98,9 +97,15 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
                                         http: HttpURLConnection,
                                         gson: Gson): JsonElement
     {
-        val rawResponse = try
+        val responseString: String = try
         {
-            http.inputStream
+            val rawResponse = http.inputStream ?: return JsonNull.INSTANCE
+
+            val responseString = rawResponse.use {
+                it.bufferedReader(Charsets.UTF_8).readText()
+            }
+
+            responseString
         }
         catch (ex: SocketTimeoutException)
         {
@@ -117,28 +122,8 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
         catch (ex: Exception)
         {
             LOG.error("Failed to make request [$request]", ex)
-            http.errorStream ?: throw OperationFailedException(request, "Request failed [$request] |", ex)
-        }
-
-        if (rawResponse == null) return JsonNull.INSTANCE
-
-        val responseString = try
-        {
-            rawResponse.use {
-                it.bufferedReader(Charsets.UTF_8).readText()
-            }
-        }
-        catch (ex: SocketException)
-        {
-            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
-        }
-        catch (ex: UnknownHostException)
-        {
-            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
-        }
-        catch (ex: Exception)
-        {
-            throw OperationFailedException(request, "Failed to read raw response from server", ex)
+            http.errorStream?.use { it.bufferedReader().readText() }
+                ?: throw OperationFailedException(request, "Request failed [$request] |", ex)
         }
         finally
         {
