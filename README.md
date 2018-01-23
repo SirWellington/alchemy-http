@@ -226,6 +226,12 @@ Feature Requests are definitely welcomed! **Please drop a note in [Issues](https
 
 # Release Notes
 
+## 3.0
++ Client re-written in Kotlin
++ Dropped usage of Apache HTTP Client, in favor of plain-java's URLConnection API
++ Full compatibility for Android
+
+
 ## 2.0
 + Significantly reduces footprint, making this library suitable for the Android platform.
 + Bugfixes and Improvements
