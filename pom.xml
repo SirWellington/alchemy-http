@@ -141,7 +141,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-kotlin</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.1</version>
         </dependency>
 
 
