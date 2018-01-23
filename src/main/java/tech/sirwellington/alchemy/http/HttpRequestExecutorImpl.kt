@@ -107,23 +107,25 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
 
             responseString
         }
-        catch (ex: SocketTimeoutException)
-        {
-            throw AlchemyConnectionException(request, "HTTP request to [${request.url}] timed out", ex)
-        }
-        catch(ex: SocketException)
-        {
-            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
-        }
-        catch (ex: UnknownHostException)
-        {
-            throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
-        }
         catch (ex: Exception)
         {
             LOG.error("Failed to make request [$request]", ex)
-            http.errorStream?.use { it.bufferedReader().readText() }
-                ?: throw OperationFailedException(request, "Request failed [$request] |", ex)
+
+            when (ex)
+            {
+                is SocketTimeoutException ->
+                    throw AlchemyConnectionException(request, "HTTP request to [${request.url}] timed out", ex)
+
+                is SocketException ->
+                    throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
+
+                is UnknownHostException ->
+                    throw AlchemyConnectionException(request, "Could not connect to server @[${request.url}]", ex)
+            }
+
+            val errorMessage = http.errorStream?.use { it.bufferedReader().readText() }
+
+            errorMessage ?: throw OperationFailedException(request, "Request failed [$request] |", ex)
         }
         finally
         {
