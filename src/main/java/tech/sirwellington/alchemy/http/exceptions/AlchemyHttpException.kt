@@ -114,11 +114,10 @@ open class AlchemyHttpException : RuntimeException
     override fun toString(): String
     {
         var string = super.toString()
-        if (hasResponse())
-        {
-            string += " | Status Code: " + response!!.statusCode() + " | Response: " + response!!.bodyAsString()
-        }
 
+        val response = this.response ?: return string
+
+        string += " | Status Code: ${response.statusCode()} | Response: ${response.bodyAsString()}"
         return string
 
     }
