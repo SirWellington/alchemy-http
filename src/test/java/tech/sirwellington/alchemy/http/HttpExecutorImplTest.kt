@@ -63,7 +63,7 @@ class HttpExecutorImplTest
 {
 
     @Mock
-    private lateinit var requestMapper: AlchemyRequestMapper
+    private lateinit var requestMapper: HttpConnectionPreparer
 
     @Mock
     private lateinit var request: HttpRequest

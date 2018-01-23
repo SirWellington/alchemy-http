@@ -45,7 +45,7 @@ import java.net.UnknownHostException
  */
 @StrategyPattern(role = CLIENT)
 @Internal
-internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper) : HttpExecutor
+internal class HttpExecutorImpl(private val requestMapper: HttpConnectionPreparer) : HttpExecutor
 {
 
     @Throws(AlchemyHttpException::class)
@@ -216,7 +216,7 @@ internal class HttpExecutorImpl(private val requestMapper: AlchemyRequestMapper)
         @FactoryMethodPattern(role = FACTORY_METHOD)
         @JvmStatic
         @JvmOverloads
-        fun create(requestMapper: AlchemyRequestMapper = AlchemyRequestMapper.create()): HttpExecutorImpl
+        fun create(requestMapper: HttpConnectionPreparer = HttpConnectionPreparer.create()): HttpExecutorImpl
         {
             return HttpExecutorImpl(requestMapper)
         }

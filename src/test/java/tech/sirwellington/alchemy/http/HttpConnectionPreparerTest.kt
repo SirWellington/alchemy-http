@@ -45,10 +45,10 @@ import java.net.URL
  */
 @Repeat(50)
 @RunWith(AlchemyTestRunner::class)
-class AlchemyRequestMapperTest
+class HttpConnectionPreparerTest
 {
 
-    private lateinit var instance: AlchemyRequestMapper
+    private lateinit var instance: HttpConnectionPreparer
 
     @GenerateURL
     private lateinit var url: URL
@@ -83,7 +83,7 @@ class AlchemyRequestMapperTest
         whenever(request.queryParams).thenReturn(queryParams)
         whenever(request.method).thenReturn(requestMethod)
 
-        instance = AlchemyRequestMapper.create()
+        instance = HttpConnectionPreparer.create()
     }
 
 
@@ -113,7 +113,7 @@ class AlchemyRequestMapperTest
     @Throws(Exception::class)
     fun testMapExpandsURL()
     {
-        instance = AlchemyRequestMapper.create()
+        instance = HttpConnectionPreparer.create()
 
         whenever(request.hasQueryParams())
                 .thenReturn(java.lang.Boolean.TRUE)
@@ -129,7 +129,7 @@ class AlchemyRequestMapperTest
     {
         whenever(request.hasQueryParams()).thenReturn(false)
 
-        val result = AlchemyRequestMapper.expandUrlFromRequest(request)
+        val result = HttpConnectionPreparer.expandUrlFromRequest(request)
         assertThat(result, equalTo(url))
     }
 
@@ -140,7 +140,7 @@ class AlchemyRequestMapperTest
         //When there are query params
         whenever(request.hasQueryParams()).thenReturn(true)
 
-        val result = AlchemyRequestMapper.expandUrlFromRequest(request)
+        val result = HttpConnectionPreparer.expandUrlFromRequest(request)
         assertThat(result, equalTo(expandedUrl))
     }
 

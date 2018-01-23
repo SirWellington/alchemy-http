@@ -40,7 +40,7 @@ import java.net.URL
  */
 @StrategyPattern(role = INTERFACE)
 @Internal
-internal interface AlchemyRequestMapper
+internal interface HttpConnectionPreparer
 {
 
     fun map(request: HttpRequest) : HttpURLConnection
@@ -72,23 +72,23 @@ internal interface AlchemyRequestMapper
         }
 
         @FactoryMethodPattern(role = FACTORY_METHOD)
-        fun create(): AlchemyRequestMapper
+        fun create(): HttpConnectionPreparer
         {
-            return AlchemyRequestMapperImpl
+            return HttpConnectionPreparerImpl
         }
     }
 }
 
 @FactoryMethodPattern(role = PRODUCT)
 @StrategyPattern(role = Role.CONCRETE_BEHAVIOR)
-private object AlchemyRequestMapperImpl: AlchemyRequestMapper
+private object HttpConnectionPreparerImpl : HttpConnectionPreparer
 {
 
     private val LOG = LoggerFactory.getLogger(this::class.java)
 
     override fun map(request: HttpRequest): HttpURLConnection
     {
-        val url = AlchemyRequestMapper.expandUrlFromRequest(request)
+        val url = HttpConnectionPreparer.expandUrlFromRequest(request)
         val connection = url.openConnection()
 
         val http = connection as? HttpURLConnection ?: throw OperationFailedException("URL is not an HTTP URL: [$url]")
