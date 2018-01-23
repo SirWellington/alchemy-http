@@ -136,7 +136,6 @@ internal interface AlchemyHttpStateMachine
         @Throws(IllegalStateException::class)
         internal fun build(): AlchemyHttpStateMachine
         {
-
             return AlchemyMachineImpl(executor, gson, httpExecutor)
         }
 
