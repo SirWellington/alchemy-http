@@ -16,7 +16,6 @@
 
 package tech.sirwellington.alchemy.http
 
-import sun.net.www.http.HttpClient
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable
@@ -28,7 +27,6 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -98,8 +96,7 @@ interface AlchemyHttp
     {
 
         /**
-         * Creates a new [AlchemyHttp] using the default settings for the [Apache HTTP Client][HttpClient]
-         * and a [Single-Threaded Executor][Executors.newWorkStealingPool] for Async requests.
+         * Creates a new [AlchemyHttp] using defaults, with asynchronous callbacks disabled.
          *
          * @return
          */
@@ -113,9 +110,10 @@ interface AlchemyHttp
         /**
          * Creates a new [AlchemyHttp] instance.
          *
-         * @param apacheHttpClient The [Apache Http Client][HttpClient] to use when making requests.
          * @param executor  For Async requests, this [ExecutorService] will be used.
          * @param defaultHeaders   Default Headers are included in every request, unless otherwise specified.
+         * @param timeout Defines how long to wait for a response from the connection.
+         * @param timeUnit Defines the [TimeUnit] for the timeout.
          *
          * @return
          * @throws IllegalArgumentException
