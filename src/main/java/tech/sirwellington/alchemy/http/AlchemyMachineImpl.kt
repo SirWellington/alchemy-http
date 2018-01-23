@@ -116,7 +116,6 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
         }
         catch (ex: AlchemyHttpException)
         {
-            LOG.info("Encountered AlchemyHttpException when running httpExecutor on request {}", request, ex)
             throw ex
         }
         catch (ex: Exception)
@@ -129,7 +128,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
                 .throwing { ex -> AlchemyHttpException(request, response, "Http Response not OK.") }
                 .isA(okResponse())
 
-        LOG.debug("HTTP Request {} successfully executed: {}", request, response)
+        LOG.trace("HTTP Request {} successfully executed: {}", request, response)
 
         return if (classOfResponseType == HttpResponse::class.java)
         {
