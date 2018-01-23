@@ -27,6 +27,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role.FACTORY_METHOD
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR
 import tech.sirwellington.alchemy.arguments.assertions.positiveLong
 import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.http.HttpResponse.Builder
@@ -43,7 +44,7 @@ import java.net.UnknownHostException
  *
  * @author SirWellington
  */
-@StrategyPattern(role = CLIENT)
+@StrategyPattern(role = CONCRETE_BEHAVIOR)
 @Internal
 internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnectionPreparer) : HttpRequestExecutor
 {
@@ -76,7 +77,7 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
             {
                 throw ex
             }
-                
+
             throw OperationFailedException(request, ex)
         }
         finally
