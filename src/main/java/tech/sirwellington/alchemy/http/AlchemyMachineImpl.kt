@@ -193,7 +193,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
 
     override fun toString(): String
     {
-        return "AlchemyMachineImpl(async=$async, gson=$gson, timeoutMillis=$timeoutMillis)"
+        return "AlchemyMachineImpl(async=$async, timeoutMillis=$timeoutMillis)"
     }
 
 }
