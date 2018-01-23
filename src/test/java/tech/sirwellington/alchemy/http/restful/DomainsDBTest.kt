@@ -25,6 +25,7 @@ import tech.sirwellington.alchemy.http.AlchemyHttp
 import tech.sirwellington.alchemy.test.hamcrest.notEmpty
 import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+import tech.sirwellington.alchemy.test.junit.runners.Repeat
 
 /**
  *
@@ -32,6 +33,7 @@ import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
  */
 @RunWith(AlchemyTestRunner::class)
 @IntegrationTest
+@Repeat(5)
 class DomainsDBTest
 {
 
