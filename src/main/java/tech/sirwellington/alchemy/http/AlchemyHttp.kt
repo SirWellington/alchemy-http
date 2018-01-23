@@ -22,7 +22,6 @@ import tech.sirwellington.alchemy.annotations.concurrency.Immutable
 import tech.sirwellington.alchemy.annotations.concurrency.ThreadSafe
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern
-import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.BUILDER
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern.Role.PRODUCT
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
@@ -140,7 +139,6 @@ interface AlchemyHttp
          *
          * @return
          */
-        @BuilderPattern(role = BUILDER)
         @FactoryMethodPattern(role = Role.FACTORY_METHOD)
         fun newBuilder(): AlchemyHttpBuilder
         {
