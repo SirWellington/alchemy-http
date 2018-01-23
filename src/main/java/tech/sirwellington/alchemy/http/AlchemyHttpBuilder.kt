@@ -19,7 +19,6 @@ package tech.sirwellington.alchemy.http
 import com.google.gson.Gson
 import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
-import tech.sirwellington.alchemy.annotations.arguments.Optional
 import tech.sirwellington.alchemy.annotations.arguments.Positive
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.annotations.designs.patterns.BuilderPattern
@@ -122,7 +121,7 @@ class AlchemyHttpBuilder
     }
 
     @Throws(IllegalArgumentException::class)
-    fun usingDefaultHeader(@NonEmpty key: String, @Optional value: String): AlchemyHttpBuilder
+    fun usingDefaultHeader(@NonEmpty key: String, value: String): AlchemyHttpBuilder
     {
         checkThat(key)
                 .usingMessage("missing key")
