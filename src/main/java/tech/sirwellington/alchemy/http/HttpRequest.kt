@@ -53,6 +53,14 @@ enum class RequestMethod
 
 
 /**
+ * Captures a complete Http Request made using Alchemy,
+ * including:
+ *
+ * 1. HTTP Request Headers
+ * 2. Query Parameters (if any)
+ * 3. The request body to send with the request (if any)
+ * 4. The Request Method (one of [RequestMethod])
+ * 5. The [URL] of the endpoint.
  *
  * @author SirWellington
  */
