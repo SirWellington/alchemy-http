@@ -76,8 +76,8 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
             {
                 throw ex
             }
-            else
-                throw OperationFailedException(request, ex)
+                
+            throw OperationFailedException(request, ex)
         }
         finally
         {
