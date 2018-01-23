@@ -32,11 +32,11 @@ import java.net.URL
 @Internal
 @StepMachineDesign(role = STEP)
 internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
-                         private var request: HttpRequest) : AlchemyRequest.Step3
+                         private var request: HttpRequest) : AlchemyRequestSteps.Step3
 {
 
     @Throws(IllegalArgumentException::class)
-    override fun usingHeader(key: String, value: String): AlchemyRequest.Step3
+    override fun usingHeader(key: String, value: String): AlchemyRequestSteps.Step3
     {
         checkThat(key)
                 .usingMessage("missing key")
@@ -55,7 +55,7 @@ internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun usingQueryParam(name: String, value: String): AlchemyRequest.Step3
+    override fun usingQueryParam(name: String, value: String): AlchemyRequestSteps.Step3
     {
         checkThat(name, value)
                 .usingMessage("missing name or value")
@@ -74,7 +74,7 @@ internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun followRedirects(maxNumberOfTimes: Int): AlchemyRequest.Step3
+    override fun followRedirects(maxNumberOfTimes: Int): AlchemyRequestSteps.Step3
     {
         checkThat(maxNumberOfTimes).isA(greaterThanOrEqualTo(1))
 
@@ -97,13 +97,13 @@ internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
         return stateMachine.executeSync(requestCopy)
     }
 
-    override fun onSuccess(onSuccessCallback: AlchemyRequest.OnSuccess<HttpResponse>): AlchemyRequest.Step5<HttpResponse>
+    override fun onSuccess(onSuccessCallback: AlchemyRequestSteps.OnSuccess<HttpResponse>): AlchemyRequestSteps.Step5<HttpResponse>
     {
         return stateMachine.jumpToStep5(request, HttpResponse::class.java, onSuccessCallback)
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun <ResponseType> expecting(classOfResponseType: Class<ResponseType>): AlchemyRequest.Step4<ResponseType>
+    override fun <ResponseType> expecting(classOfResponseType: Class<ResponseType>): AlchemyRequestSteps.Step4<ResponseType>
     {
         checkThat(classOfResponseType).isA(validResponseClass())
 

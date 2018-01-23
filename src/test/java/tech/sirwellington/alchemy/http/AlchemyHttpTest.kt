@@ -49,7 +49,7 @@ class AlchemyHttpTest
     private lateinit var stateMachine: AlchemyHttpStateMachine
 
     @Mock
-    private lateinit var step1: AlchemyRequest.Step1
+    private lateinit var step1: AlchemyRequestSteps.Step1
 
     @Mock
     private lateinit var executor: Executor

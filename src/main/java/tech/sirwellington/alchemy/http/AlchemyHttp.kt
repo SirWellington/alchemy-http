@@ -90,7 +90,7 @@ interface AlchemyHttp
      *
      * @return
      */
-    fun go(): AlchemyRequest.Step1
+    fun go(): AlchemyRequestSteps.Step1
 
     companion object Factory
     {

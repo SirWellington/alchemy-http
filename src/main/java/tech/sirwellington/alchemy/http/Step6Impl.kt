@@ -31,8 +31,8 @@ import java.net.URL
 internal class Step6Impl<ResponseType>(private val stateMachine: AlchemyHttpStateMachine,
                                        private val request: HttpRequest,
                                        private val classOfResponseType: Class<ResponseType>,
-                                       private val successCallback: AlchemyRequest.OnSuccess<ResponseType>,
-                                       private val failureCallback: AlchemyRequest.OnFailure) : AlchemyRequest.Step6<ResponseType>
+                                       private val successCallback: AlchemyRequestSteps.OnSuccess<ResponseType>,
+                                       private val failureCallback: AlchemyRequestSteps.OnFailure) : AlchemyRequestSteps.Step6<ResponseType>
 {
 
     init

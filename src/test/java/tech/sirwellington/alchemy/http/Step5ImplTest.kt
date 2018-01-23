@@ -24,9 +24,9 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step5
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step5
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 
 /**

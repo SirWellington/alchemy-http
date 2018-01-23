@@ -30,8 +30,8 @@ import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step4
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step4
 import tech.sirwellington.alchemy.http.Generators.validUrls
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner

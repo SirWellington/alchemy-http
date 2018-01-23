@@ -47,7 +47,7 @@ internal class AlchemyHttpImpl(defaultHeaders: Map<String, String>,
         return AlchemyHttpImpl(defaultHeaders = Maps.immutableCopyOf(copy), stateMachine = stateMachine)
     }
 
-    override fun go(): AlchemyRequest.Step1
+    override fun go(): AlchemyRequestSteps.Step1
     {
         val initialRequest = HttpRequest.Builder
                                         .newInstance()

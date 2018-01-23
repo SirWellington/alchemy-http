@@ -36,8 +36,8 @@ import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.integers
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.smallPositiveIntegers
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.hexadecimalString
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step3
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step3
 import tech.sirwellington.alchemy.http.Generators.validUrls
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner

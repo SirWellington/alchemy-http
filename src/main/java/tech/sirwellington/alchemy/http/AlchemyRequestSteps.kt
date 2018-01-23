@@ -41,7 +41,7 @@ import java.util.LinkedHashSet
  */
 @FluidAPIDesign
 @StepMachineDesign
-interface AlchemyRequest
+interface AlchemyRequestSteps
 {
 
     interface Step1

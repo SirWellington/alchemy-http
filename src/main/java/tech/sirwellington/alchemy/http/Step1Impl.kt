@@ -30,11 +30,11 @@ import tech.sirwellington.alchemy.http.RequestMethod.PUT
 @Internal
 @StepMachineDesign(role = STEP)
 internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
-                         private val request: HttpRequest) : AlchemyRequest.Step1
+                         private val request: HttpRequest) : AlchemyRequestSteps.Step1
 {
 
 
-    override fun get(): AlchemyRequest.Step3
+    override fun get(): AlchemyRequestSteps.Step3
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
@@ -44,7 +44,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
         return stateMachine.jumpToStep3(newRequest)
     }
 
-    override fun post(): AlchemyRequest.Step2
+    override fun post(): AlchemyRequestSteps.Step2
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
@@ -54,7 +54,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
         return stateMachine.jumpToStep2(newRequest)
     }
 
-    override fun put(): AlchemyRequest.Step2
+    override fun put(): AlchemyRequestSteps.Step2
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
@@ -64,7 +64,7 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
         return stateMachine.jumpToStep2(newRequest)
     }
 
-    override fun delete(): AlchemyRequest.Step2
+    override fun delete(): AlchemyRequestSteps.Step2
     {
         val newRequest = HttpRequest.Builder
                                     .from(this.request)

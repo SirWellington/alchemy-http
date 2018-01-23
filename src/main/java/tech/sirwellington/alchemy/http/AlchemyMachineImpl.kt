@@ -22,8 +22,8 @@ import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.MACHINE
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.positiveLong
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess
 import tech.sirwellington.alchemy.http.HttpAssertions.okResponse
 import tech.sirwellington.alchemy.http.HttpAssertions.ready
 import tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass
@@ -49,7 +49,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
     private val LOG = LoggerFactory.getLogger(AlchemyMachineImpl::class.java)
 
     @Throws(IllegalArgumentException::class)
-    override fun begin(initialRequest: HttpRequest): AlchemyRequest.Step1
+    override fun begin(initialRequest: HttpRequest): AlchemyRequestSteps.Step1
     {
         val requestCopy = HttpRequest.copyOf(initialRequest)
         LOG.debug("Beginning HTTP request {}", requestCopy)
@@ -58,14 +58,14 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun jumpToStep2(request: HttpRequest): AlchemyRequest.Step2
+    override fun jumpToStep2(request: HttpRequest): AlchemyRequestSteps.Step2
     {
         val requestCopy = HttpRequest.copyOf(request)
         return Step2Impl(requestCopy, this, gson)
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun jumpToStep3(request: HttpRequest): AlchemyRequest.Step3
+    override fun jumpToStep3(request: HttpRequest): AlchemyRequestSteps.Step3
     {
         val requestCopy = HttpRequest.copyOf(request)
         return Step3Impl(this, requestCopy)
@@ -73,7 +73,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
 
     @Throws(IllegalArgumentException::class)
     override fun <ResponseType> jumpToStep4(request: HttpRequest,
-                                            classOfResponseType: Class<ResponseType>): AlchemyRequest.Step4<ResponseType>
+                                            classOfResponseType: Class<ResponseType>): AlchemyRequestSteps.Step4<ResponseType>
     {
         checkThat(classOfResponseType).isA(validResponseClass())
 
@@ -84,7 +84,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
     @Throws(IllegalArgumentException::class)
     override fun <ResponseType> jumpToStep5(request: HttpRequest,
                                             classOfResponseType: Class<ResponseType>,
-                                            successCallback: OnSuccess<ResponseType>): AlchemyRequest.Step5<ResponseType>
+                                            successCallback: OnSuccess<ResponseType>): AlchemyRequestSteps.Step5<ResponseType>
     {
         checkThat(classOfResponseType).isA(validResponseClass())
 
@@ -95,7 +95,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
     override fun <ResponseType> jumpToStep6(request: HttpRequest,
                                             classOfResponseType: Class<ResponseType>,
                                             successCallback: OnSuccess<ResponseType>,
-                                            failureCallback: OnFailure): AlchemyRequest.Step6<ResponseType>
+                                            failureCallback: OnFailure): AlchemyRequestSteps.Step6<ResponseType>
     {
         checkThat(classOfResponseType).isA(validResponseClass())
 

@@ -36,8 +36,8 @@ import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.reset
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnFailure
-import tech.sirwellington.alchemy.http.AlchemyRequest.OnSuccess
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.http.exceptions.JsonException
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows

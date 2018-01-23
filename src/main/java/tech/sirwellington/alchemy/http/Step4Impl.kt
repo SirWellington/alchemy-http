@@ -31,7 +31,7 @@ import java.net.URL
 @StepMachineDesign(role = STEP)
 internal class Step4Impl<ResponseType>(private val stateMachine: AlchemyHttpStateMachine,
                                        private val request: HttpRequest,
-                                       private val classOfResponseType: Class<ResponseType>) : AlchemyRequest.Step4<ResponseType>
+                                       private val classOfResponseType: Class<ResponseType>) : AlchemyRequestSteps.Step4<ResponseType>
 {
 
     init
@@ -50,7 +50,7 @@ internal class Step4Impl<ResponseType>(private val stateMachine: AlchemyHttpStat
         return stateMachine.executeSync(newRequest, classOfResponseType)
     }
 
-    override fun onSuccess(onSuccessCallback: AlchemyRequest.OnSuccess<ResponseType>): AlchemyRequest.Step5<ResponseType>
+    override fun onSuccess(onSuccessCallback: AlchemyRequestSteps.OnSuccess<ResponseType>): AlchemyRequestSteps.Step5<ResponseType>
     {
         return stateMachine.jumpToStep5(request, classOfResponseType, onSuccessCallback)
     }

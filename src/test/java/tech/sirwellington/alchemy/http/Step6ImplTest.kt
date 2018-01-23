@@ -26,7 +26,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step6
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step6
 import tech.sirwellington.alchemy.http.Generators.validUrls
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -50,10 +50,10 @@ class Step6ImplTest
     private lateinit var requestCaptor: ArgumentCaptor<HttpRequest>
 
     @Mock
-    private lateinit var onSuccess: AlchemyRequest.OnSuccess<Any>
+    private lateinit var onSuccess: AlchemyRequestSteps.OnSuccess<Any>
 
     @Mock
-    private lateinit var onFailure: AlchemyRequest.OnFailure
+    private lateinit var onFailure: AlchemyRequestSteps.OnFailure
 
     private lateinit var responseClass: Class<Any>
 

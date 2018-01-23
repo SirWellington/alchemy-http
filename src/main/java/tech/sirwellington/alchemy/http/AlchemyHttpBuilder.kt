@@ -53,7 +53,7 @@ class AlchemyHttpBuilder
 
     /**
      * Directly sets the [Executor] to use for Asynchronous Requests.
-     * Asynchronous requests only happen when a [Callback][AlchemyRequest.Step4.onSuccess]
+     * Asynchronous requests only happen when a [Callback][AlchemyRequestSteps.Step4.onSuccess]
      * is set on the Request.
      *
      * @param executor

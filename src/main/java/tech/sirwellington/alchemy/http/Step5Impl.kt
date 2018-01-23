@@ -30,7 +30,7 @@ import tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass
 internal class Step5Impl<ResponseType>(private val stateMachine: AlchemyHttpStateMachine,
                                        private val request: HttpRequest,
                                        private val classOfResponseType: Class<ResponseType>,
-                                       private val successCallback: AlchemyRequest.OnSuccess<ResponseType>) : AlchemyRequest.Step5<ResponseType>
+                                       private val successCallback: AlchemyRequestSteps.OnSuccess<ResponseType>) : AlchemyRequestSteps.Step5<ResponseType>
 {
 
     init
@@ -38,7 +38,7 @@ internal class Step5Impl<ResponseType>(private val stateMachine: AlchemyHttpStat
         checkThat(classOfResponseType).isA(validResponseClass())
     }
 
-    override fun onFailure(onFailureCallback: AlchemyRequest.OnFailure): AlchemyRequest.Step6<ResponseType>
+    override fun onFailure(onFailureCallback: AlchemyRequestSteps.OnFailure): AlchemyRequestSteps.Step6<ResponseType>
     {
         return stateMachine.jumpToStep6(request, classOfResponseType, successCallback, onFailureCallback)
     }

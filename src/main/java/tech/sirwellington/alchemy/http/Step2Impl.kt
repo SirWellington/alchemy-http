@@ -35,11 +35,11 @@ import tech.sirwellington.alchemy.http.exceptions.JsonException
 @StepMachineDesign(role = STEP)
 internal class Step2Impl(private val request: HttpRequest,
                          private val stateMachine: AlchemyHttpStateMachine,
-                         private val gson: Gson) : AlchemyRequest.Step2
+                         private val gson: Gson) : AlchemyRequestSteps.Step2
 {
 
 
-    override fun nothing(): AlchemyRequest.Step3
+    override fun nothing(): AlchemyRequestSteps.Step3
     {
         val newRequest = HttpRequest.Builder
                                     .from(request)
@@ -50,7 +50,7 @@ internal class Step2Impl(private val request: HttpRequest,
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun body(jsonString: String): AlchemyRequest.Step3
+    override fun body(jsonString: String): AlchemyRequestSteps.Step3
     {
         checkThat(jsonString)
                 .usingMessage("use 'nothing()' for empty body")
@@ -74,7 +74,7 @@ internal class Step2Impl(private val request: HttpRequest,
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun body(pojo: Any): AlchemyRequest.Step3
+    override fun body(pojo: Any): AlchemyRequestSteps.Step3
     {
 
         val jsonBody = try

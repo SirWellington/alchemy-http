@@ -26,12 +26,12 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.positiveLong
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step1
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step2
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step3
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step4
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step5
-import tech.sirwellington.alchemy.http.AlchemyRequest.Step6
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step1
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step2
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step3
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step4
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step5
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step6
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import java.util.concurrent.Executor
 
@@ -73,13 +73,13 @@ internal interface AlchemyHttpStateMachine
     @Throws(IllegalArgumentException::class)
     fun <ResponseType> jumpToStep5(request: HttpRequest,
                                    classOfResponseType: Class<ResponseType>,
-                                   successCallback: AlchemyRequest.OnSuccess<ResponseType>): Step5<ResponseType>
+                                   successCallback: AlchemyRequestSteps.OnSuccess<ResponseType>): Step5<ResponseType>
 
 
     fun <ResponseType> jumpToStep6(request: HttpRequest,
                                    classOfResponseType: Class<ResponseType>,
-                                   successCallback: AlchemyRequest.OnSuccess<ResponseType>,
-                                   failureCallback: AlchemyRequest.OnFailure): Step6<ResponseType>
+                                   successCallback: AlchemyRequestSteps.OnSuccess<ResponseType>,
+                                   failureCallback: AlchemyRequestSteps.OnFailure): Step6<ResponseType>
 
 
     @Throws(AlchemyHttpException::class)
@@ -96,8 +96,8 @@ internal interface AlchemyHttpStateMachine
 
     fun <ResponseType> executeAsync(request: HttpRequest,
                                     classOfResponseType: Class<ResponseType>,
-                                    successCallback: AlchemyRequest.OnSuccess<ResponseType>,
-                                    failureCallback: AlchemyRequest.OnFailure)
+                                    successCallback: AlchemyRequestSteps.OnSuccess<ResponseType>,
+                                    failureCallback: AlchemyRequestSteps.OnFailure)
 
 
     @BuilderPattern(role = BUILDER)
