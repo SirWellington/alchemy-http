@@ -28,7 +28,14 @@ import java.net.URL
 import java.util.LinkedHashSet
 
 /**
+ * Captures the workflow for making an HTTP request using Alchemy.
  *
+ * 1. Define the method
+ * 2. Set the request body
+ * 3. Configure the query parameters and request headers
+ * 4. Set the expected response type
+ * 5, 6. Set the async callbacks (if any)
+ * 7. Specify the URL and get your response!
  *
  * @author SirWellington
  */
@@ -203,6 +210,12 @@ interface AlchemyRequest
 
         fun onSuccess(onSuccessCallback: OnSuccess<HttpResponse>): Step5<HttpResponse>
 
+        /**
+         * Set the class of the response type expected.
+         * Usually this is set to a pojo representing the json structure of the expected response body.
+         *
+         * @author SirWellington
+         */
         @Throws(IllegalArgumentException::class)
         fun <ResponseType> expecting(classOfResponseType: Class<ResponseType>): Step4<ResponseType>
 
