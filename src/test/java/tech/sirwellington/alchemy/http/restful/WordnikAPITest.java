@@ -44,9 +44,9 @@ public class WordnikAPITest
 
     private static final String ENDPOINT = "http://api.wordnik.com:80/v4";
 
-    private AlchemyHttp http = AlchemyHttp.Companion.newBuilder()
-                                                    .usingDefaultHeader("api_key", "a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5")
-                                                    .build();
+    private AlchemyHttp http = AlchemyHttp.Factory.newBuilder()
+                                                  .usingDefaultHeader("api_key", "a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5")
+                                                  .build();
 
     @Test
     public void testWordOfDay() throws Exception

@@ -73,7 +73,7 @@ class AlchemyMachineImplTest
     private lateinit var onFailure: OnFailure
 
     @Mock
-    private lateinit var httpExecutor: HttpExecutor
+    private lateinit var requestExecutor: HttpRequestExecutor
 
     @Mock
     private lateinit var response: HttpResponse
@@ -91,8 +91,8 @@ class AlchemyMachineImplTest
     {
         request = TestRequest()
 
-        instance = AlchemyMachineImpl(executor, gson, httpExecutor)
-        verifyZeroInteractions(executor, httpExecutor)
+        instance = AlchemyMachineImpl(executor, gson, requestExecutor)
+        verifyZeroInteractions(executor, requestExecutor)
 
         setupExecutor()
         setupResponse()
@@ -100,7 +100,7 @@ class AlchemyMachineImplTest
 
     private fun setupExecutor()
     {
-        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
+        whenever(requestExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(response)
 
     }
@@ -195,16 +195,16 @@ class AlchemyMachineImplTest
     fun testExecuteSyncWhenHttpExecutorFails()
     {
 
-        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
+        whenever(requestExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(RuntimeException())
 
         assertThrows { instance.executeSync(request) }
                 .isInstanceOf(AlchemyHttpException::class.java)
 
         //Reset and do another assertion
-        reset(httpExecutor)
+        reset(requestExecutor)
 
-        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
+        whenever(requestExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(AlchemyHttpException(request))
 
         assertThrows { instance.executeSync(request) }
@@ -224,7 +224,7 @@ class AlchemyMachineImplTest
     @Test
     fun testExecuteWhenHttpExecutorReturnsNullResponse()
     {
-        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
+        whenever(requestExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenReturn(null)
 
         assertThrows { instance.executeSync(request, responseClass) }
@@ -280,7 +280,7 @@ class AlchemyMachineImplTest
     {
         val ex = AlchemyHttpException()
 
-        whenever(httpExecutor.execute(request, gson, Constants.DEFAULT_TIMEOUT))
+        whenever(requestExecutor.execute(request, gson, Constants.DEFAULT_TIMEOUT))
                 .thenThrow(ex)
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure)
@@ -297,7 +297,7 @@ class AlchemyMachineImplTest
     @Test
     fun testExecuteAsyncWhenRuntimeExceptionHappens()
     {
-        whenever(httpExecutor.execute(eq(request), eq(gson), anyLong()))
+        whenever(requestExecutor.execute(eq(request), eq(gson), anyLong()))
                 .thenThrow(RuntimeException())
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure)

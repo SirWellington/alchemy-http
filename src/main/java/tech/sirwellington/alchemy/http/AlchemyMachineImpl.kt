@@ -38,7 +38,7 @@ import java.util.concurrent.Executor
 @StepMachineDesign(role = MACHINE)
 internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: Executor,
                                                             private val gson: Gson,
-                                                            private val httpExecutor: HttpExecutor,
+                                                            private val requestExecutor: HttpRequestExecutor,
                                                             private val timeoutMillis: Long = Constants.DEFAULT_TIMEOUT) : AlchemyHttpStateMachine
 {
     init
@@ -112,7 +112,7 @@ internal class AlchemyMachineImpl @JvmOverloads constructor(private val async: E
 
         val response = try
         {
-            httpExecutor.execute(request, gson)
+            requestExecutor.execute(request, gson)
         }
         catch (ex: AlchemyHttpException)
         {

@@ -27,7 +27,7 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
  */
 @StrategyPattern(role = INTERFACE)
 @Internal
-internal interface HttpExecutor
+internal interface HttpRequestExecutor
 {
     @Throws(AlchemyHttpException::class)
     fun execute(request: HttpRequest, gson: Gson, timeoutMillis: Long = Constants.DEFAULT_TIMEOUT): HttpResponse

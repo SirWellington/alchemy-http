@@ -107,7 +107,7 @@ internal interface AlchemyHttpStateMachine
 
         private var executor: Executor = SynchronousExecutor.newInstance()
         private var gson = Constants.DEFAULT_GSON
-        private var httpExecutor: HttpExecutor = HttpExecutorImpl.create()
+        private var requestExecutor: HttpRequestExecutor = HttpRequestExecutorImpl.create()
         private var timeout = Constants.DEFAULT_TIMEOUT
 
         @Throws(IllegalArgumentException::class)
@@ -136,7 +136,7 @@ internal interface AlchemyHttpStateMachine
         @Throws(IllegalStateException::class)
         internal fun build(): AlchemyHttpStateMachine
         {
-            return AlchemyMachineImpl(executor, gson, httpExecutor)
+            return AlchemyMachineImpl(executor, gson, requestExecutor)
         }
 
         companion object

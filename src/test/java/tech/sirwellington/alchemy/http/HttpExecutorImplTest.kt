@@ -85,14 +85,14 @@ class HttpExecutorImplTest
     private val gson = Constants.DEFAULT_GSON
     private var timeout: Long = 0
 
-    private lateinit var instance: HttpExecutor
+    private lateinit var instance: HttpRequestExecutor
 
 
     @Before
     @Throws(IOException::class)
     fun setUp()
     {
-        instance = HttpExecutorImpl(requestMapper)
+        instance = HttpRequestExecutorImpl(requestMapper)
         verifyZeroInteractions(requestMapper)
 
         timeout = NumberGenerators.smallPositiveLongs().get()
@@ -141,10 +141,10 @@ class HttpExecutorImplTest
     @Test
     fun testCreate()
     {
-        val result = HttpExecutorImpl.create(requestMapper!!)
+        val result = HttpRequestExecutorImpl.create(requestMapper!!)
         assertThat(result, notNullValue())
 
-        assertThrows { HttpExecutorImpl.create(null!!) }
+        assertThrows { HttpRequestExecutorImpl.create(null!!) }
     }
 
     @Test
