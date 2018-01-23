@@ -62,7 +62,6 @@ internal class Step3Impl(private val stateMachine: AlchemyHttpStateMachine,
                 .are(nonEmptyString())
 
         val newParam = Pair(name, value)
-
         val queryParams = request.queryParams?.plus(newParam) ?: mapOf(newParam)
 
         request = HttpRequest.Builder
