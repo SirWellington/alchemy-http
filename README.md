@@ -5,40 +5,7 @@ Alchemy HTTP
 ## "REST without the MESS"
 
 [![Build Status](http://jenkins.redroma.tech/job/Alchemy%20HTTP/badge/icon)](http://jenkins.redroma.tech/job/Alchemy%20HTTP/)
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
-
-- [Purpose](#purpose)
-  - [Javascript](#javascript)
-  - [Ruby](#ruby)
-  - [Java](#java)
-- [The Alchemy Way](#the-alchemy-way)
-  - [The Async Way](#the-async-way)
-    - [Another way](#another-way)
-- [Download](#download)
-  - [Release](#release)
-  - [Snapshot](#snapshot)
-- [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-http)
-- [Tested Against](#tested-against)
-  - [Slack](#slack)
-- [Gitter](#gitter)
-  - [Google APIs](#google-apis)
-    - [Geocoding](#geocoding)
-    - [Places API](#places-api)
-  - [Mashape APIs](#mashape-apis)
-  - [More on the way...](#more-on-the-way)
-- [Requirements](#requirements)
-- [Building](#building)
-- [Feature Requests](#feature-requests)
-- [Release Notes](#release-notes)
-  - [1.2](#12)
-  - [1.1](#11)
-  - [1.0](#10)
-- [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+![Maven Central Version](http://img.shields.io/maven-central/v/tech.sirwellington.alchemy/alchemy-http.svg)
 
 
 # Purpose
@@ -138,9 +105,9 @@ We can do better than that.
 AlchemyHttp http = AlchemyHttp.newDefaultInstance();
 
 Coffee myCoffee = http.go()
-					  .get()
-					  .expecting(Coffee.class)
-					  .at("http://aroma.tech/orders?orderNumber=99");
+                      .get()
+		      .expecting(Coffee.class)
+		      .at("http://aroma.tech/orders?orderNumber=99");
 //Wait...that's it?
 ```
 **That's it!**
@@ -153,12 +120,12 @@ There may be times when you don't care to wait for an immediate response from th
 
 ```java
 http.go()
-	.post()
-	.body(request)
-	.expecting(Coffee.class)
-	.onSuccess(c -> LOG.warn("What took you so long to get my cofee! {}", c))
-	.onFailure(ex -> LOG.error("What can I do without coffee?", ex))
-	.at("http://aroma.tech/orders");
+    .post()
+    .body(request)
+    .expecting(Coffee.class)
+    .onSuccess(c -> LOG.warn("What took you so long to get my cofee! {}", c))
+    .onFailure(ex -> LOG.error("What can I do without coffee?", ex))
+    .at("http://aroma.tech/orders");
 ```
 ### Another way
 To be fair Java Lambdas aren't as clean as `Blocks` in other languages.
@@ -173,11 +140,11 @@ class BaristaService
 	public void serveCustomer(Customer customer)
 	{
 		http.go()
-			.get()
-			.expecting(Coffee.class)
-			.onSuccess(coffee -> customer.accept(coffee))
-			.onFailure(this::handleOrderIssue)
-			.at("http://aroma.tech/orders");
+		    .get()
+		    .expecting(Coffee.class)
+		    .onSuccess(coffee -> customer.accept(coffee))
+		    .onFailure(this::handleOrderIssue)
+		    .at("http://aroma.tech/orders");
 	}
 
 	private void handleOrderIssue(AlchemyException ex)
@@ -199,7 +166,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-    <version>1.3</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 ## Snapshot
@@ -208,7 +175,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-	<version>1.4-SNAPSHOT</version>
+	<version>2.1-SNAPSHOT</version>
 </dependency>
 ```
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
@@ -258,6 +225,16 @@ To build, just run a `mvn clean install` to compile and install to your local ma
 Feature Requests are definitely welcomed! **Please drop a note in [Issues](https://github.com/SirWellington/alchemy-http/issues).**
 
 # Release Notes
+
+## 3.0
++ Client re-written in Kotlin
++ Dropped usage of Apache HTTP Client, in favor of plain-java's URLConnection API
++ Full compatibility for Android
+
+
+## 2.0
++ Significantly reduces footprint, making this library suitable for the Android platform.
++ Bugfixes and Improvements
 
 ## 1.3
 + Bugfixes and Improvements

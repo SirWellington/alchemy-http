@@ -1,10 +1,10 @@
 /*
- * Copyright 2015 SirWellington Tech.
+ * Copyright © 2018. Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
+ * You may obtain a copy of the License at
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -15,13 +15,11 @@
  */
 package tech.sirwellington.alchemy.http.exceptions;
 
-import tech.sirwellington.alchemy.http.AlchemyRequest;
-import tech.sirwellington.alchemy.http.HttpRequest;
-import tech.sirwellington.alchemy.http.HttpResponse;
+import tech.sirwellington.alchemy.http.*;
 
 /**
  * Thrown when an error occurs trying to parse JSON, or unwrap JSON into a
- * {@linkplain AlchemyRequest.Step3#expecting(java.lang.Class) POJO}.
+ * {@linkplain AlchemyRequestSteps.Step3#expecting(java.lang.Class) POJO}.
  *
  * @author SirWellington
  */
