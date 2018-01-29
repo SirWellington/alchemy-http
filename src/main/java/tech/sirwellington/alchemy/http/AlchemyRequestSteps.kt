@@ -123,7 +123,12 @@ interface AlchemyRequestSteps
         /**
          * No body will be included in the Request.
          */
-        fun nothing(): Step3
+        fun noBody(): Step3
+
+        /**
+         * No body will be included in the Request.
+         */
+        fun nothing() = noBody()
 
         /**
          * Includes a JSON String as the body.

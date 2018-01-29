@@ -71,6 +71,18 @@ class Step2ImplTest
 
     @DontRepeat
     @Test
+    fun testNoBody()
+    {
+        instance.noBody()
+
+        verify(stateMachine).jumpToStep3(requestCaptor.capture())
+
+        expectedBody = JsonNull.INSTANCE
+        val requestMade = requestCaptor.firstValue
+        verifyRequestMade(requestMade)
+    }
+    @DontRepeat
+    @Test
     fun testNothing()
     {
         instance.nothing()

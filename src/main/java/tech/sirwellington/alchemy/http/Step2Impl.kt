@@ -39,7 +39,7 @@ internal class Step2Impl(private val request: HttpRequest,
 {
 
 
-    override fun nothing(): AlchemyRequestSteps.Step3
+    override fun noBody(): AlchemyRequestSteps.Step3
     {
         val newRequest = HttpRequest.Builder
                                     .from(request)

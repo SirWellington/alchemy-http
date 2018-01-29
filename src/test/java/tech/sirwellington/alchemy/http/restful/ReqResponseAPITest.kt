@@ -118,7 +118,7 @@ class ReqResponseAPITest
 
         val response = http.go()
                 .delete()
-                .nothing()
+                .noBody()
                 .at(url)
 
         LOG.info("DELETE request @[$url] produced | [$response]")

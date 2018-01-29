@@ -79,7 +79,7 @@ class DummyAPITest
 
         val response = http.go()
                            .delete()
-                           .nothing()
+                           .noBody()
                            .at(url)
 
         assertThat(response, notNull)
