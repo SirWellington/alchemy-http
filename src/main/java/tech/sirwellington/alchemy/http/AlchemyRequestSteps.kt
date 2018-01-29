@@ -22,6 +22,7 @@ import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.nonEmptyString
 import tech.sirwellington.alchemy.arguments.assertions.validURL
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step4
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import java.net.MalformedURLException
 import java.net.URL
@@ -316,4 +317,13 @@ interface AlchemyRequestSteps
             }
         }
     }
+}
+
+/**
+ * Kotlin convenience function for [AlchemyRequestSteps.Step3.expecting].
+ * This inline function infers the type to expect based on the context.
+ */
+inline fun <reified T> AlchemyRequestSteps.Step3.expecting(): Step4<T>
+{
+    return this.expecting(T::class.java)
 }
