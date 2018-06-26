@@ -115,13 +115,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-annotations</artifactId>
-            <version>2.1</version>
+            <version>2.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-arguments</artifactId>
-            <version>2.1.1</version>
+            <version>2.2.1</version>
         </dependency>
 
         <dependency>
@@ -140,7 +140,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-kotlin</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
 
 
