@@ -119,7 +119,8 @@ class ClearbitAPITest
         assertThat(response, notNull)
         assertThat(response, notEmpty)
 
-        response.forEach {
+        response.forEach()
+        {
             assertThat(it.name, nonEmptyString)
             assertThat(it.domain, nonEmptyString)
             assertThat(it.logo, nonEmptyString)
