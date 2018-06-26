@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.http.restful;
 
 import com.google.gson.JsonObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(AlchemyTestRunner.class)
 @IntegrationTest
+@Ignore
 public class WordnikAPITest
 {
 

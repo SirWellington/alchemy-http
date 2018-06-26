@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.http.restful
 
 import com.natpryce.hamkrest.assertion.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.slf4j.LoggerFactory
@@ -29,6 +30,7 @@ import kotlin.test.assertTrue
 
 @RunWith(AlchemyTestRunner::class)
 @IntegrationTest
+@Ignore
 class NumValidateTest
 {
 
