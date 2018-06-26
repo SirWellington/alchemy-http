@@ -39,6 +39,7 @@ class NumValidateTest
 
     private val http = AlchemyHttpBuilder.newInstance().build()
 
+    @Ignore
     @Repeat(5)
     @Test
     fun testPhone()

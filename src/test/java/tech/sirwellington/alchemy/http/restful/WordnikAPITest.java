@@ -51,6 +51,7 @@ public class WordnikAPITest
                                                   .usingDefaultHeader(api_key, API_KEY)
                                                   .build();
 
+    @Ignore
     @Test
     public void testWordOfDay() throws Exception
     {
@@ -71,6 +72,7 @@ public class WordnikAPITest
         assertTrue(json.has("examples"));
     }
 
+    @Ignore
     @Repeat(5)
     @Test
     public void testRandomWord() throws Exception
@@ -93,6 +95,7 @@ public class WordnikAPITest
         LOG.info("Random word is [{}]", json.get("word").getAsString());
     }
 
+    @Ignore
     @Test
     public void testGetTokenStatus() throws Exception
     {
