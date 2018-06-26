@@ -15,6 +15,7 @@
 
 package tech.sirwellington.alchemy.http.restful
 
+import com.google.gson.JsonObject
 import com.natpryce.hamkrest.assertion.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,7 +44,7 @@ class DomainsDBTest
 
     data class ResponseBody(val total: Int?,
                             val time: Int?,
-                            val domains: List<String>?)
+                            val domains: List<JsonObject>?)
 
     @Test
     fun testCensio()
