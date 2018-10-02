@@ -26,7 +26,6 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.nonEmptyMap
-import tech.sirwellington.alchemy.kotlin.extensions.isNotNull
 import java.net.URL
 
 
@@ -74,9 +73,9 @@ interface HttpRequest
     val body: JsonElement?
     val method: RequestMethod
 
-    fun hasBody() = body.isNotNull && body !is JsonNull
+    fun hasBody() = body != null && body !is JsonNull
 
-    fun hasMethod() = method.isNotNull
+    fun hasMethod() = method != null
 
     fun hasQueryParams(): Boolean
     {
