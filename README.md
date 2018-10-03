@@ -102,7 +102,7 @@ We can do better than that.
 
 # The Alchemy Way
 ```java
-AlchemyHttp http = AlchemyHttp.newDefaultInstance();
+AlchemyHttp http = AlchemyHttp.Factory.newDefaultInstance();
 
 Coffee myCoffee = http.go()
                       .get()
