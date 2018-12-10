@@ -15,6 +15,7 @@
 package tech.sirwellington.alchemy.http
 
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasKey
@@ -27,6 +28,7 @@ import sir.wellington.alchemy.collections.maps.Maps
 import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
 import tech.sirwellington.alchemy.generator.BinaryGenerators
 import tech.sirwellington.alchemy.generator.CollectionGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess
@@ -244,6 +246,18 @@ class AlchemyRequestTest
     }
 
     @Test
+    fun testOnSuccessCreate()
+    {
+        val string = StringGenerators.hexadecimalString(30).get()
+        val mock = mock<OnSuccess<String>> { }
+
+        val result = OnSuccess.create<String> { mock.processResponse(string) }
+
+        result.processResponse(string)
+        verify(mock).processResponse(string)
+    }
+
+    @Test
     fun testOnFailureNoOp()
     {
         val instance = OnFailure.NO_OP
@@ -253,4 +267,22 @@ class AlchemyRequestTest
         instance.handleError(ex)
     }
 
+    @Test
+    fun testOnFailureCreate()
+    {
+        val mock = mock<OnFailure> { }
+        val ex = AlchemyHttpException(Generators.validUrls().get().toString())
+        val result = OnFailure.create { mock.handleError(ex) }
+
+        result.handleError(ex)
+        verify(mock).handleError(ex)
+
+    }
+
+    interface MockInterface<ResponseType>
+    {
+        fun handleError(ex: AlchemyHttpException)
+
+        fun handleSuccess(response: ResponseType)
+    }
 }

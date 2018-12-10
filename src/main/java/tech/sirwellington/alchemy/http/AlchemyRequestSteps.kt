@@ -288,6 +288,17 @@ interface AlchemyRequestSteps
         companion object
         {
             val NO_OP = INSTANCES.NO_OP
+
+            fun <ResponseType>create(block: (ResponseType) -> Unit): OnSuccess<ResponseType>
+            {
+                return object: OnSuccess<ResponseType>
+                {
+                    override fun processResponse(response: ResponseType)
+                    {
+                        block(response)
+                    }
+                }
+            }
         }
 
         object INSTANCES
@@ -317,6 +328,17 @@ interface AlchemyRequestSteps
                 override fun handleError(ex: AlchemyHttpException)
                 {
 
+                }
+            }
+
+            fun create(block: (AlchemyHttpException) -> Unit) : OnFailure
+            {
+                return object: OnFailure
+                {
+                    override fun handleError(ex: AlchemyHttpException)
+                    {
+                        block(ex)
+                    }
                 }
             }
         }
