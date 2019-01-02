@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -73,7 +73,7 @@ class HttpAssertionsTest
         assertThrows { instance.check(badStatusCode) }
                 .isInstanceOf(FailedAssertionException::class.java)
 
-        val anotherBadCode = one(integers(506, 1000))
+        val anotherBadCode = one(integers(600, Int.MAX_VALUE))
         assertThrows { instance.check(anotherBadCode) }
                 .isInstanceOf(FailedAssertionException::class.java)
     }
