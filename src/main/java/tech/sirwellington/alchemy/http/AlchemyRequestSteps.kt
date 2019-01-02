@@ -117,6 +117,11 @@ interface AlchemyRequestSteps
          */
         fun delete(): Step2
 
+        /**
+         * Begins a new request using the specified [requestMethod].
+         * @return
+         */
+        fun method(requestMethod: RequestMethod): Step2
     }
 
     //===========================================

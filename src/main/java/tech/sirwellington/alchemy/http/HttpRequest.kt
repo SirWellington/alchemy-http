@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -26,6 +26,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.nonEmptyMap
+import tech.sirwellington.alchemy.kotlin.extensions.anyElement
 import java.net.URL
 
 
@@ -38,6 +39,7 @@ enum class RequestMethod
 {
 
     GET,
+    PATCH,
     POST,
     HEAD,
     OPTIONS,
@@ -47,6 +49,17 @@ enum class RequestMethod
     ;
 
     val asString = this.toString()
+
+    companion object
+    {
+
+        @JvmStatic
+        val all = values().toList()
+
+        @JvmStatic
+        val any get() = all.anyElement ?: GET
+
+    }
 }
 
 

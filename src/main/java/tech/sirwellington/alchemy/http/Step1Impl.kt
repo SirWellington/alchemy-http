@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.http
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign
 import tech.sirwellington.alchemy.annotations.designs.StepMachineDesign.Role.STEP
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step2
 import tech.sirwellington.alchemy.http.RequestMethod.DELETE
 import tech.sirwellington.alchemy.http.RequestMethod.GET
 import tech.sirwellington.alchemy.http.RequestMethod.POST
@@ -68,6 +69,16 @@ internal class Step1Impl(private val stateMachine: AlchemyHttpStateMachine,
         val newRequest = HttpRequest.Builder
                                     .from(this.request)
                                     .usingRequestMethod(DELETE)
+                                    .build()
+
+        return stateMachine.jumpToStep2(newRequest)
+    }
+
+    override fun method(requestMethod: RequestMethod): Step2
+    {
+        val newRequest = HttpRequest.Builder
+                                    .from(this.request)
+                                    .usingRequestMethod(requestMethod)
                                     .build()
 
         return stateMachine.jumpToStep2(newRequest)

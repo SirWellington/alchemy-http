@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -116,6 +116,22 @@ class Step1ImplTest
         val passedRequest = requestCaptor.firstValue
         assertThat(passedRequest, notNullValue())
         assertThat(passedRequest.method, equalTo(RequestMethod.DELETE))
+        assertThat(passedRequest.requestHeaders, equalTo(this.request.requestHeaders))
+
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testCustomMethod()
+    {
+        val method = RequestMethod.any
+        instance.method(method)
+
+        verify(stateMachine).jumpToStep2(requestCaptor.capture())
+
+        val passedRequest = requestCaptor.firstValue
+        assertThat(passedRequest, notNullValue())
+        assertThat(passedRequest.method, equalTo(method))
         assertThat(passedRequest.requestHeaders, equalTo(this.request.requestHeaders))
 
     }
