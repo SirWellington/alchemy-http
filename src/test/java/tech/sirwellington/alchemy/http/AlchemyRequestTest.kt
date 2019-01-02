@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -30,10 +30,7 @@ import tech.sirwellington.alchemy.generator.BinaryGenerators
 import tech.sirwellington.alchemy.generator.CollectionGenerators
 import tech.sirwellington.alchemy.generator.StringGenerators
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step1
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step5
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.*
 import tech.sirwellington.alchemy.http.Generators.validUrls
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
@@ -71,28 +68,32 @@ class AlchemyRequestTest
     @Throws(IOException::class)
     fun testStep1()
     {
-        val instance = object: Step1
+        val instance = object : Step1
         {
             override fun get(): AlchemyRequestSteps.Step3
             {
-                throw UnsupportedOperationException("Not supported yet.") //To change body of generated methods, choose Tools | Templates.
+                throw UnsupportedOperationException("Not supported yet.")
             }
 
             override fun post(): AlchemyRequestSteps.Step2
             {
-                throw UnsupportedOperationException("Not supported yet.") //To change body of generated methods, choose Tools | Templates.
+                throw UnsupportedOperationException("Not supported yet.")
             }
 
             override fun put(): AlchemyRequestSteps.Step2
             {
-                throw UnsupportedOperationException("Not supported yet.") //To change body of generated methods, choose Tools | Templates.
+                throw UnsupportedOperationException("Not supported yet.")
             }
 
             override fun delete(): AlchemyRequestSteps.Step2
             {
-                throw UnsupportedOperationException("Not supported yet.") //To change body of generated methods, choose Tools | Templates.
+                throw UnsupportedOperationException("Not supported yet.")
             }
 
+            override fun method(requestMethod: RequestMethod): Step2
+            {
+                throw UnsupportedOperationException("Not supported yet.")
+            }
         }
 
         //Test the built-in download()
@@ -140,13 +141,13 @@ class AlchemyRequestTest
 
             override fun onSuccess(onSuccessCallback: OnSuccess<HttpResponse>): AlchemyRequestSteps.Step5<HttpResponse>
             {
-                throw UnsupportedOperationException("Not supported yet.") //To change body of generated methods, choose Tools | Templates.
+                throw UnsupportedOperationException("Not supported yet.")
             }
 
             @Throws(IllegalArgumentException::class)
             override fun <ResponseType> expecting(classOfResponseType: Class<ResponseType>): AlchemyRequestSteps.Step4<ResponseType>
             {
-                throw UnsupportedOperationException("Not supported yet.") //To change body of generated methods, choose Tools | Templates.
+                throw UnsupportedOperationException("Not supported yet.")
             }
         }
 
