@@ -116,7 +116,7 @@ class AlchemyRequestTest
             @Throws(IllegalArgumentException::class)
             override fun usingHeader(key: String, value: String): AlchemyRequestSteps.Step3
             {
-                savedHeaders.put(key, value)
+                savedHeaders[key] = value
                 return this
             }
 
