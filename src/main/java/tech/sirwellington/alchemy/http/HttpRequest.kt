@@ -39,7 +39,6 @@ enum class RequestMethod
 {
 
     GET,
-    PATCH,
     POST,
     HEAD,
     OPTIONS,
