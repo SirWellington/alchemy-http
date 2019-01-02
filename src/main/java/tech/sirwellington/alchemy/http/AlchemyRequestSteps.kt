@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -44,6 +44,9 @@ import java.util.LinkedHashSet
 interface AlchemyRequestSteps
 {
 
+    //===========================================
+    // STEP 1
+    //===========================================
     interface Step1
     {
 
@@ -116,6 +119,9 @@ interface AlchemyRequestSteps
 
     }
 
+    //===========================================
+    // STEP 2
+    //===========================================
     interface Step2
     {
 
@@ -150,6 +156,9 @@ interface AlchemyRequestSteps
         fun body(@Required pojo: Any): Step3
     }
 
+    //===========================================
+    // STEP 3
+    //===========================================
     interface Step3
     {
 
@@ -226,6 +235,9 @@ interface AlchemyRequestSteps
 
     }
 
+    //===========================================
+    // STEP 4
+    //===========================================
     interface Step4<ResponseType>
     {
 
@@ -252,6 +264,9 @@ interface AlchemyRequestSteps
         fun onSuccess(onSuccessCallback: OnSuccess<ResponseType>): Step5<ResponseType>
     }
 
+    //===========================================
+    // STEP 5
+    //===========================================
     interface Step5<ResponseType>
     {
 
@@ -263,6 +278,9 @@ interface AlchemyRequestSteps
         fun onFailure(onFailureCallback: OnFailure): Step6<ResponseType>
     }
 
+    //===========================================
+    // STEP 6
+    //===========================================
     interface Step6<ResponseType>
     {
 
@@ -278,6 +296,10 @@ interface AlchemyRequestSteps
 
     }
 
+
+    //===========================================
+    // ON SUCCESS
+    //===========================================
     @FunctionalInterface
     interface OnSuccess<ResponseType>
     {
@@ -314,6 +336,9 @@ interface AlchemyRequestSteps
         }
     }
 
+    //===========================================
+    // ON FAIL
+    //===========================================
     @FunctionalInterface
     interface OnFailure
     {
@@ -343,6 +368,8 @@ interface AlchemyRequestSteps
             }
         }
     }
+
+
 }
 
 /**
