@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -21,13 +21,7 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.arguments.assertions.combine
-import tech.sirwellington.alchemy.arguments.assertions.falseStatement
-import tech.sirwellington.alchemy.arguments.assertions.greaterThanOrEqualTo
-import tech.sirwellington.alchemy.arguments.assertions.lessThanOrEqualTo
-import tech.sirwellington.alchemy.arguments.assertions.nonEmptyString
-import tech.sirwellington.alchemy.arguments.assertions.nonNullReference
-import tech.sirwellington.alchemy.arguments.assertions.stringBeginningWith
+import tech.sirwellington.alchemy.arguments.assertions.*
 
 /**
  * @author SirWellington
@@ -41,10 +35,9 @@ internal object HttpAssertions
     fun validHttpStatusCode(): AlchemyAssertion<Int>
     {
         /*
-     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-     */
-
-        return combine(greaterThanOrEqualTo(100), lessThanOrEqualTo(505))
+        * See https://www.whoishostingthis.com/resources/http-status-codes
+        */
+        return greaterThanOrEqualTo(100).and(lessThanOrEqualTo(600))
     }
 
     /*

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -30,6 +30,7 @@ import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.integers
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
 import tech.sirwellington.alchemy.http.Generators.jsonElements
+import tech.sirwellington.alchemy.http.HttpStatusCode.NOT_FOUND
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
@@ -70,6 +71,26 @@ class HttpResponseTest
     {
         val instance = builder.build()
         assertThat(instance.statusCode(), equalTo(first.statusCode))
+    }
+
+    @Test
+    fun testStatus()
+    {
+        val instance = builder.build()
+        val status = instance.statusCode()
+        val expected = HttpStatusCode.forCode(status)
+        assertThat(instance.status, equalTo(expected))
+    }
+
+    @Test
+    fun testNotFound()
+    {
+        val status = HttpStatusCode.any
+        val code = status.code
+        val instance = builder.withStatusCode(code).build()
+
+        val expected = status == NOT_FOUND
+        assertThat(instance.notFound, equalTo(expected))
     }
 
     @Test

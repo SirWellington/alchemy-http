@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -77,8 +77,9 @@ enum class HttpStatusCode(val code: Int)
     SERVICE_UNAVAILABLE(503),
     GATEWAY_TIMEOUT(504),
     HTTP_VERSION_NOT_SUPPORTED(505),
+    NETWORK_AUTHENTICATION_REQUIRED(511),
     NETWORK_READ_TIMEOUT_ERROR(598),
-    NETWORK_AUTHENTICATION_REQUIRED(511);
+    NETWORK_CONNECT_TIMEOUT_ERROR(599);
 
     val statusName = this.toString()
 
@@ -95,8 +96,6 @@ enum class HttpStatusCode(val code: Int)
     companion object
     {
 
-        private val REVERSE_MAP = createReverseMapping()
-
         @JvmStatic
         val all = values().toList()
 
@@ -104,14 +103,19 @@ enum class HttpStatusCode(val code: Int)
         val any get() = all.anyElement ?: OK
 
         @JvmStatic
+        private val REVERSE_MAP = createReverseMapping()
+
+        @JvmStatic
         fun forCode(code: Int): HttpStatusCode?
         {
             return REVERSE_MAP[code]
         }
 
+        @JvmStatic
         private fun createReverseMapping(): Map<Int, HttpStatusCode>
         {
-            return all.map { it.code to it }.toMap()
+            val map = all.map { it.code to it }.toMap()
+            return map
         }
     }
 

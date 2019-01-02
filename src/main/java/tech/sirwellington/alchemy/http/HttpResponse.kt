@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -15,11 +15,7 @@
 
 package tech.sirwellington.alchemy.http
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonElement
-import com.google.gson.JsonNull
-import com.google.gson.JsonParseException
+import com.google.gson.*
 import jdk.nashorn.internal.ir.annotations.Immutable
 import tech.sirwellington.alchemy.annotations.arguments.Optional
 import tech.sirwellington.alchemy.annotations.arguments.Required
@@ -31,6 +27,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.http.HttpAssertions.validHttpStatusCode
 import tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass
+import tech.sirwellington.alchemy.http.HttpStatusCode.NOT_FOUND
 import tech.sirwellington.alchemy.http.exceptions.JsonException
 import java.util.Collections.unmodifiableMap
 
@@ -65,6 +62,17 @@ interface HttpResponse
      * @return The HTTP Status code of the request.
      */
     fun statusCode(): Int
+
+    /**
+     * @return The [HttpStatusCode] corresponding to the [statusCode].
+     */
+    val status: HttpStatusCode?
+        get() = HttpStatusCode.forCode(statusCode())
+
+    /**
+     * Whether the response corresponds to a [NOT_FOUND] status code.
+     */
+    val notFound get() = status == NOT_FOUND
 
     /**
      * @return The response headers returned by the REST Service.
