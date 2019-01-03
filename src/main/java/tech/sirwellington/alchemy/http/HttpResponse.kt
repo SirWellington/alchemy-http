@@ -193,6 +193,13 @@ interface HttpResponse
         }
 
         @Throws(IllegalArgumentException::class)
+        fun withStatusCode(statusCode: HttpStatusCode): Builder
+        {
+            this.statusCode = statusCode.code
+            return this
+        }
+
+        @Throws(IllegalArgumentException::class)
         fun withResponseHeaders(responseHeaders: Map<String, String>?): Builder
         {
             val headers = responseHeaders ?: emptyMap()

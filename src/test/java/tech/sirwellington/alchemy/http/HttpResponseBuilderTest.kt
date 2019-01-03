@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -70,6 +70,15 @@ class HttpResponseBuilderTest
         assertThrows { instance.withStatusCode(negativeStatusCode) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
+    }
+
+    @Test
+    fun testWithStatusCodeEnum()
+    {
+        val status = HttpStatusCode.any
+
+        val result = instance.withStatusCode(status).build()
+        assertThat(result.status, equalTo(status))
     }
 
     @Test
