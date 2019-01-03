@@ -111,6 +111,16 @@ enum class HttpStatusCode(val code: Int)
             return REVERSE_MAP[code]
         }
 
+        /**
+         * @return Any [HttpStatusCode] that is different from [code].
+         */
+        @JvmStatic
+        fun anyExcept(code: HttpStatusCode): HttpStatusCode
+        {
+            val possible = all - code
+            return possible.anyElement ?: BAD_REQUEST
+        }
+
         @JvmStatic
         private fun createReverseMapping(): Map<Int, HttpStatusCode>
         {
