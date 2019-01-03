@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -29,11 +29,7 @@ import tech.sirwellington.alchemy.generator.CollectionGenerators
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
 import tech.sirwellington.alchemy.http.Generators.jsonElements
 import tech.sirwellington.alchemy.http.Generators.validUrls
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
-import tech.sirwellington.alchemy.test.junit.runners.GenerateEnum
-import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import tech.sirwellington.alchemy.test.junit.runners.*
 import java.net.MalformedURLException
 import java.net.URISyntaxException
 import java.net.URL

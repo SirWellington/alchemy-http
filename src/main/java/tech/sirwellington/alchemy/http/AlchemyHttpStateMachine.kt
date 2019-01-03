@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -25,12 +25,7 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPatt
 import tech.sirwellington.alchemy.annotations.designs.patterns.FactoryMethodPattern.Role
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.positiveLong
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step1
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step2
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step3
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step4
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step5
-import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step6
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps.*
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException
 import java.util.concurrent.Executor
 
