@@ -62,7 +62,7 @@ class HttpResponseBuilderTest
         val result = instance.withStatusCode(goodStatusCode)
         assertThat(result, notNullValue())
 
-        val badStatusCode = one(integers(520, 10000))
+        val badStatusCode = one(integers(600, 10000))
         assertThrows { instance.withStatusCode(badStatusCode) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
