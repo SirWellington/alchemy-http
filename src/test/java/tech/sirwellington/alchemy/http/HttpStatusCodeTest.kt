@@ -25,7 +25,7 @@ import tech.sirwellington.alchemy.test.hamcrest.notNull
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.GenerateEnum
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import kotlin.test.assertFails
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @RunWith(AlchemyTestRunner::class)
@@ -42,7 +42,7 @@ class HttpStatusCodeTest
         assertTrue { status.matchesCode(code) }
 
         val other = HttpStatusCode.anyExcept(status)
-        assertFails { other.matchesCode(code) }
+        assertFalse { other.matchesCode(code) }
     }
 
     @Test
