@@ -283,7 +283,7 @@ interface HttpResponse
                 {
                     return if (responseBody.isJsonPrimitive)
                     {
-                        val json = responseBody.toString()
+                        val json = responseBody.asString
                         gson.fromJson(json, classOfT)
                     }
                     else
