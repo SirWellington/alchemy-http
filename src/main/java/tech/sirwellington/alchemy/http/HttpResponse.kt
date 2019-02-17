@@ -281,11 +281,19 @@ interface HttpResponse
 
                 try
                 {
-                    return gson.fromJson(responseBody, classOfT)
+                    return if (responseBody.isJsonPrimitive)
+                    {
+                        val json = responseBody.toString()
+                        gson.fromJson(json, classOfT)
+                    }
+                    else
+                    {
+                        gson.fromJson(responseBody, classOfT)
+                    }
                 }
                 catch (ex: Exception)
                 {
-                    throw JsonException("Failed to parse json to class: " + classOfT, ex)
+                    throw JsonException("Failed to parse json to class: $classOfT", ex)
                 }
 
             }
