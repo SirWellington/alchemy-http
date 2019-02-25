@@ -96,7 +96,8 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
         {
             val rawResponse = http.inputStream ?: return JsonNull.INSTANCE
 
-            val responseString = rawResponse.use {
+            val responseString = rawResponse.use()
+            {
                 it.bufferedReader(Charsets.UTF_8).readText()
             }
 
