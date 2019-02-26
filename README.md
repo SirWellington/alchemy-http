@@ -166,18 +166,11 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-http</artifactId>
-    <version>3.2</version>
+    <version>3.4.1</version>
 </dependency>
 ```
-## Snapshot
 
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-http</artifactId>
-	<version>3.3-SNAPSHOT</version>
-</dependency>
-```
+
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-http/)
 
 # Tested Against
