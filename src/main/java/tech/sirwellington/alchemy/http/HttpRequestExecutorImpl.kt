@@ -59,7 +59,7 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
 
         val json = try
         {
-            extractJsonFromResponse(request, http, gson)
+            performRequestForJson(request, http, gson)
         }
         catch (ex: Exception)
         {
@@ -88,9 +88,9 @@ internal class HttpRequestExecutorImpl(private val requestMapper: HttpConnection
     }
 
     @Throws(AlchemyHttpException::class)
-    private fun extractJsonFromResponse(request: HttpRequest,
-                                        http: HttpURLConnection,
-                                        gson: Gson): JsonElement
+    private fun performRequestForJson(request: HttpRequest,
+                                      http: HttpURLConnection,
+                                      gson: Gson): JsonElement
     {
         val responseString: String = try
         {
