@@ -1,0 +1,50 @@
+name: Maven Build
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  build:
+    name: Build, Test, and Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: Build with Maven (No Deploy)
+        run: mvn --batch-mode clean verify -P release
+        env:
+          CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Upload Build Artifacts (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            target/*.jar
+            target/*.pom
+            target/*.asc
