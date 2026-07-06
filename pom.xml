@@ -57,8 +57,9 @@
     <properties>
 
         <!--Java Compiler Properties-->
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
     </properties>
 
 
@@ -98,16 +99,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.nhaarman</groupId>
-            <artifactId>mockito-kotlin</artifactId>
-        </dependency>
-
 
         <!--=======================-->
         <!--ALCHEMY-->
@@ -137,12 +128,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>alchemy-kotlin</artifactId>
-            <version>1.5</version>
-        </dependency>
-
 
         <!--=======================-->
         <!--LOGGING-->
@@ -163,15 +148,6 @@
 
 
         <!--=======================-->
-        <!--KOTLIN-->
-        <!--=======================-->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk7</artifactId>
-        </dependency>
-
-
-        <!--=======================-->
         <!--URL BUILDER-->
         <!--=======================-->
         <dependency>
@@ -186,16 +162,17 @@
     <build>
         <!--Inherited from Parent POM-->
 
-
         <plugins>
 
-
             <!--=======================-->
-            <!--KOTLIN PLUGIN-->
+            <!--JAVA COMPILER-->
             <!--=======================-->
             <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>25</release>
+                </configuration>
             </plugin>
 
         </plugins>
