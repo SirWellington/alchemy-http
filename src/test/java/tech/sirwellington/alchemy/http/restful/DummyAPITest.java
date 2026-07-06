@@ -1,0 +1,120 @@
+/*
+ * Copyright © 2019. Sir Wellington.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package tech.sirwellington.alchemy.http.restful;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
+import tech.sirwellington.alchemy.http.AlchemyHttp;
+import tech.sirwellington.alchemy.http.HttpResponse;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+
+@RunWith(AlchemyTestRunner.class)
+@IntegrationTest
+@Repeat(35)
+public class DummyAPITest
+{
+
+    private static final String ENDPOINT = "https://jsonplaceholder.typicode.com";
+    private static final Logger LOG = LoggerFactory.getLogger(DummyAPITest.class);
+
+    private static class PostRequest
+    {
+        String title;
+        String body;
+        int userId;
+
+        @Override
+        public String toString()
+        {
+            return "PostRequest{" +
+                   "title='" + title + '\'' +
+                   ", body='" + body + '\'' +
+                   ", userId=" + userId +
+                   '}';
+        }
+    }
+
+    private static class Post
+    {
+        int id;
+        String title;
+        String body;
+        int userId;
+
+        @Override
+        public String toString()
+        {
+            return "Post{" +
+                   "id=" + id +
+                   ", title='" + title + '\'' +
+                   ", body='" + body + '\'' +
+                   ", userId=" + userId +
+                   '}';
+        }
+    }
+
+    @GeneratePojo
+    private PostRequest request;
+
+    private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
+
+    @Test
+    public void testCreatePost()
+    {
+        String url = ENDPOINT + "/posts";
+
+        Post response = http.go()
+                            .post()
+                            .body(request)
+                            .expecting(Post.class)
+                            .at(url);
+
+        assertThat(response, notNullValue());
+        assertThat(response.userId, equalTo(request.userId));
+        assertThat(response.title, equalTo(request.title));
+        assertThat(response.body, equalTo(request.body));
+
+        LOG.info("Received response from [{}] | [{}]", url, response);
+    }
+
+    @Test
+    public void testDeletePost()
+    {
+        int postId = 1;
+        String url = ENDPOINT + "/posts/" + postId;
+
+        HttpResponse response = http.go()
+                                    .delete()
+                                    .noBody()
+                                    .at(url);
+
+        assertThat(response, notNullValue());
+        assertTrue(response.isOk());
+
+        LOG.info("Received response when deleting [{}] | [{}]", url, response);
+    }
+}

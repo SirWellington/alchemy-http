@@ -1,0 +1,137 @@
+/*
+ * Copyright © 2019. Sir Wellington.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package tech.sirwellington.alchemy.http;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import sir.wellington.alchemy.collections.maps.Maps;
+import tech.sirwellington.alchemy.generator.AlchemyGenerator;
+import tech.sirwellington.alchemy.generator.CollectionGenerators;
+import tech.sirwellington.alchemy.generator.StringGenerators;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+
+/**
+ * @author SirWellington
+ */
+@RunWith(AlchemyTestRunner.class)
+@Repeat(100)
+public class AlchemyHttpImplTest
+{
+    @Mock
+    private AlchemyHttpStateMachine stateMachine;
+
+    @Captor
+    private ArgumentCaptor<HttpRequest> requestCaptor;
+
+    private Map<String, String> defaultHeaders;
+
+    private AlchemyHttp instance;
+
+    @Before
+    public void setUp()
+    {
+        defaultHeaders = CollectionGenerators.mapOf(alphabeticStrings(), alphabeticStrings(), 20);
+        instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);
+        verifyNoInteractions(stateMachine);
+    }
+
+    @Test
+    public void testDefaultHeadersArePassedToStateMachine()
+    {
+        instance.go();
+
+        verify(stateMachine).begin(requestCaptor.capture());
+
+        HttpRequest requestMade = requestCaptor.getValue();
+        assertThat(requestMade, notNullValue());
+        assertThat(requestMade.requestHeaders(), equalTo(defaultHeaders));
+    }
+
+    @Test
+    public void testUsingDefaultHeader()
+    {
+        String key = one(alphabeticStrings());
+        String value = one(alphabeticStrings());
+
+        AlchemyHttp result = instance.usingDefaultHeader(key, value);
+        assertThat(result, notNullValue());
+        assertThat(result, not(sameInstance(instance)));
+
+        result.go();
+        verify(stateMachine).begin(requestCaptor.capture());
+
+        HttpRequest requestMade = requestCaptor.getValue();
+        assertThat(requestMade, notNullValue());
+
+        Map<String, String> expectedHeaders = new HashMap<>(defaultHeaders);
+        expectedHeaders.put(key, value);
+        assertThat(requestMade.requestHeaders(), equalTo(expectedHeaders));
+    }
+
+    @Test
+    public void testUsingDefaultHeaderEdgeCase()
+    {
+        String key = one(alphabeticStrings());
+        String value = one(alphabeticStrings());
+
+        assertThrows(() -> instance.usingDefaultHeader("", ""))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> instance.usingDefaultHeader("", value))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        // Key alone is OK
+        instance.usingDefaultHeader(key, "");
+    }
+
+    @Test
+    public void testGo()
+    {
+        instance.go();
+        verify(stateMachine).begin(any());
+    }
+
+    @Test
+    public void testGetDefaultHeaders()
+    {
+        Map<String, String> result = instance.getDefaultHeaders();
+        assertThat(result, equalTo(defaultHeaders));
+
+        assertThrows(() -> result.clear());
+    }
+
+    @Test
+    public void testToString()
+    {
+        String toString = instance.toString();
+        assertThat(toString, not(isEmptyOrNullString()));
+    }
+}
