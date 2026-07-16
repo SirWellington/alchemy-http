@@ -156,7 +156,7 @@ public class AlchemyMachineImplTest
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Repeat(200)
+    @RepeatedTest(200)
     @Test
     public void testExecuteSync()
     {
@@ -164,7 +164,7 @@ public class AlchemyMachineImplTest
         assertThat(result, equalTo(response));
     }
 
-    @Repeat(200)
+    @RepeatedTest(200)
     @Test
     public void testExecuteSyncWithCustomClass()
     {
@@ -220,7 +220,7 @@ public class AlchemyMachineImplTest
         verify(response).bodyAsString();
     }
 
-    @Repeat(200)
+    @RepeatedTest(200)
     @Test
     public void testExecuteWhenResponseNotOk()
     {
@@ -240,7 +240,7 @@ public class AlchemyMachineImplTest
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
-    @Repeat(200)
+    @RepeatedTest(200)
     @Test
     public void testExecuteAsync() throws Exception
     {

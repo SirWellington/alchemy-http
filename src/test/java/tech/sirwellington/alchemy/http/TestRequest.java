@@ -21,7 +21,7 @@ import java.util.Objects;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 

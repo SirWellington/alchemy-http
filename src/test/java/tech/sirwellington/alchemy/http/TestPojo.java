@@ -17,7 +17,7 @@ package tech.sirwellington.alchemy.http;
 import java.util.Date;
 import java.util.Objects;
 
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.DateGenerators.pastDates;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.*;

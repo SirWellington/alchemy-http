@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AlchemyTestRunner.class)
 @IntegrationTest
-@Repeat(35)
+@RepeatedTest(35)
 public class DummyAPITest
 {
 

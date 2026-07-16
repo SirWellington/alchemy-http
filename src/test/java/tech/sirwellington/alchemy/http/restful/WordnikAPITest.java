@@ -73,7 +73,7 @@ public class WordnikAPITest
     }
 
     @Ignore
-    @Repeat(5)
+    @RepeatedTest(5)
     @Test
     public void testRandomWord() throws Exception
     {

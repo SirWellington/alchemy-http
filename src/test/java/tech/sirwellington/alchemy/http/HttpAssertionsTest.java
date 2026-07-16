@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.*;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
@@ -148,7 +148,7 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
     }
 
-    @Repeat(10)
+    @RepeatedTest(10)
     @Test
     public void testValidContentType()
     {

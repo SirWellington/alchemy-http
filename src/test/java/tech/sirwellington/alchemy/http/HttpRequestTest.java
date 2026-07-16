@@ -32,7 +32,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-@Repeat(50)
+@RepeatedTest(50)
 public class HttpRequestTest
 {
 

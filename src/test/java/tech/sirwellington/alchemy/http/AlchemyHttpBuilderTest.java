@@ -15,36 +15,33 @@
 package tech.sirwellington.alchemy.http;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.NumberGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateLong;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.*;
-import static tech.sirwellington.alchemy.generator.StringGenerators.*;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
+import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@Repeat(25)
-@RunWith(AlchemyTestRunner.class)
-public class AlchemyHttpBuilderTest
-{
+@AlchemyTest
+final class AlchemyHttpBuilderTest {
 
     @Mock
     private ExecutorService executor;
@@ -53,137 +50,118 @@ public class AlchemyHttpBuilderTest
 
     private AlchemyHttpBuilder instance;
 
-    @GenerateLong(min = 100)
-    private long timeout;
-
-    @Before
-    public void setUp()
-    {
+    @BeforeEach
+    void setUp() {
         defaultHeaders = CollectionGenerators.mapOf(alphabeticStrings(), alphabeticStrings(), 20);
-        timeout = NumberGenerators.longs(100, 2000).get();
+        var timeout = NumberGenerators.longs(100, 2000).get();
 
         instance = AlchemyHttpBuilder.newInstance()
-                .usingTimeout(Math.toIntExact(timeout), TimeUnit.MILLISECONDS)
-                .usingExecutor(executor)
-                .usingDefaultHeaders(defaultHeaders);
+                                     .usingTimeout(Math.toIntExact(timeout), TimeUnit.MILLISECONDS)
+                                     .usingExecutor(executor)
+                                     .usingDefaultHeaders(defaultHeaders);
     }
 
     @Test
-    public void testNewInstance()
-    {
+    public void testNewInstance() {
         instance = AlchemyHttpBuilder.newInstance();
         assertThat(instance, notNullValue());
     }
 
-    @Repeat(50)
-    @Test
-    public void testUsingTimeout()
-    {
-        int socketTimeout = one(integers(15, 100));
-        AlchemyHttpBuilder result = instance.usingTimeout(socketTimeout, TimeUnit.SECONDS);
+    @RepeatedTest(50)
+    public void testUsingTimeout() {
+        // Given
+        var socketTimeout = one(integers(15, 100));
+        // When
+        var result = instance.usingTimeout(socketTimeout, TimeUnit.SECONDS);
+        // Then
         assertThat(result, notNullValue());
     }
 
-    @Repeat(10)
-    @Test
-    public void testUsingTimeoutWithBadArgs()
-    {
-        int negativeNumber = one(negativeIntegers());
-
+    @RepeatedTest(10)
+    public void testUsingTimeoutWithBadArgs() {
+        var negativeNumber = one(negativeIntegers());
         assertThrows(() -> instance.usingTimeout(negativeNumber, TimeUnit.SECONDS))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isIllegalArgumentException();
     }
 
     @Test
-    public void testUsingGson()
-    {
-        Gson gson = new Gson();
-        AlchemyHttpBuilder result = instance.usingGson(gson);
+    public void testUsingGson() {
+        var gson = new Gson();
+        var result = instance.usingGson(gson);
         assertThat(result, notNullValue());
     }
 
-    @Repeat(100)
-    @Test
-    public void testUsingExecutorService()
-    {
-        AlchemyHttpBuilder result = instance.usingExecutor(executor);
-        assertThat(result, notNullValue());
-    }
-
-    @Test
-    public void testDisableAsyncCallbacks()
-    {
-        AlchemyHttpBuilder result = instance.disableAsyncCallbacks();
+    @RepeatedTest(100)
+    public void testUsingExecutorService() {
+        var result = instance.usingExecutor(executor);
         assertThat(result, notNullValue());
     }
 
     @Test
-    public void testEnableAsyncCallbacks()
-    {
-        AlchemyHttpBuilder result = instance.enableAsyncCallbacks();
+    public void testDisableAsyncCallbacks() {
+        var result = instance.disableAsyncCallbacks();
         assertThat(result, notNullValue());
     }
 
-    @Repeat(100)
     @Test
-    public void testUsingDefaultHeaders()
-    {
+    public void testEnableAsyncCallbacks() {
+        var result = instance.enableAsyncCallbacks();
+        assertThat(result, notNullValue());
+    }
+
+    @RepeatedTest(100)
+    public void testUsingDefaultHeaders() {
         instance = AlchemyHttpBuilder.newInstance();
 
-        Map<String, String> headers = CollectionGenerators.mapOf(alphabeticStrings(),
-                                                                  asString(smallPositiveIntegers()),
-                                                                  100);
+        var headers = CollectionGenerators.mapOf(
+            alphabeticStrings(),
+            smallPositiveIntegers().mapping(String::valueOf),
+            100
+        );
 
-        AlchemyHttpBuilder result = instance.usingDefaultHeaders(headers);
+        var result = instance.usingDefaultHeaders(headers);
         assertThat(result, notNullValue());
 
-        AlchemyHttp http = result.build();
+        var http = result.build();
         assertThat(http, notNullValue());
 
-        Map<String, String> expected = new HashMap<>(Constants.DEFAULT_HEADERS);
-        expected.putAll(headers);
+        var expected = Map.copyOf(headers);
         assertThat(http.getDefaultHeaders(), equalTo(expected));
 
         // Empty headers is ok
         instance.usingDefaultHeaders(Collections.emptyMap());
     }
 
-    @Repeat
     @Test
-    public void testUsingDefaultHeader()
-    {
-        String key = one(alphabeticStrings());
-        String value = one(hexadecimalString(10));
+    public void testUsingDefaultHeader() {
+        var key = one(alphabeticStrings());
+        var value = one(hexadecimalString(10));
 
-        AlchemyHttpBuilder result = instance.usingDefaultHeader(key, value);
+        var result = instance.usingDefaultHeader(key, value);
         assertThat(result, notNullValue());
 
-        AlchemyHttp http = result.build();
+        var http = result.build();
         assertThat(http.getDefaultHeaders(), hasEntry(key, value));
     }
 
     @Test
-    public void testUsingDefaultHeaderEdgeCases()
-    {
-        String key = one(alphabeticStrings());
+    public void testUsingDefaultHeaderEdgeCases() {
+        var key = one(alphabeticStrings());
         // should be ok
         instance.usingDefaultHeader(key, "");
     }
 
-    @Repeat(100)
-    @Test
-    public void testBuild()
-    {
-        AlchemyHttp result = instance.build();
+    @RepeatedTest(100)
+    public void testBuild() {
+        var result = instance.build();
         assertThat(result, notNullValue());
-        Map<String, String> expectedHeaders = new HashMap<>(Constants.DEFAULT_HEADERS);
+        var expectedHeaders = Maps.copyOf(defaultHeaders);
         expectedHeaders.putAll(this.defaultHeaders);
         assertThat(result.getDefaultHeaders(), equalTo(expectedHeaders));
     }
 
     @Test
-    public void testBuildEdgeCases()
-    {
+    public void testBuildEdgeCases() {
         // Nothing is set
         instance = AlchemyHttpBuilder.newInstance();
         instance.build();
@@ -198,14 +176,13 @@ public class AlchemyHttpBuilderTest
     }
 
     @Test
-    public void testDefaultIncludesBasicRequestHeaders()
-    {
+    public void testDefaultIncludesBasicRequestHeaders() {
         instance = AlchemyHttpBuilder.newInstance()
-                .usingExecutor(executor);
+                                     .usingExecutor(executor);
 
-        AlchemyHttp result = instance.build();
+        var result = instance.build();
         assertThat(result, notNullValue());
-        Map<String, String> headers = result.getDefaultHeaders();
+        var headers = result.getDefaultHeaders();
         assertThat(headers, hasKey("Accept"));
         assertThat(headers, hasKey("Content-Type"));
     }

@@ -46,7 +46,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
@@ -55,7 +55,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-@Repeat(100)
+@RepeatedTest(100)
 public class HttpRequestExecutorImplTest
 {
 
@@ -215,7 +215,7 @@ public class HttpRequestExecutorImplTest
         assertThat(result, equalTo(expected));
     }
 
-    @Repeat(5)
+    @RepeatedTest(5)
     @Test
     public void testWhenConnectionFails()
     {

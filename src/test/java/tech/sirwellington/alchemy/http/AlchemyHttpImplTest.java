@@ -32,7 +32,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -40,7 +40,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-@Repeat(100)
+@RepeatedTest(100)
 public class AlchemyHttpImplTest
 {
     @Mock

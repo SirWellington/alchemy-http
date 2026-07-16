@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
  */
 @RunWith(AlchemyTestRunner.class)
 @IntegrationTest
-@Repeat(5)
+@RepeatedTest(5)
 public class DomainsDBTest
 {
 

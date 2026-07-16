@@ -31,14 +31,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-@Repeat(50)
+@RepeatedTest(50)
 public class Step2ImplTest
 {
     @Mock

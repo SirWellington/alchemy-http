@@ -14,17 +14,21 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException;
@@ -38,196 +42,157 @@ import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.p
 /**
  * @author SirWellington
  */
-final class HttpRequestExecutorImpl implements HttpRequestExecutor
-{
+final class HttpRequestExecutorImpl implements HttpRequestExecutor {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestExecutorImpl.class);
 
     private final HttpConnectionPreparer requestMapper;
 
-    HttpRequestExecutorImpl(HttpConnectionPreparer requestMapper)
-    {
+    HttpRequestExecutorImpl(HttpConnectionPreparer requestMapper) {
         this.requestMapper = requestMapper;
     }
 
     @Override
-    public HttpResponse execute(HttpRequest request, Gson gson, long timeoutMillis) throws AlchemyHttpException
-    {
+    public HttpResponse execute(HttpRequest request, Gson gson, long timeoutMillis) throws AlchemyHttpException {
         checkThat(timeoutMillis).isA(positiveLong());
 
-        HttpURLConnection http = requestMapper.map(request);
+        var http = requestMapper.map(request);
         http.setConnectTimeout((int) timeoutMillis);
         http.setReadTimeout((int) timeoutMillis);
 
-        if (request.hasBody())
-        {
+        if (request.hasBody()) {
             http.setDoOutput(true);
             setBody(http, request);
         }
 
         JsonElement json;
 
-        try
-        {
+        try {
             json = performRequestForJson(request, http, gson);
         }
-        catch (AlchemyHttpException ex)
-        {
+        catch (AlchemyHttpException ex) {
             throw ex;
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             LOG.error("Could not parse Response from Request {}", request, ex);
             throw new OperationFailedException(request, ex);
         }
 
-        try
-        {
+        try {
             return HttpResponse.Builder.newInstance()
-                    .withResponseBody(json)
-                    .withStatusCode(http.getResponseCode())
-                    .withResponseHeaders(extractHeadersFrom(http))
-                    .usingGson(gson)
-                    .build();
+                                       .withResponseBody(json)
+                                       .withStatusCode(http.getResponseCode())
+                                       .withResponseHeaders(extractHeadersFrom(http))
+                                       .usingGson(gson)
+                                       .build();
         }
-        catch (IOException ex)
-        {
+        catch (IOException ex) {
             throw new OperationFailedException(request, "Failed to read response code", ex);
         }
     }
 
-    private JsonElement performRequestForJson(HttpRequest request,
-                                              HttpURLConnection http,
-                                              Gson gson) throws AlchemyHttpException
-    {
+    private JsonElement performRequestForJson(
+        HttpRequest request,
+        HttpURLConnection http,
+        Gson gson
+    ) throws AlchemyHttpException {
         String responseString;
 
-        try
-        {
-            InputStream rawResponse = http.getInputStream();
+        try {
+            var rawResponse = http.getInputStream();
 
-            if (rawResponse == null)
-            {
+            if (rawResponse == null) {
                 return JsonNull.INSTANCE;
             }
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(rawResponse, StandardCharsets.UTF_8)))
-            {
-                StringBuilder sb = new StringBuilder();
+            try (var reader = new BufferedReader(
+                new InputStreamReader(rawResponse, StandardCharsets.UTF_8))) {
+                var sb = new StringBuilder();
                 String line;
 
-                while ((line = reader.readLine()) != null)
-                {
+                while ((line = reader.readLine()) != null) {
                     sb.append(line);
                 }
 
                 responseString = sb.toString();
             }
         }
-        catch (SocketTimeoutException ex)
-        {
+        catch (SocketTimeoutException ex) {
             LOG.error("Failed to make request [{}]", request, ex);
             throw new AlchemyConnectionException(request, "HTTP request to [" + request.url() + "] timed out", ex);
         }
-        catch (SocketException ex)
-        {
+        catch (SocketException | UnknownHostException ex) {
             LOG.error("Failed to make request [{}]", request, ex);
             throw new AlchemyConnectionException(request, "Could not connect to server @[" + request.url() + "]", ex);
         }
-        catch (UnknownHostException ex)
-        {
-            LOG.error("Failed to make request [{}]", request, ex);
-            throw new AlchemyConnectionException(request, "Could not connect to server @[" + request.url() + "]", ex);
-        }
-        catch (IOException ex)
-        {
+        catch (IOException ex) {
             LOG.error("Failed to make request [{}]", request, ex);
 
-            try
-            {
-                InputStream errorStream = http.getErrorStream();
+            try {
+                var errorStream = http.getErrorStream();
 
-                if (errorStream != null)
-                {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8)))
-                    {
+                if (errorStream != null) {
+                    try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(errorStream, StandardCharsets.UTF_8))) {
                         StringBuilder sb = new StringBuilder();
                         String line;
 
-                        while ((line = reader.readLine()) != null)
-                        {
+                        while ((line = reader.readLine()) != null) {
                             sb.append(line);
                         }
 
                         responseString = sb.toString();
                     }
                 }
-                else
-                {
+                else {
                     throw new OperationFailedException(request, "Request failed [" + request + "] |", ex);
                 }
             }
-            catch (AlchemyHttpException ahe)
-            {
-                throw ahe;
-            }
-            catch (IOException errorEx)
-            {
+            catch (IOException errorEx) {
                 throw new OperationFailedException(request, "Request failed [" + request + "] |", ex);
             }
         }
 
-        String contentType = http.getContentType();
+        var contentType = http.getContentType();
 
-        if (contentType == null)
-        {
+        if (contentType == null) {
             contentType = "";
         }
 
-        if (Strings.isNullOrEmpty(responseString))
-        {
+        if (Strings.isNullOrEmpty(responseString)) {
             return JsonNull.INSTANCE;
         }
 
-        try
-        {
-            if (contentType.contains(ContentTypes.APPLICATION_JSON))
-            {
+        try {
+            if (contentType.contains(ContentTypes.APPLICATION_JSON)) {
                 return gson.fromJson(responseString, JsonElement.class);
             }
-            else
-            {
+            else {
                 return gson.toJsonTree(responseString);
             }
         }
-        catch (JsonSyntaxException | JsonParseException ex)
-        {
+        catch (JsonParseException ex) {
             throw new JsonException(request, ex);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             throw new OperationFailedException(request, ex);
         }
     }
 
-    private Map<String, String> extractHeadersFrom(HttpURLConnection http)
-    {
-        Map<String, List<String>> headerFields = http.getHeaderFields();
+    private Map<String, String> extractHeadersFrom(HttpURLConnection http) {
+        var headerFields = http.getHeaderFields();
 
-        if (headerFields == null)
-        {
+        if (headerFields == null) {
             return Map.of();
         }
 
         Map<String, String> result = new HashMap<>();
 
-        for (Map.Entry<String, List<String>> entry : headerFields.entrySet())
-        {
-            String key = entry.getKey();
-            List<String> values = entry.getValue();
+        for (var entry : headerFields.entrySet()) {
+            var key = entry.getKey();
+            var values = entry.getValue();
 
-            if (key != null && values != null)
-            {
+            if (key != null && values != null) {
                 result.put(key, String.join(", ", values));
             }
         }
@@ -235,44 +200,33 @@ final class HttpRequestExecutorImpl implements HttpRequestExecutor
         return result;
     }
 
-    private static void setBody(HttpURLConnection http, HttpRequest request) throws AlchemyHttpException
-    {
-        JsonElement body = request.body();
+    private static void setBody(HttpURLConnection http, HttpRequest request) throws AlchemyHttpException {
+        var body = request.body();
 
-        if (body == null)
-        {
+        if (body == null) {
             return;
         }
 
-        String jsonString = body.toString();
+        var jsonString = body.toString();
 
-        try (OutputStream outputStream = http.getOutputStream())
-        {
-            byte[] bytes = jsonString.getBytes(StandardCharsets.UTF_8);
+        try (var outputStream = http.getOutputStream()) {
+            var bytes = jsonString.getBytes(StandardCharsets.UTF_8);
             outputStream.write(bytes);
         }
-        catch (SocketException ex)
-        {
+        catch (SocketException | UnknownHostException ex) {
             throw new AlchemyConnectionException(request, "Could not connect to server @[" + request.url() + "]", ex);
         }
-        catch (UnknownHostException ex)
-        {
-            throw new AlchemyConnectionException(request, "Could not connect to server @[" + request.url() + "]", ex);
-        }
-        catch (IOException ex)
-        {
+        catch (IOException ex) {
             LOG.error("Failed to set json request body [{}]", jsonString, ex);
             throw new OperationFailedException(request, "Failed to set json request body [" + jsonString + "]", ex);
         }
     }
 
-    static HttpRequestExecutorImpl create()
-    {
+    static HttpRequestExecutorImpl create() {
         return new HttpRequestExecutorImpl(HttpConnectionPreparer.create());
     }
 
-    static HttpRequestExecutorImpl create(HttpConnectionPreparer mapper)
-    {
+    static HttpRequestExecutorImpl create(HttpConnectionPreparer mapper) {
         return new HttpRequestExecutorImpl(mapper);
     }
 }

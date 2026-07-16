@@ -30,7 +30,7 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.PeopleGenerators.phoneNumberStrings;
 
 
@@ -46,7 +46,7 @@ public class NumValidateTest
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 
     @Ignore
-    @Repeat(5)
+    @RepeatedTest(5)
     @Test
     public void testPhone()
     {

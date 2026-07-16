@@ -73,7 +73,7 @@ public class AlchemyHttpTest
         instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);
     }
 
-    @Repeat(100)
+    @RepeatedTest(100)
     @Test
     public void testUsingDefaultHeader()
     {
