@@ -17,32 +17,28 @@ package tech.sirwellington.alchemy.http;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-@RepeatedTest(100)
-public class AlchemyHttpImplTest
-{
+@AlchemyTest
+public class AlchemyHttpImplTest {
     @Mock
     private AlchemyHttpStateMachine stateMachine;
 
@@ -53,31 +49,28 @@ public class AlchemyHttpImplTest
 
     private AlchemyHttp instance;
 
-    @Before
-    public void setUp()
-    {
+    @BeforeEach
+    public void setUp() {
         defaultHeaders = CollectionGenerators.mapOf(alphabeticStrings(), alphabeticStrings(), 20);
         instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);
         verifyNoInteractions(stateMachine);
     }
 
     @Test
-    public void testDefaultHeadersArePassedToStateMachine()
-    {
+    public void testDefaultHeadersArePassedToStateMachine() {
         instance.go();
 
         verify(stateMachine).begin(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
         assertThat(requestMade.requestHeaders(), equalTo(defaultHeaders));
     }
 
     @Test
-    public void testUsingDefaultHeader()
-    {
-        String key = one(alphabeticStrings());
-        String value = one(alphabeticStrings());
+    public void testUsingDefaultHeader() {
+        var key = one(alphabeticStrings());
+        var value = one(alphabeticStrings());
 
         AlchemyHttp result = instance.usingDefaultHeader(key, value);
         assertThat(result, notNullValue());
@@ -86,40 +79,37 @@ public class AlchemyHttpImplTest
         result.go();
         verify(stateMachine).begin(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
 
-        Map<String, String> expectedHeaders = new HashMap<>(defaultHeaders);
+        var expectedHeaders = new HashMap<>(defaultHeaders);
         expectedHeaders.put(key, value);
         assertThat(requestMade.requestHeaders(), equalTo(expectedHeaders));
     }
 
     @Test
-    public void testUsingDefaultHeaderEdgeCase()
-    {
+    public void testUsingDefaultHeaderEdgeCase() {
         String key = one(alphabeticStrings());
         String value = one(alphabeticStrings());
 
         assertThrows(() -> instance.usingDefaultHeader("", ""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() -> instance.usingDefaultHeader("", value))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         // Key alone is OK
         instance.usingDefaultHeader(key, "");
     }
 
     @Test
-    public void testGo()
-    {
+    public void testGo() {
         instance.go();
         verify(stateMachine).begin(any());
     }
 
     @Test
-    public void testGetDefaultHeaders()
-    {
+    public void testGetDefaultHeaders() {
         Map<String, String> result = instance.getDefaultHeaders();
         assertThat(result, equalTo(defaultHeaders));
 
@@ -127,8 +117,7 @@ public class AlchemyHttpImplTest
     }
 
     @Test
-    public void testToString()
-    {
+    public void testToString() {
         String toString = instance.toString();
         assertThat(toString, not(isEmptyOrNullString()));
     }
