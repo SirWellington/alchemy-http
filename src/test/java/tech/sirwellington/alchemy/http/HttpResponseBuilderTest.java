@@ -14,6 +14,8 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import java.util.Collections;
+
 import com.google.gson.JsonElement;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +23,6 @@ import org.junit.runner.RunWith;
 import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
-
-import java.util.Collections;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;

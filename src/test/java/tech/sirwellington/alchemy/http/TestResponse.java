@@ -14,16 +14,12 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import java.lang.reflect.Array;
+import java.util.*;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;

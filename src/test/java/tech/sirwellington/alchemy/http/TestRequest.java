@@ -14,12 +14,12 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;

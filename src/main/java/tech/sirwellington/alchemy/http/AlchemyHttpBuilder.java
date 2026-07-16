@@ -14,16 +14,17 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import com.google.gson.Gson;
 import tech.sirwellington.alchemy.arguments.Arguments;
 
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveInteger;
-import static tech.sirwellington.alchemy.arguments.assertions.BasicAssertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 
 public class AlchemyHttpBuilder

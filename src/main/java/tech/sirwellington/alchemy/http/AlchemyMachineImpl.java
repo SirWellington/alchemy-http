@@ -14,18 +14,16 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import java.util.concurrent.Executor;
+
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
-import java.util.concurrent.Executor;
-
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveLong;
-import static tech.sirwellington.alchemy.http.HttpAssertions.okResponse;
-import static tech.sirwellington.alchemy.http.HttpAssertions.ready;
-import static tech.sirwellington.alchemy.http.HttpAssertions.validResponseClass;
+import static tech.sirwellington.alchemy.http.HttpAssertions.*;
 
 final class AlchemyMachineImpl implements AlchemyHttpStateMachine
 {

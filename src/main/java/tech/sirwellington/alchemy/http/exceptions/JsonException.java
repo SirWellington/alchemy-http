@@ -14,7 +14,9 @@
  */
 package tech.sirwellington.alchemy.http.exceptions;
 
-import tech.sirwellington.alchemy.http.*;
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps;
+import tech.sirwellington.alchemy.http.HttpRequest;
+import tech.sirwellington.alchemy.http.HttpResponse;
 
 /**
  * Thrown when an error occurs trying to parse JSON, or unwrap JSON into a

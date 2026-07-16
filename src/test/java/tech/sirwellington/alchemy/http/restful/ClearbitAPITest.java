@@ -15,6 +15,10 @@
 
 package tech.sirwellington.alchemy.http.restful;
 
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -23,12 +27,9 @@ import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
-import javax.swing.ImageIcon;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.validURL;
 

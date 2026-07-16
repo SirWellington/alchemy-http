@@ -14,8 +14,9 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
 import java.util.concurrent.Executor;
+
+import com.google.gson.Gson;
 import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 

@@ -17,11 +17,12 @@ package tech.sirwellington.alchemy.http;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashSet;
+
 import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.validURL;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 
 public interface AlchemyRequestSteps
 {

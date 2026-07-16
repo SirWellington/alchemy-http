@@ -14,6 +14,11 @@
  */
 package tech.sirwellington.alchemy.http;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Map;
+
 import com.google.gson.JsonElement;
 import io.mikael.urlbuilder.UrlBuilder;
 import org.junit.Before;
@@ -21,16 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateEnum;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateURL;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
-
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Map;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;

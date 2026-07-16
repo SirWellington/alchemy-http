@@ -14,15 +14,14 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import tech.sirwellington.alchemy.arguments.Arguments;
-import tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions;
-
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import tech.sirwellington.alchemy.arguments.Arguments;
 
 import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.nonEmptyMap;
 

@@ -14,9 +14,10 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import com.google.gson.Gson;
 import java.util.Map;
 import java.util.concurrent.Executor;
+
+import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
