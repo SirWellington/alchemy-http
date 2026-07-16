@@ -18,8 +18,8 @@ jobs:
       - name: Set Up Java Environment
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '11'
+          distribution: temurin
+          java-version: 25
           server-id: central
           server-username: CENTRAL_USERNAME
           server-password: CENTRAL_TOKEN
