@@ -77,7 +77,7 @@ public class AlchemyHttpTest
     @Test
     public void testUsingDefaultHeader()
     {
-        AlchemyHttp result = instance.usingDefaultHeader(headerKey, headerValue);
+        var result = instance.usingDefaultHeader(headerKey, headerValue);
         assertThat(result, notNullValue());
         assertTrue(result.getDefaultHeaders().containsKey(headerKey));
         assertEquals(result.getDefaultHeaders().get(headerKey), headerValue);
@@ -93,7 +93,7 @@ public class AlchemyHttpTest
     @Test
     public void testGetDefaultHeaders()
     {
-        Map<String, String> result = instance.getDefaultHeaders();
+        var result = instance.getDefaultHeaders();
         assertThat(result, equalTo(defaultHeaders));
     }
 
@@ -102,7 +102,7 @@ public class AlchemyHttpTest
     {
         when(stateMachine.begin(any())).thenReturn(step1);
 
-        AlchemyRequestSteps.Step1 step = instance.go();
+        var step = instance.go();
 
         assertThat(step, equalTo(step1));
 
@@ -119,14 +119,14 @@ public class AlchemyHttpTest
     @Test
     public void testNewDefaultInstance()
     {
-        AlchemyHttp result = AlchemyHttp.newDefaultInstance();
+        var result = AlchemyHttp.newDefaultInstance();
         assertThat(result, notNullValue());
     }
 
     @Test
     public void testNewInstance()
     {
-        AlchemyHttp result = AlchemyHttp.newInstance(executor, defaultHeaders);
+        var result = AlchemyHttp.newInstance(executor, defaultHeaders);
         assertThat(result, notNullValue());
 
         // Edge cases
@@ -137,17 +137,17 @@ public class AlchemyHttpTest
     @Test
     public void testNewBuilder()
     {
-        AlchemyHttpBuilder result = AlchemyHttp.newBuilder();
+        var result = AlchemyHttp.newBuilder();
         assertThat(result, notNullValue());
 
-        AlchemyHttp client = result
+        var client = result
                 .usingExecutor(executor)
                 .usingDefaultHeaders(defaultHeaders)
                 .build();
 
         assertThat(client, notNullValue());
 
-        for (Map.Entry<String, String> entry : defaultHeaders.entrySet())
+        for (var entry : defaultHeaders.entrySet())
         {
             assertTrue(entry.getValue().equals(client.getDefaultHeaders().get(entry.getKey())));
         }

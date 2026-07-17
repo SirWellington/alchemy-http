@@ -42,13 +42,13 @@ final class Step3Impl implements AlchemyRequestSteps.Step3
                 .usingMessage("missing key")
                 .isA(nonEmptyString());
 
-        Map<String, String> newHeaders = new HashMap<>(request.requestHeaders());
+        var newHeaders = new HashMap<>(request.requestHeaders());
         newHeaders.put(key, value);
 
         this.request = HttpRequest.Builder
-                                  .from(request)
-                                  .usingRequestHeaders(newHeaders)
-                                  .build();
+                                   .from(request)
+                                   .usingRequestHeaders(newHeaders)
+                                   .build();
 
         return this;
     }
@@ -64,13 +64,13 @@ final class Step3Impl implements AlchemyRequestSteps.Step3
                 .usingMessage("missing name or value")
                 .isA(nonEmptyString());
 
-        Map<String, String> queryParams = new HashMap<>(request.queryParams());
+        var queryParams = new HashMap<>(request.queryParams());
         queryParams.put(name, value);
 
         this.request = HttpRequest.Builder
-                                  .from(request)
-                                  .usingQueryParams(queryParams)
-                                  .build();
+                                   .from(request)
+                                   .usingQueryParams(queryParams)
+                                   .build();
 
         return this;
     }
@@ -89,10 +89,10 @@ final class Step3Impl implements AlchemyRequestSteps.Step3
     @Override
     public HttpResponse at(URL url) throws AlchemyHttpException
     {
-        HttpRequest requestCopy = HttpRequest.Builder
-                                              .from(request)
-                                              .usingUrl(url)
-                                              .build();
+        var requestCopy = HttpRequest.Builder
+                                               .from(request)
+                                               .usingUrl(url)
+                                               .build();
 
         return stateMachine.executeSync(requestCopy);
     }

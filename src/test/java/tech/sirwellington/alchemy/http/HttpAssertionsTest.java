@@ -61,17 +61,17 @@ public class HttpAssertionsTest
     @Test
     public void testValidHttpStatusCode()
     {
-        AlchemyAssertion<Integer> instance = HttpAssertions.validHttpStatusCode();
+        var instance = HttpAssertions.validHttpStatusCode();
         assertThat(instance, notNullValue());
 
-        int statusCode = one(integers(200, 500));
+        var statusCode = one(integers(200, 500));
         instance.check(statusCode);
 
-        int badStatusCode = one(integers(-100, 100));
+        var badStatusCode = one(integers(-100, 100));
         assertThrows(() -> instance.check(badStatusCode))
                 .isInstanceOf(FailedAssertionException.class);
 
-        int anotherBadCode = one(integers(600, Integer.MAX_VALUE));
+        var anotherBadCode = one(integers(600, Integer.MAX_VALUE));
         assertThrows(() -> instance.check(anotherBadCode))
                 .isInstanceOf(FailedAssertionException.class);
     }
@@ -80,19 +80,19 @@ public class HttpAssertionsTest
     public void testValidResponseClass()
     {
         // Check Object
-        AlchemyAssertion<Class<Object>> instanceOne = HttpAssertions.validResponseClass();
+        var instanceOne = HttpAssertions.validResponseClass();
         assertThat(instanceOne, notNullValue());
         instanceOne.check(Object.class);
 
         // Check String
-        AlchemyAssertion<Class<String>> instanceTwo = HttpAssertions.validResponseClass();
+        var instanceTwo = HttpAssertions.validResponseClass();
         instanceTwo.check(String.class);
 
         // Edge Cases
         assertThrows(() -> instanceOne.check(null))
                 .isInstanceOf(FailedAssertionException.class);
 
-        AlchemyAssertion<Class<Void>> instanceThree = HttpAssertions.validResponseClass();
+        var instanceThree = HttpAssertions.validResponseClass();
         assertThrows(() -> instanceThree.check(Void.class))
                 .isInstanceOf(FailedAssertionException.class);
     }
@@ -100,7 +100,7 @@ public class HttpAssertionsTest
     @Test
     public void testRequestReady() throws MalformedURLException
     {
-        AlchemyAssertion<HttpRequest> instance = HttpAssertions.ready();
+        var instance = HttpAssertions.ready();
 
         URL url = one(Generators.validUrls());
 
@@ -115,7 +115,7 @@ public class HttpAssertionsTest
     @Test
     public void testRequestReadyEdgeCases() throws MalformedURLException
     {
-        AlchemyAssertion<HttpRequest> instance = HttpAssertions.ready();
+        var instance = HttpAssertions.ready();
 
         // Edge cases
         assertThrows(() -> instance.check(null))
@@ -141,7 +141,7 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
 
         // Bad URL
-        URL badUrl = new URL("file://" + one(alphabeticStrings()));
+        var badUrl = new URL("file://" + one(alphabeticStrings()));
         when(request.url()).thenReturn(badUrl);
 
         assertThrows(() -> instance.check(request))
@@ -152,10 +152,10 @@ public class HttpAssertionsTest
     @Test
     public void testValidContentType()
     {
-        AlchemyAssertion<String> instance = HttpAssertions.validContentType();
+        var instance = HttpAssertions.validContentType();
         assertThat(instance, notNullValue());
 
-        String contentType = one(stringsFromFixedList(ContentTypes.APPLICATION_JSON, ContentTypes.PLAIN_TEXT));
+        var contentType = one(stringsFromFixedList(ContentTypes.APPLICATION_JSON, ContentTypes.PLAIN_TEXT));
 
         instance.check(contentType);
         instance.check(contentType + one(alphabeticStrings()));
@@ -164,7 +164,7 @@ public class HttpAssertionsTest
     @Test
     public void testValidContentTypeEdgeCases()
     {
-        AlchemyAssertion<String> instance = HttpAssertions.validContentType();
+        var instance = HttpAssertions.validContentType();
 
         // Edge cases
         assertThrows(() -> instance.check(null))
@@ -184,7 +184,7 @@ public class HttpAssertionsTest
     @Test
     public void testJsonArray()
     {
-        AlchemyAssertion<com.google.gson.JsonElement> instance = HttpAssertions.jsonArray();
+        var instance = HttpAssertions.jsonArray();
         assertThat(instance, notNullValue());
 
         com.google.gson.JsonArray valid = one(Generators.jsonArrays());
@@ -202,7 +202,7 @@ public class HttpAssertionsTest
     @Test
     public void testOkResponse()
     {
-        AlchemyAssertion<HttpResponse> instance = HttpAssertions.okResponse();
+        var instance = HttpAssertions.okResponse();
         assertThat(instance, notNullValue());
 
         // Check with null argument
@@ -215,7 +215,7 @@ public class HttpAssertionsTest
         instance.check(okResponse);
 
         // Response is NOT OK
-        HttpResponse notOkResponse = mock(HttpResponse.class);
+        var notOkResponse = mock(HttpResponse.class);
         when(notOkResponse.isOk()).thenReturn(false);
         assertThrows(() -> instance.check(notOkResponse))
                 .isInstanceOf(FailedAssertionException.class);

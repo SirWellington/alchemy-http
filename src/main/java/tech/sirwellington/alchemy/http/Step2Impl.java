@@ -43,10 +43,10 @@ final class Step2Impl implements AlchemyRequestSteps.Step2
     @Override
     public AlchemyRequestSteps.Step3 noBody()
     {
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingBody(JsonNull.INSTANCE)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingBody(JsonNull.INSTANCE)
+                                             .build();
 
         return stateMachine.jumpToStep3(newRequest);
     }
@@ -68,10 +68,10 @@ final class Step2Impl implements AlchemyRequestSteps.Step2
             throw new JsonException("Failed to parse JSON Body: " + jsonString, ex);
         }
 
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingBody(jsonBody)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingBody(jsonBody)
+                                             .build();
 
         return stateMachine.jumpToStep3(newRequest);
     }
@@ -90,10 +90,10 @@ final class Step2Impl implements AlchemyRequestSteps.Step2
             throw new AlchemyHttpException("Could not convert to JSON", ex);
         }
 
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingBody(jsonBody)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingBody(jsonBody)
+                                             .build();
 
         return stateMachine.jumpToStep3(newRequest);
     }

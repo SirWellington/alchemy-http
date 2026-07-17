@@ -59,15 +59,15 @@ public class HttpResponseBuilderTest
     @Test
     public void testWithStatusCode()
     {
-        int goodStatusCode = one(integers(200, 500));
-        HttpResponse.Builder result = instance.withStatusCode(goodStatusCode);
+        var goodStatusCode = one(integers(200, 500));
+        var result = instance.withStatusCode(goodStatusCode);
         assertThat(result, notNullValue());
 
-        int badStatusCode = one(integers(600, 10000));
+        var badStatusCode = one(integers(600, 10000));
         assertThrows(() -> instance.withStatusCode(badStatusCode))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        int negativeStatusCode = one(negativeIntegers());
+        var negativeStatusCode = one(negativeIntegers());
         assertThrows(() -> instance.withStatusCode(negativeStatusCode))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -75,23 +75,23 @@ public class HttpResponseBuilderTest
     @Test
     public void testWithStatusCodeEnum()
     {
-        HttpStatusCode status = HttpStatusCode.any();
+        var status = HttpStatusCode.any();
 
-        HttpResponse result = instance.withStatusCode(status).build();
+        var result = instance.withStatusCode(status).build();
         assertThat(result.status(), equalTo(status));
     }
 
     @Test
     public void testUsingGson()
     {
-        HttpResponse.Builder result = instance.usingGson(gson);
+        var result = instance.usingGson(gson);
         assertThat(result, notNullValue());
     }
 
     @Test
     public void testWithResponseBody()
     {
-        HttpResponse.Builder result = instance.withResponseBody(responseBody);
+        var result = instance.withResponseBody(responseBody);
         assertThat(result, notNullValue());
 
         instance.withResponseBody(one(Generators.jsonNull()));
@@ -100,7 +100,7 @@ public class HttpResponseBuilderTest
     @Test
     public void testWithResponseHeaders()
     {
-        HttpResponse.Builder result = instance.withResponseHeaders(response.responseHeaders);
+        var result = instance.withResponseHeaders(response.responseHeaders);
         assertThat(result, notNullValue());
 
         // Empty Map is ok
@@ -111,7 +111,7 @@ public class HttpResponseBuilderTest
     @Test
     public void testBuild()
     {
-        HttpResponse result = instance
+        var result = instance
                 .withResponseBody(responseBody)
                 .withResponseHeaders(response.responseHeaders)
                 .withStatusCode(response.statusCode)
@@ -137,7 +137,7 @@ public class HttpResponseBuilderTest
     {
         instance.copyFrom(response);
 
-        HttpResponse result = instance.build();
+        var result = instance.build();
         assertThat(result, equalTo(response));
         assertThat(response.equals(result), equalTo(true));
     }
@@ -155,9 +155,9 @@ public class HttpResponseBuilderTest
     @Test
     public void testMergeFromEdgeCases()
     {
-        java.util.Map<String, String> headers = response.responseHeaders;
+        var headers = response.responseHeaders;
         response.responseHeaders = Maps.emptyMap();
-        HttpResponse result = instance.copyFrom(response).build();
+        var result = instance.copyFrom(response).build();
         assertThat(result, notNullValue());
 
         response.responseHeaders = headers;

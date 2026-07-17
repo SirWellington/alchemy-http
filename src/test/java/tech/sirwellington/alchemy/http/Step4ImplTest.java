@@ -75,7 +75,7 @@ public class Step4ImplTest
 
         verify(stateMachine).executeSync(requestCaptor.capture(), eq(responseClass));
 
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
         assertThat(requestMade, not(sameInstance(request)));
         assertThat(requestMade.url(), equalTo(url));

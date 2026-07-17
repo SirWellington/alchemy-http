@@ -100,7 +100,7 @@ public class AlchemyRequestTest
         // Test the built-in download()
         byte[] data = BinaryGenerators.binary(100000).get();
         File tempFile = TestFile.writeToTempFile(data);
-        byte[] result = instance.download(tempFile.toURI().toURL());
+        var result = instance.download(tempFile.toURI().toURL());
         assertThat(result, is(data));
     }
 
@@ -160,15 +160,15 @@ public class AlchemyRequestTest
                 .isInstanceOf(IllegalArgumentException.class);
 
         // Test the built-in accept(String...) function
-        AlchemyGenerator<String> types = alphabeticStrings();
-        String first = types.get();
-        String second = types.get();
-        String third = types.get();
+        var types = alphabeticStrings();
+        var first = types.get();
+        var second = types.get();
+        var third = types.get();
 
         instance.accept(first, second, third);
 
         assertThat(instance.savedHeaders, hasKey("Accept"));
-        String expected = first + "," + second + "," + third;
+        var expected = first + "," + second + "," + third;
         assertThat(instance.savedHeaders.get("Accept"), is(expected));
 
         // Edge cases
@@ -243,7 +243,7 @@ public class AlchemyRequestTest
         OnSuccess<String> instance = OnSuccess.NO_OP;
         assertThat(instance, notNullValue());
 
-        String response = one(alphabeticStrings());
+        var response = one(alphabeticStrings());
         instance.processResponse(response);
     }
 
@@ -251,10 +251,10 @@ public class AlchemyRequestTest
     @SuppressWarnings("unchecked")
     public void testOnSuccessCreate()
     {
-        String string = StringGenerators.hexadecimalString(30).get();
+        var string = StringGenerators.hexadecimalString(30).get();
         OnSuccess<String> mockOnSuccess = mock(OnSuccess.class);
 
-        OnSuccess<String> result = OnSuccess.create(r -> mockOnSuccess.processResponse(string));
+        var result = OnSuccess.create(r -> mockOnSuccess.processResponse(string));
 
         result.processResponse(string);
         verify(mockOnSuccess).processResponse(string);
@@ -273,9 +273,9 @@ public class AlchemyRequestTest
     @Test
     public void testOnFailureCreate()
     {
-        OnFailure mockOnFailure = mock(OnFailure.class);
+        var mockOnFailure = mock(OnFailure.class);
         AlchemyHttpException ex = new AlchemyHttpException(Generators.validUrls().get().toString());
-        OnFailure result = OnFailure.create(e -> mockOnFailure.handleError(ex));
+        var result = OnFailure.create(e -> mockOnFailure.handleError(ex));
 
         result.handleError(ex);
         verify(mockOnFailure).handleError(ex);

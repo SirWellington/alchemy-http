@@ -53,7 +53,7 @@ public interface HttpRequest
 
     default boolean hasBody()
     {
-        JsonElement body = body();
+        var body = body();
         return body != null && !(body instanceof JsonNull);
     }
 
@@ -64,7 +64,7 @@ public interface HttpRequest
 
     default boolean hasQueryParams()
     {
-        Map<String, String> queryParams = queryParams();
+        var queryParams = queryParams();
         return queryParams != null && !queryParams.isEmpty();
     }
 
@@ -193,9 +193,9 @@ public interface HttpRequest
          */
         public HttpRequest build() throws IllegalArgumentException
         {
-            URL url = this.url;
-            JsonElement body = this.body;
-            RequestMethod method = this.requestMethod != null ? this.requestMethod : Constants.DEFAULT_REQUEST_METHOD;
+            var url = this.url;
+            var body = this.body;
+            var method = this.requestMethod != null ? this.requestMethod : Constants.DEFAULT_REQUEST_METHOD;
 
             return new ActualRequestObject(
                     Map.copyOf(this.requestHeaders),

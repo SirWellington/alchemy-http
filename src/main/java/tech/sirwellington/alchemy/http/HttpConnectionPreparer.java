@@ -53,13 +53,13 @@ interface HttpConnectionPreparer
             return url;
         }
 
-        UrlBuilder uriBuilder = UrlBuilder.fromUrl(url);
+        var uriBuilder = UrlBuilder.fromUrl(url);
 
         Map<String, String> queryParams = request.queryParams();
 
         if (queryParams != null)
         {
-            for (Map.Entry<String, String> entry : queryParams.entrySet())
+            for (var entry : queryParams.entrySet())
             {
                 uriBuilder = uriBuilder.addParameter(entry.getKey(), entry.getValue());
             }
@@ -105,11 +105,11 @@ interface HttpConnectionPreparer
                         http.setDoOutput(true);
                     }
 
-                    Map<String, String> headers = request.requestHeaders();
+                    var headers = request.requestHeaders();
 
                     if (headers != null)
                     {
-                        for (Map.Entry<String, String> entry : headers.entrySet())
+                        for (var entry : headers.entrySet())
                         {
                             http.setRequestProperty(entry.getKey(), entry.getValue());
                         }

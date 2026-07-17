@@ -118,8 +118,8 @@ class TestResponse implements HttpResponse
     {
         checkThat(this.responseBody).isA(jsonArray());
 
-        Object emptyArray = Array.newInstance(classOfT, 0);
-        Class<?> arrayType = emptyArray.getClass();
+        var emptyArray = Array.newInstance(classOfT, 0);
+        var arrayType = emptyArray.getClass();
 
         T[] array = (T[]) gson.fromJson(responseBody, arrayType);
         return Arrays.asList(array);

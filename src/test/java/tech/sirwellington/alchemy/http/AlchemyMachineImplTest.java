@@ -102,28 +102,28 @@ public class AlchemyMachineImplTest
     @Test
     public void testBegin()
     {
-        AlchemyRequestSteps.Step1 step1 = instance.begin(mockRequest);
+        var step1 = instance.begin(mockRequest);
         assertThat(step1, notNullValue());
     }
 
     @Test
     public void testJumpToStep2()
     {
-        AlchemyRequestSteps.Step2 step2 = instance.jumpToStep2(mockRequest);
+        var step2 = instance.jumpToStep2(mockRequest);
         assertThat(step2, notNullValue());
     }
 
     @Test
     public void testJumpToStep3()
     {
-        AlchemyRequestSteps.Step3 step3 = instance.jumpToStep3(mockRequest);
+        var step3 = instance.jumpToStep3(mockRequest);
         assertThat(step3, notNullValue());
     }
 
     @Test
     public void testJumpToStep4()
     {
-        AlchemyRequestSteps.Step4<TestPojo> step4 = instance.jumpToStep4(mockRequest, responseClass);
+        var step4 = instance.jumpToStep4(mockRequest, responseClass);
         assertThat(step4, notNullValue());
 
         assertThrows(() -> instance.jumpToStep4(mockRequest, Void.class))
@@ -133,7 +133,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testJumpToStep5()
     {
-        AlchemyRequestSteps.Step5<TestPojo> step5 = instance.jumpToStep5(mockRequest, responseClass, onSuccess);
+        var step5 = instance.jumpToStep5(mockRequest, responseClass, onSuccess);
         assertThat(step5, notNullValue());
 
         // Edge cases
@@ -146,7 +146,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testJumpToStep6()
     {
-        AlchemyRequestSteps.Step6<TestPojo> step6 = instance.jumpToStep6(mockRequest, responseClass, onSuccess, onFailure);
+        var step6 = instance.jumpToStep6(mockRequest, responseClass, onSuccess, onFailure);
         assertThat(step6, notNullValue());
 
         // Edge cases
@@ -160,7 +160,7 @@ public class AlchemyMachineImplTest
     @Test
     public void testExecuteSync()
     {
-        HttpResponse result = instance.executeSync(request);
+        var result = instance.executeSync(request);
         assertThat(result, equalTo(response));
     }
 
@@ -170,7 +170,7 @@ public class AlchemyMachineImplTest
     {
         when(response.bodyAs(responseClass)).thenReturn(pojo);
 
-        TestPojo result = instance.executeSync(request, responseClass);
+        var result = instance.executeSync(request, responseClass);
         assertThat(result, equalTo(pojo));
     }
 
@@ -248,7 +248,7 @@ public class AlchemyMachineImplTest
 
         verify(executor).execute(taskCaptor.capture());
 
-        Runnable task = taskCaptor.getValue();
+        var task = taskCaptor.getValue();
         assertThat(task, notNullValue());
 
         task.run();
@@ -267,7 +267,7 @@ public class AlchemyMachineImplTest
 
         verify(executor).execute(taskCaptor.capture());
 
-        Runnable task = taskCaptor.getValue();
+        var task = taskCaptor.getValue();
         assertThat(task, notNullValue());
 
         task.run();
@@ -284,7 +284,7 @@ public class AlchemyMachineImplTest
 
         verify(executor).execute(taskCaptor.capture());
 
-        Runnable task = taskCaptor.getValue();
+        var task = taskCaptor.getValue();
         assertThat(task, notNullValue());
 
         task.run();
@@ -302,7 +302,7 @@ public class AlchemyMachineImplTest
 
         verify(executor).execute(taskCaptor.capture());
 
-        Runnable task = taskCaptor.getValue();
+        var task = taskCaptor.getValue();
         assertThat(task, notNullValue());
         task.run();
         verify(onFailure).handleError(any());
@@ -312,7 +312,7 @@ public class AlchemyMachineImplTest
     public void testExecuteAsyncWithBadArgs()
     {
         @SuppressWarnings("unchecked")
-        OnSuccess<Void> mockOnSuccess = mock(OnSuccess.class);
+        var mockOnSuccess = mock(OnSuccess.class);
 
         assertThrows(() -> instance.executeAsync(mockRequest, Void.class, mockOnSuccess, onFailure))
                 .isInstanceOf(IllegalArgumentException.class);

@@ -101,7 +101,7 @@ public enum HttpStatusCode
 
     public static HttpStatusCode anyExcept(HttpStatusCode code)
     {
-        List<HttpStatusCode> filtered = all.stream()
+        var filtered = all.stream()
             .filter(status -> status != code)
             .collect(Collectors.toList());
 

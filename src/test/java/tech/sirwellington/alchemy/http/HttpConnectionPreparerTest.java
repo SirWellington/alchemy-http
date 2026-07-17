@@ -90,10 +90,10 @@ public class HttpConnectionPreparerTest
         assertThat(result.getDoInput(), equalTo(true));
         assertThat(result.getDoOutput(), equalTo(true));
 
-        for (Map.Entry<String, java.util.List<String>> entry : result.getRequestProperties().entrySet())
+        for (var entry : result.getRequestProperties().entrySet())
         {
-            String key = entry.getKey();
-            String value = String.join(", ", entry.getValue());
+            var key = entry.getKey();
+            var value = String.join(", ", entry.getValue());
 
             assertThat(queryParams.containsKey(key), equalTo(true));
             assertThat(queryParams.get(key), equalTo(value));
@@ -135,7 +135,7 @@ public class HttpConnectionPreparerTest
     {
         UrlBuilder builder = UrlBuilder.fromUrl(url);
 
-        for (Map.Entry<String, String> entry : queryParams.entrySet())
+        for (var entry : queryParams.entrySet())
         {
             builder = builder.addParameter(entry.getKey(), entry.getValue());
         }

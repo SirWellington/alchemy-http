@@ -52,7 +52,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     @Override
     public AlchemyRequestSteps.Step1 begin(HttpRequest initialRequest)
     {
-        HttpRequest copy = HttpRequest.copyOf(initialRequest);
+        var copy = HttpRequest.copyOf(initialRequest);
         LOG.debug("Beginning HTTP request {}", copy);
         return new Step1Impl(this, copy);
     }
@@ -60,14 +60,14 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     @Override
     public AlchemyRequestSteps.Step2 jumpToStep2(HttpRequest request)
     {
-        HttpRequest copy = HttpRequest.copyOf(request);
+        var copy = HttpRequest.copyOf(request);
         return new Step2Impl(copy, this, gson);
     }
 
     @Override
     public AlchemyRequestSteps.Step3 jumpToStep3(HttpRequest request)
     {
-        HttpRequest copy = HttpRequest.copyOf(request);
+        var copy = HttpRequest.copyOf(request);
         return new Step3Impl(this, copy);
     }
 
@@ -76,7 +76,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         Arguments.checkThat(classOfResponseType).isA(validResponseClass());
 
-        HttpRequest copy = HttpRequest.copyOf(request);
+        var copy = HttpRequest.copyOf(request);
         return new Step4Impl<>(this, copy, classOfResponseType);
     }
 
@@ -85,7 +85,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         Arguments.checkThat(classOfResponseType).isA(validResponseClass());
 
-        HttpRequest copy = HttpRequest.copyOf(request);
+        var copy = HttpRequest.copyOf(request);
         return new Step5Impl<>(this, copy, classOfResponseType, successCallback);
     }
 
@@ -94,7 +94,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
     {
         Arguments.checkThat(classOfResponseType).isA(validResponseClass());
 
-        HttpRequest copy = HttpRequest.copyOf(request);
+        var copy = HttpRequest.copyOf(request);
         return new Step6Impl<>(this, copy, classOfResponseType, successCallback, failureCallback);
     }
 
@@ -179,7 +179,7 @@ final class AlchemyMachineImpl implements AlchemyHttpStateMachine
             }
             catch (Exception ex)
             {
-                String message = "Success Callback threw exception";
+                var message = "Success Callback threw exception";
                 LOG.warn(message, ex);
                 failureCallback.handleError(new AlchemyHttpException(message, ex));
             }

@@ -107,7 +107,7 @@ public class HttpRequestTest
     @Test
     public void testCopyOf()
     {
-        HttpRequest result = HttpRequest.copyOf(instance);
+        var result = HttpRequest.copyOf(instance);
         assertThat(result, notNullValue());
         assertThat(result, equalTo(instance));
         assertThat(instance, equalTo(result));
@@ -116,7 +116,7 @@ public class HttpRequestTest
     @Test
     public void testFrom()
     {
-        HttpRequest.Builder result = HttpRequest.Builder.from(null);
+        var result = HttpRequest.Builder.from(null);
         assertThat(result, notNullValue());
     }
 }

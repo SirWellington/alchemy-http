@@ -83,7 +83,7 @@ public class Step6ImplTest
     {
         instance.at(url);
 
-        HttpRequest expectedRequest = HttpRequest.Builder.from(request)
+        var expectedRequest = HttpRequest.Builder.from(request)
                 .usingUrl(url)
                 .build();
 

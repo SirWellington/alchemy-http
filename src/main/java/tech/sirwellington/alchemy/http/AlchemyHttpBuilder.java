@@ -94,12 +94,12 @@ public class AlchemyHttpBuilder
                 .throwing(ex -> new IllegalStateException("missing Executor Service"))
                 .isA(notNull());
 
-        AlchemyHttpStateMachine stateMachine = AlchemyHttpStateMachine.Builder
-                                                                       .newInstance()
-                                                                       .usingExecutorService(executor)
-                                                                       .usingGson(gson)
-                                                                       .usingTimeout(timeoutMillis)
-                                                                       .build();
+        var stateMachine = AlchemyHttpStateMachine.Builder
+                                                                        .newInstance()
+                                                                        .usingExecutorService(executor)
+                                                                        .usingGson(gson)
+                                                                        .usingTimeout(timeoutMillis)
+                                                                        .build();
 
         return new AlchemyHttpImpl(defaultHeaders, stateMachine);
     }

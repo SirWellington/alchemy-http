@@ -45,7 +45,7 @@ final class AlchemyHttpImpl implements AlchemyHttp
                 .usingMessage("Key is empty")
                 .isA(nonEmptyString());
 
-        Map<String, String> copy = new HashMap<>(defaultHeaders);
+        var copy = new HashMap<>(defaultHeaders);
         copy.put(key, value);
 
         return new AlchemyHttpImpl(copy, stateMachine);
@@ -54,10 +54,10 @@ final class AlchemyHttpImpl implements AlchemyHttp
     @Override
     public AlchemyRequestSteps.Step1 go()
     {
-        HttpRequest initialRequest = HttpRequest.Builder
-                                                 .newInstance()
-                                                 .usingRequestHeaders(defaultHeaders)
-                                                 .build();
+        var initialRequest = HttpRequest.Builder
+                                                  .newInstance()
+                                                  .usingRequestHeaders(defaultHeaders)
+                                                  .build();
 
         return stateMachine.begin(initialRequest);
     }

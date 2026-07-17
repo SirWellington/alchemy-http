@@ -85,7 +85,7 @@ public class AlchemyHttpStateMachineTest
     @Test
     public void testBegin()
     {
-        AlchemyRequestSteps.Step1 result = instance.begin();
+        var result = instance.begin();
         assertThat(result, notNullValue());
         assertThat(result, equalTo(step1));
     }
@@ -100,10 +100,10 @@ public class AlchemyHttpStateMachineTest
     @Test
     public void testBuilder()
     {
-        AlchemyHttpStateMachine.Builder builder = AlchemyHttpStateMachine.Builder.newInstance();
+        var builder = AlchemyHttpStateMachine.Builder.newInstance();
         assertThat(builder, notNullValue());
 
-        AlchemyHttpStateMachine result = AlchemyHttpStateMachine.Builder.newInstance()
+        var result = AlchemyHttpStateMachine.Builder.newInstance()
                 .usingExecutorService(executor)
                 .build();
 
@@ -116,7 +116,7 @@ public class AlchemyHttpStateMachineTest
     {
         Gson gson = new Gson();
 
-        AlchemyHttpStateMachine result = AlchemyHttpStateMachine.Builder.newInstance()
+        var result = AlchemyHttpStateMachine.Builder.newInstance()
                 .usingGson(gson)
                 .build();
 
@@ -126,7 +126,7 @@ public class AlchemyHttpStateMachineTest
     @Test
     public void testBuilderWithEdgeCases()
     {
-        AlchemyHttpStateMachine result = AlchemyHttpStateMachine.Builder.newInstance().build();
+        var result = AlchemyHttpStateMachine.Builder.newInstance().build();
         assertThat(result, notNullValue());
     }
 

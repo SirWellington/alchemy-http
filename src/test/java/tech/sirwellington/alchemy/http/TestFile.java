@@ -43,10 +43,10 @@ final class TestFile
     {
         checkThat(binary).isA(notNull());
 
-        String filename = one(alphabeticStrings(10));
+        var filename = one(alphabeticStrings(10));
         File tempFile = File.createTempFile(filename, ".txt");
 
-        try (FileOutputStream fos = new FileOutputStream(tempFile))
+        try (var fos = new FileOutputStream(tempFile))
         {
             fos.write(binary);
         }

@@ -66,16 +66,16 @@ public class HttpResponseTest
     @Test
     public void testStatusCode()
     {
-        HttpResponse instance = builder.build();
+        var instance = builder.build();
         assertThat(instance.statusCode(), equalTo(first.statusCode));
     }
 
     @Test
     public void testStatus()
     {
-        HttpResponse instance = builder.build();
-        int status = instance.statusCode();
-        HttpStatusCode expected = HttpStatusCode.forCode(status);
+        var instance = builder.build();
+        var status = instance.statusCode();
+        var expected = HttpStatusCode.forCode(status);
         assertThat(instance.status(), equalTo(expected));
     }
 
@@ -83,10 +83,10 @@ public class HttpResponseTest
     public void testNotFound()
     {
         HttpStatusCode status = HttpStatusCode.any();
-        int code = status.getCode();
-        HttpResponse instance = builder.withStatusCode(code).build();
+        var code = status.getCode();
+        var instance = builder.withStatusCode(code).build();
 
-        boolean expected = (status == HttpStatusCode.NOT_FOUND);
+        var expected = (status == HttpStatusCode.NOT_FOUND);
         assertThat(instance.notFound(), equalTo(expected));
     }
 
@@ -96,7 +96,7 @@ public class HttpResponseTest
         first.statusCode = one(integers(200, 209));
         builder = builder.copyFrom(first);
 
-        HttpResponse instance = builder.build();
+        var instance = builder.build();
         assertThat(instance.isOk(), equalTo(true));
     }
 
@@ -106,34 +106,34 @@ public class HttpResponseTest
         first.statusCode = one(integers(400, 506));
         builder = builder.copyFrom(first);
 
-        HttpResponse instance = builder.build();
+        var instance = builder.build();
         assertThat(instance.isOk(), equalTo(false));
     }
 
     @Test
     public void testResponseHeaders()
     {
-        HttpResponse instance = builder.build();
+        var instance = builder.build();
         assertThat(instance.responseHeaders(), equalTo(first.responseHeaders));
 
-        String value = one(alphabeticStrings());
-        Map<String, String> headers = instance.responseHeaders();
+        var value = one(alphabeticStrings());
+        var headers = instance.responseHeaders();
         assertThrows(() -> headers.put(value, value));
     }
 
     @Test
     public void testBody()
     {
-        HttpResponse instance = builder.build();
+        var instance = builder.build();
         assertThat(instance.body(), equalTo(first.responseBody));
     }
 
     @Test
     public void testBodyAsString()
     {
-        HttpResponse instance = builder.build();
-        String asString = instance.bodyAsString();
-        String expected = first.responseBody.toString();
+        var instance = builder.build();
+        var asString = instance.bodyAsString();
+        var expected = first.responseBody.toString();
         assertThat(asString, equalTo(expected));
     }
 
@@ -141,9 +141,9 @@ public class HttpResponseTest
     public void testBodyAs()
     {
         first.responseBody = pojoAsJson;
-        HttpResponse instance = builder.copyFrom(first).build();
+        var instance = builder.copyFrom(first).build();
 
-        TestPojo result = instance.bodyAs(TestPojo.class);
+        var result = instance.bodyAs(TestPojo.class);
         assertThat(result.equals(pojo), equalTo(true));
     }
 
@@ -155,8 +155,8 @@ public class HttpResponseTest
         assertThat(jsonArray.isJsonArray(), equalTo(true));
         first.responseBody = jsonArray;
 
-        HttpResponse instance = builder.copyFrom(first).build();
-        List<TestPojo> result = instance.bodyAsArrayOf(TestPojo.class);
+        var instance = builder.copyFrom(first).build();
+        var result = instance.bodyAsArrayOf(TestPojo.class);
         assertThat(result, equalTo(pojos));
     }
 

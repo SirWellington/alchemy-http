@@ -41,10 +41,10 @@ final class Step6Impl<ResponseType> implements AlchemyRequestSteps.Step6<Respons
     @Override
     public void at(URL url)
     {
-        HttpRequest requestCopy = HttpRequest.Builder
-                                              .from(request)
-                                              .usingUrl(url)
-                                              .build();
+        var requestCopy = HttpRequest.Builder
+                                               .from(request)
+                                               .usingUrl(url)
+                                               .build();
 
         stateMachine.executeAsync(requestCopy, classOfResponseType, successCallback, failureCallback);
     }

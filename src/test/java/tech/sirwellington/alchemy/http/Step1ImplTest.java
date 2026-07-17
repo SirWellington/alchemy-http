@@ -67,7 +67,7 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
 
-        HttpRequest passedRequest = requestCaptor.getValue();
+        var passedRequest = requestCaptor.getValue();
         assertThat(passedRequest, notNullValue());
         assertThat(passedRequest.method(), equalTo(RequestMethod.GET));
         assertThat(passedRequest.requestHeaders(), equalTo(this.request.requestHeaders()));
@@ -80,7 +80,7 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
 
-        HttpRequest passedRequest = requestCaptor.getValue();
+        var passedRequest = requestCaptor.getValue();
         assertThat(passedRequest, notNullValue());
         assertThat(passedRequest.method(), equalTo(RequestMethod.POST));
         assertThat(passedRequest.requestHeaders(), equalTo(this.request.requestHeaders()));
@@ -93,7 +93,7 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
 
-        HttpRequest passedRequest = requestCaptor.getValue();
+        var passedRequest = requestCaptor.getValue();
         assertThat(passedRequest, notNullValue());
         assertThat(passedRequest.method(), equalTo(RequestMethod.PUT));
         assertThat(passedRequest.requestHeaders(), equalTo(this.request.requestHeaders()));
@@ -106,7 +106,7 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
 
-        HttpRequest passedRequest = requestCaptor.getValue();
+        var passedRequest = requestCaptor.getValue();
         assertThat(passedRequest, notNullValue());
         assertThat(passedRequest.method(), equalTo(RequestMethod.DELETE));
         assertThat(passedRequest.requestHeaders(), equalTo(this.request.requestHeaders()));
@@ -120,7 +120,7 @@ public class Step1ImplTest
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
 
-        HttpRequest passedRequest = requestCaptor.getValue();
+        var passedRequest = requestCaptor.getValue();
         assertThat(passedRequest, notNullValue());
         assertThat(passedRequest.method(), equalTo(method));
         assertThat(passedRequest.requestHeaders(), equalTo(this.request.requestHeaders()));

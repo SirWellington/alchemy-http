@@ -87,11 +87,11 @@ public class Step3ImplTest
                 .isInstanceOf(IllegalArgumentException.class);
 
         // Happy cases
-        Map<String, String> expectedHeaders = CollectionGenerators.mapOf(alphabeticStrings(),
+        var expectedHeaders = CollectionGenerators.mapOf(alphabeticStrings(),
                 hexadecimalString(10),
                 20);
 
-        for (Map.Entry<String, String> entry : expectedHeaders.entrySet())
+        for (var entry : expectedHeaders.entrySet())
         {
             instance = instance.usingHeader(entry.getKey(), entry.getValue());
         }
@@ -100,7 +100,7 @@ public class Step3ImplTest
 
         verify(stateMachine).executeSync(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
         assertThat(requestMade, not(sameInstance(request)));
         assertThat(requestMade.requestHeaders(), equalTo(expectedHeaders));
@@ -115,7 +115,7 @@ public class Step3ImplTest
     {
         int amount = one(integers(5, 20));
 
-        Map<String, String> strings = CollectionGenerators.mapOf(alphabeticStrings(),
+        var strings = CollectionGenerators.mapOf(alphabeticStrings(),
                 hexadecimalString(10),
                 amount);
 
@@ -127,7 +127,7 @@ public class Step3ImplTest
                 booleans(),
                 amount);
 
-        for (Map.Entry<String, String> entry : strings.entrySet())
+        for (var entry : strings.entrySet())
         {
             instance = instance.usingQueryParam(entry.getKey(), entry.getValue());
         }
@@ -142,14 +142,14 @@ public class Step3ImplTest
             instance = instance.usingQueryParam(entry.getKey(), entry.getValue());
         }
 
-        Map<String, String> expected = Maps.mutableCopyOf(strings);
+        var expected = Maps.mutableCopyOf(strings);
         // Put the integers
-        for (Map.Entry<String, Integer> entry : integers.entrySet())
+        for (var entry : integers.entrySet())
         {
             expected.put(entry.getKey(), entry.getValue().toString());
         }
         // Put the booleans too
-        for (Map.Entry<String, Boolean> entry : booleans.entrySet())
+        for (var entry : booleans.entrySet())
         {
             expected.put(entry.getKey(), entry.getValue().toString());
         }
@@ -157,7 +157,7 @@ public class Step3ImplTest
         instance.at(url);
 
         verify(stateMachine).executeSync(requestCaptor.capture());
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
         assertThat(requestMade.queryParams(), equalTo(expected));
         assertThat(requestMade, not(sameInstance(request)));
@@ -195,7 +195,7 @@ public class Step3ImplTest
         instance.at(url);
         verify(stateMachine).executeSync(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         assertThat(requestMade, notNullValue());
         assertThat(requestMade.url(), equalTo(url));
         assertThat(requestMade, not(sameInstance(request)));
@@ -218,7 +218,7 @@ public class Step3ImplTest
                 .isInstanceOf(IllegalArgumentException.class);
 
         // Happy cases
-        Class<String> expectedClass = String.class;
+        var expectedClass = String.class;
         instance.expecting(expectedClass);
         verify(stateMachine).jumpToStep4(request, expectedClass);
     }

@@ -86,14 +86,14 @@ final class Generators
 
             for (int i = 0; i < elements; i++)
             {
-                String key = one(alphabeticStrings());
+            var key = one(alphabeticStrings());
 
-                int random = one(integers(1, 3));
-                switch (random)
-                {
-                    case 2 -> result.add(key, one(jsonPrimitives()));
-                    default -> result.add(key, one(jsonArrays()));
-                }
+            int random = one(integers(1, 3));
+            switch (random)
+            {
+                case 2 -> result.add(key, one(jsonPrimitives()));
+                default -> result.add(key, one(jsonArrays()));
+            }
             }
 
             return result;

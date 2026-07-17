@@ -28,10 +28,10 @@ final class Step1Impl implements AlchemyRequestSteps.Step1
     @Override
     public AlchemyRequestSteps.Step3 get()
     {
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingRequestMethod(RequestMethod.GET)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingRequestMethod(RequestMethod.GET)
+                                             .build();
 
         return stateMachine.jumpToStep3(newRequest);
     }
@@ -39,10 +39,10 @@ final class Step1Impl implements AlchemyRequestSteps.Step1
     @Override
     public AlchemyRequestSteps.Step2 post()
     {
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingRequestMethod(RequestMethod.POST)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingRequestMethod(RequestMethod.POST)
+                                             .build();
 
         return stateMachine.jumpToStep2(newRequest);
     }
@@ -50,10 +50,10 @@ final class Step1Impl implements AlchemyRequestSteps.Step1
     @Override
     public AlchemyRequestSteps.Step2 put()
     {
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingRequestMethod(RequestMethod.PUT)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingRequestMethod(RequestMethod.PUT)
+                                             .build();
 
         return stateMachine.jumpToStep2(newRequest);
     }
@@ -61,10 +61,10 @@ final class Step1Impl implements AlchemyRequestSteps.Step1
     @Override
     public AlchemyRequestSteps.Step2 delete()
     {
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingRequestMethod(RequestMethod.DELETE)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingRequestMethod(RequestMethod.DELETE)
+                                             .build();
 
         return stateMachine.jumpToStep2(newRequest);
     }
@@ -72,10 +72,10 @@ final class Step1Impl implements AlchemyRequestSteps.Step1
     @Override
     public AlchemyRequestSteps.Step2 method(RequestMethod requestMethod)
     {
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingRequestMethod(requestMethod)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingRequestMethod(requestMethod)
+                                             .build();
 
         return stateMachine.jumpToStep2(newRequest);
     }

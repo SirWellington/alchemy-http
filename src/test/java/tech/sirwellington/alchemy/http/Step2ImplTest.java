@@ -74,7 +74,7 @@ public class Step2ImplTest
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
 
         expectedBody = JsonNull.INSTANCE;
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         verifyRequestMade(requestMade);
     }
 
@@ -87,7 +87,7 @@ public class Step2ImplTest
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
 
         expectedBody = JsonNull.INSTANCE;
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         verifyRequestMade(requestMade);
     }
 
@@ -99,7 +99,7 @@ public class Step2ImplTest
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
 
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         verifyRequestMade(requestMade);
     }
 
@@ -120,7 +120,7 @@ public class Step2ImplTest
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
 
         expectedBody = gson.toJsonTree(pojo);
-        HttpRequest requestMade = requestCaptor.getValue();
+        var requestMade = requestCaptor.getValue();
         verifyRequestMade(requestMade);
     }
 

@@ -121,7 +121,7 @@ public class HttpRequestExecutorImplTest
 
         Map<String, List<String>> headers = Maps.create();
 
-        for (Map.Entry<String, String> entry : responseHeaders.entrySet())
+        for (var entry : responseHeaders.entrySet())
         {
             headers.put(entry.getKey(), Lists.createFrom(entry.getValue()));
         }
@@ -222,7 +222,7 @@ public class HttpRequestExecutorImplTest
         java.net.URL url = Generators.validUrls().get();
         request = HttpRequest.Builder.from(request).usingUrl(url).build();
 
-        HttpURLConnection realConnection;
+        var realConnection;
         try
         {
             realConnection = (HttpURLConnection) url.openConnection();
@@ -246,10 +246,10 @@ public class HttpRequestExecutorImplTest
     @Test
     public void testPerformance()
     {
-        JsonParser parser = new JsonParser();
+        var parser = new JsonParser();
 
         System.out.println("performance test");
-        String body = one(Generators.jsonObjects()).toString();
+        var body = one(Generators.jsonObjects()).toString();
 
         long time = time(() -> parser.parse(body));
         System.out.println("Parser took " + time);
@@ -257,7 +257,7 @@ public class HttpRequestExecutorImplTest
         time = time(() -> gson.fromJson(body, JsonElement.class));
         System.out.println("Gson took " + time);
 
-        int iterations = 100;
+        var iterations = 100;
 
         time = time(() -> {
             for (int i = 0; i < iterations; i++)
@@ -283,10 +283,10 @@ public class HttpRequestExecutorImplTest
     {
         responseBody = one(Generators.jsonObjects());
 
-        String text = responseBody.toString();
+        var text = responseBody.toString();
 
-        JsonElement fromJson = gson.fromJson(text, JsonElement.class);
-        JsonElement toJsonTree = gson.toJsonTree(text);
+        var fromJson = gson.fromJson(text, JsonElement.class);
+        var toJsonTree = gson.toJsonTree(text);
 
         boolean equals = fromJson.equals(toJsonTree);
         System.out.println("Equal? " + equals);

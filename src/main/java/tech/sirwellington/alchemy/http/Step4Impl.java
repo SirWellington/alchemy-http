@@ -38,10 +38,10 @@ final class Step4Impl<ResponseType> implements AlchemyRequestSteps.Step4<Respons
     @Override
     public ResponseType at(URL url) throws AlchemyHttpException
     {
-        HttpRequest newRequest = HttpRequest.Builder
-                                            .from(request)
-                                            .usingUrl(url)
-                                            .build();
+        var newRequest = HttpRequest.Builder
+                                             .from(request)
+                                             .usingUrl(url)
+                                             .build();
 
         return stateMachine.executeSync(newRequest, classOfResponseType);
     }
