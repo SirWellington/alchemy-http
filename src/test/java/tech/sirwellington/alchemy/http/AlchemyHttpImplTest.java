@@ -89,8 +89,8 @@ public class AlchemyHttpImplTest {
 
     @Test
     public void testUsingDefaultHeaderEdgeCase() {
-        String key = one(alphabeticStrings());
-        String value = one(alphabeticStrings());
+        var key = one(alphabeticStrings());
+        var value = one(alphabeticStrings());
 
         assertThrows(() -> instance.usingDefaultHeader("", ""))
             .isInstanceOf(IllegalArgumentException.class);
@@ -110,7 +110,7 @@ public class AlchemyHttpImplTest {
 
     @Test
     public void testGetDefaultHeaders() {
-        Map<String, String> result = instance.getDefaultHeaders();
+        var result = instance.getDefaultHeaders();
         assertThat(result, equalTo(defaultHeaders));
 
         assertThrows(() -> result.clear());
@@ -118,7 +118,7 @@ public class AlchemyHttpImplTest {
 
     @Test
     public void testToString() {
-        String toString = instance.toString();
+        var toString = instance.toString();
         assertThat(toString, not(isEmptyOrNullString()));
     }
 }
