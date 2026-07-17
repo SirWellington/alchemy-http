@@ -38,8 +38,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  * @author SirWellington
  */
 @AlchemyTest
-public class HttpConnectionPreparerTest
-{
+public class HttpConnectionPreparerTest {
 
     private HttpConnectionPreparer instance;
 
@@ -57,12 +56,13 @@ public class HttpConnectionPreparerTest
     private Map<String, String> queryParams;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         body = one(Generators.jsonElements());
-        queryParams = CollectionGenerators.mapOf(alphabeticStrings(10),
-                                                  alphabeticStrings(10),
-                                                  10);
+        queryParams = CollectionGenerators.mapOf(
+            alphabeticStrings(10),
+            alphabeticStrings(10),
+            10
+        );
         url = one(Generators.validUrls());
         expandedUrl = expandUrl();
 
@@ -75,18 +75,16 @@ public class HttpConnectionPreparerTest
     }
 
     @Test
-    public void testMap() throws Exception
-    {
+    public void testMap() throws Exception {
         when(request.hasBody()).thenReturn(true);
 
-        java.net.HttpURLConnection result = instance.map(request);
+        var result = instance.map(request);
         assertThat(result, notNullValue());
         assertThat(result.getRequestMethod(), equalTo(requestMethod.asString));
         assertThat(result.getDoInput(), equalTo(true));
         assertThat(result.getDoOutput(), equalTo(true));
 
-        for (var entry : result.getRequestProperties().entrySet())
-        {
+        for (var entry : result.getRequestProperties().entrySet()) {
             var key = entry.getKey();
             var value = String.join(", ", entry.getValue());
 
@@ -96,41 +94,36 @@ public class HttpConnectionPreparerTest
     }
 
     @Test
-    public void testMapExpandsURL() throws Exception
-    {
+    public void testMapExpandsURL() throws Exception {
         instance = HttpConnectionPreparer.create();
 
         when(request.hasQueryParams()).thenReturn(true);
 
-        java.net.HttpURLConnection result = instance.map(request);
+        var result = instance.map(request);
         assertThat(result.getURL(), equalTo(expandedUrl));
     }
 
     @Test
-    public void testExpandUrlFromRequestWhenNoQueryParams() throws Exception
-    {
+    public void testExpandUrlFromRequestWhenNoQueryParams() throws Exception {
         when(request.hasQueryParams()).thenReturn(false);
 
-        URL result = HttpConnectionPreparer.expandUrlFromRequest(request);
+        var result = HttpConnectionPreparer.expandUrlFromRequest(request);
         assertThat(result, equalTo(url));
     }
 
     @Test
-    public void testExpandUrlFromRequestWhenQueryParamsPresent() throws Exception
-    {
+    public void testExpandUrlFromRequestWhenQueryParamsPresent() throws Exception {
         // When there are query params
         when(request.hasQueryParams()).thenReturn(true);
 
-        URL result = HttpConnectionPreparer.expandUrlFromRequest(request);
+        var result = HttpConnectionPreparer.expandUrlFromRequest(request);
         assertThat(result, equalTo(expandedUrl));
     }
 
-    private URL expandUrl() throws URISyntaxException, MalformedURLException
-    {
-        UrlBuilder builder = UrlBuilder.fromUrl(url);
+    private URL expandUrl() throws URISyntaxException, MalformedURLException {
+        var builder = UrlBuilder.fromUrl(url);
 
-        for (var entry : queryParams.entrySet())
-        {
+        for (var entry : queryParams.entrySet()) {
             builder = builder.addParameter(entry.getKey(), entry.getValue());
         }
 

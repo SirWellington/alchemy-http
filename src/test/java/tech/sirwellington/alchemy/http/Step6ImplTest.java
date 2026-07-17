@@ -15,6 +15,7 @@
 package tech.sirwellington.alchemy.http;
 
 import java.net.URL;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,19 +25,17 @@ import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step6;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
 @AlchemyTest
-public class Step6ImplTest
-{
+public class Step6ImplTest {
     @Mock
     private AlchemyHttpStateMachine stateMachine;
 
@@ -59,8 +58,7 @@ public class Step6ImplTest
     private Step6<Object> instance;
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         responseClass = Object.class;
         url = one(Generators.validUrls());
 
@@ -69,29 +67,26 @@ public class Step6ImplTest
     }
 
     @Test
-    public void testAtWithBadArgs()
-    {
+    public void testAtWithBadArgs() {
         // Edge cases
         assertThrows(() -> instance.at(""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAt() throws Exception
-    {
+    public void testAt() throws Exception {
         instance.at(url);
 
         var expectedRequest = HttpRequest.Builder.from(request)
-                .usingUrl(url)
-                .build();
+                                                 .usingUrl(url)
+                                                 .build();
 
         verify(stateMachine).executeAsync(expectedRequest, responseClass, onSuccess, onFailure);
     }
 
     @Test
-    public void testToString()
-    {
-        String toString = instance.toString();
+    public void testToString() {
+        var toString = instance.toString();
         assertThat(Strings.isNullOrEmpty(toString), equalTo(false));
     }
 }

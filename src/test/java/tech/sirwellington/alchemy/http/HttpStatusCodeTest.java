@@ -23,42 +23,37 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 
 @AlchemyTest
-public class HttpStatusCodeTest
-{
+public class HttpStatusCodeTest {
 
     private HttpStatusCode status;
 
     @Test
-    public void testMatchesCode()
-    {
+    public void testMatchesCode() {
         int code = status.getCode();
         assertThat(status.matchesCode(code), equalTo(true));
 
-        HttpStatusCode other = HttpStatusCode.anyExcept(status);
-        assertThat(other.matchesCode(code), equalTo(false));
+        var otherCode = HttpStatusCode.anyExcept(status);
+        assertThat(otherCode.matchesCode(code), equalTo(false));
     }
 
     @Test
-    public void testForCode()
-    {
+    public void testForCode() {
         int code = status.getCode();
-        HttpStatusCode result = HttpStatusCode.forCode(code);
-        assertThat(result, equalTo(status));
+        var resultCode = HttpStatusCode.forCode(code);
+        assertThat(resultCode, equalTo(status));
     }
 
     @Test
-    public void testForCodeWhenUnknown()
-    {
+    public void testForCodeWhenUnknown() {
         int code = one(integers(-100, 100));
-        HttpStatusCode result = HttpStatusCode.forCode(code);
-        assertThat(result, nullValue());
+        var resultCode = HttpStatusCode.forCode(code);
+        assertThat(resultCode, nullValue());
     }
 
     @Test
-    public void testAnyExcept()
-    {
-        HttpStatusCode result = HttpStatusCode.anyExcept(status);
-        assertThat(result, notNullValue());
-        assertThat(result, not(equalTo(status)));
+    public void testAnyExcept() {
+        var resultCode = HttpStatusCode.anyExcept(status);
+        assertThat(resultCode, notNullValue());
+        assertThat(resultCode, not(equalTo(status)));
     }
 }

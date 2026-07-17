@@ -31,8 +31,7 @@ import static tech.sirwellington.alchemy.http.HttpAssertions.jsonArray;
 /**
  * @author SirWellington
  */
-class TestResponse implements HttpResponse
-{
+class TestResponse implements HttpResponse {
 
     public int statusCode = one(integers(200, 500));
     public Map<String, String> responseHeaders = mapOf(alphabeticStrings(), alphabeticStrings(), 10);
@@ -40,14 +39,12 @@ class TestResponse implements HttpResponse
     private final Gson gson = Constants.DEFAULT_GSON;
 
     @Override
-    public boolean isOk()
-    {
+    public boolean isOk() {
         return statusCode >= 200 && statusCode <= 208;
     }
 
-    TestResponse copy()
-    {
-        TestResponse clone = new TestResponse();
+    TestResponse copy() {
+        var clone = new TestResponse();
         clone.statusCode = this.statusCode;
         clone.responseHeaders = new HashMap<>(this.responseHeaders);
         clone.responseBody = gson.toJsonTree(responseBody);
@@ -55,38 +52,32 @@ class TestResponse implements HttpResponse
     }
 
     @Override
-    public int statusCode()
-    {
+    public int statusCode() {
         return statusCode;
     }
 
     @Override
-    public Map<String, String> responseHeaders()
-    {
+    public Map<String, String> responseHeaders() {
         return responseHeaders;
     }
 
     @Override
-    public String bodyAsString()
-    {
+    public String bodyAsString() {
         return responseBody.toString();
     }
 
     @Override
-    public JsonElement body() throws JsonException
-    {
+    public JsonElement body() throws JsonException {
         return responseBody;
     }
 
     @Override
-    public <Pojo> Pojo bodyAs(Class<Pojo> classOfPojo) throws JsonException
-    {
+    public <Pojo> Pojo bodyAs(Class<Pojo> classOfPojo) throws JsonException {
         return gson.fromJson(responseBody, classOfPojo);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 7;
         hash = 89 * hash + this.statusCode;
         hash = 89 * hash + Objects.hashCode(this.responseHeaders);
@@ -95,33 +86,29 @@ class TestResponse implements HttpResponse
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (o instanceof HttpResponse other)
-        {
+    public boolean equals(Object o) {
+        if (o instanceof HttpResponse other) {
             return HttpResponse.super.equals(other);
         }
         return false;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "TestResponse{statusCode=" + statusCode
-                + ", responseHeaders=" + responseHeaders
-                + ", responseBody=" + responseBody + "}";
+            + ", responseHeaders=" + responseHeaders
+            + ", responseBody=" + responseBody + "}";
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException
-    {
+    public <T> List<T> bodyAsArrayOf(Class<T> classOfT) throws JsonException {
         checkThat(this.responseBody).isA(jsonArray());
 
         var emptyArray = Array.newInstance(classOfT, 0);
         var arrayType = emptyArray.getClass();
 
-        T[] array = (T[]) gson.fromJson(responseBody, arrayType);
+        var array = (T[]) gson.fromJson(responseBody, arrayType);
         return Arrays.asList(array);
     }
 }

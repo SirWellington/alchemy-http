@@ -14,7 +14,7 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import com.google.gson.*;
@@ -30,44 +30,36 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.*;
 /**
  * @author SirWellington
  */
-final class Generators
-{
+final class Generators {
 
     private static final Logger LOG = LoggerFactory.getLogger(Generators.class);
 
-    private Generators()
-    {
+    private Generators() {
         throw new AssertionError("non-instantiable");
     }
 
-    static AlchemyGenerator<URL> validUrls()
-    {
-        return () ->
-        {
-            AlchemyGenerator<String> protocols = stringsFromFixedList("https://", "http://");
-            String protocol = one(protocols);
-            String host = one(alphanumericStrings(10));
-            String uri = protocol + host;
+    static AlchemyGenerator<URL> validUrls() {
+        return () -> {
+            var protocols = stringsFromFixedList("https://", "http://");
+            var protocol = one(protocols);
+            var host = one(alphanumericStrings(10));
+            var uri = protocol + host;
 
-            try
-            {
-                return new URL(uri);
+            try {
+                return new URI(uri).toURL();
             }
-            catch (MalformedURLException ex)
-            {
+            catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         };
     }
 
-    static AlchemyGenerator<JsonElement> jsonElements()
-    {
+    static AlchemyGenerator<JsonElement> jsonElements() {
         return () ->
         {
             int random = one(integers(1, 5));
 
-            return switch (random)
-            {
+            return switch (random) {
                 case 1 -> one(jsonObjects());
                 case 2 -> one(jsonArrays());
                 case 3 -> one(jsonNull());
@@ -76,39 +68,32 @@ final class Generators
         };
     }
 
-    static AlchemyGenerator<JsonObject> jsonObjects()
-    {
-        return () ->
-        {
-            JsonObject result = new JsonObject();
+    static AlchemyGenerator<JsonObject> jsonObjects() {
+        return () -> {
+            var result = new JsonObject();
 
-            int elements = one(integers(10, 50));
+            var elements = one(integers(10, 50));
 
-            for (int i = 0; i < elements; i++)
-            {
-            var key = one(alphabeticStrings());
+            for (int i = 0; i < elements; i++) {
+                var key = one(alphabeticStrings());
 
-            int random = one(integers(1, 3));
-            switch (random)
-            {
-                case 2 -> result.add(key, one(jsonPrimitives()));
-                default -> result.add(key, one(jsonArrays()));
-            }
+                var random = one(integers(1, 3));
+                switch (random) {
+                    case 2  -> result.add(key, one(jsonPrimitives()));
+                    default -> result.add(key, one(jsonArrays()));
+                }
             }
 
             return result;
         };
     }
 
-    static AlchemyGenerator<JsonArray> jsonArrays()
-    {
-        return () ->
-        {
-            int arraySize = one(integers(50, 1000));
-            JsonArray array = new JsonArray();
+    static AlchemyGenerator<JsonArray> jsonArrays() {
+        return () -> {
+            var arraySize = one(integers(50, 1000));
+            var array = new JsonArray();
 
-            for (int i = 0; i < arraySize; i++)
-            {
+            for (int i = 0; i < arraySize; i++) {
                 array.add(one(jsonPrimitives()));
             }
 
@@ -116,24 +101,20 @@ final class Generators
         };
     }
 
-    static AlchemyGenerator<JsonPrimitive> jsonPrimitives()
-    {
-        return () ->
-        {
-            int random = one(integers(1, 4));
+    static AlchemyGenerator<JsonPrimitive> jsonPrimitives() {
+        return () -> {
+            var random = one(integers(1, 4));
 
-            return switch (random)
-            {
-                case 1 -> new JsonPrimitive(one(booleans()));
-                case 2 -> new JsonPrimitive(one(positiveDoubles()));
-                case 3 -> new JsonPrimitive(one(positiveIntegers()));
+            return switch (random) {
+                case 1  -> new JsonPrimitive(one(booleans()));
+                case 2  -> new JsonPrimitive(one(positiveDoubles()));
+                case 3  -> new JsonPrimitive(one(positiveIntegers()));
                 default -> new JsonPrimitive(one(alphabeticStrings()));
             };
         };
     }
 
-    static AlchemyGenerator<JsonNull> jsonNull()
-    {
+    static AlchemyGenerator<JsonNull> jsonNull() {
         return () -> JsonNull.INSTANCE;
     }
 }

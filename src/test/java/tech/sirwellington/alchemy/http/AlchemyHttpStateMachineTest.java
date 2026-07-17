@@ -14,7 +14,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.util.Map;
 import java.util.concurrent.Executor;
 
 import com.google.gson.Gson;
@@ -24,24 +23,20 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.AlchemyTest;
-
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 /**
  * @author SirWellington
  */
 @AlchemyTest
-public class AlchemyHttpStateMachineTest
-{
+public class AlchemyHttpStateMachineTest {
     private AlchemyHttpStateMachine instance;
 
     @Mock
@@ -71,113 +66,112 @@ public class AlchemyHttpStateMachineTest
     @Mock
     private Executor executor;
 
-    private Map<String, String> requestHeaders;
-
     @BeforeEach
-    public void setUp()
-    {
-        requestHeaders = CollectionGenerators.mapOf(alphabeticStrings(), alphabeticStrings(), 15);
+    public void setUp() {
         instance = new TestImpl();
         instance = spy(instance);
     }
 
     @Test
-    public void testBegin()
-    {
+    public void testBegin() {
         var result = instance.begin();
         assertThat(result, notNullValue());
         assertThat(result, equalTo(step1));
     }
 
     @Test
-    public void testExecuteSyncCallsImplementation()
-    {
+    public void testExecuteSyncCallsImplementation() {
         instance.executeSync(request);
         verify(instance).executeSync(request, HttpResponse.class);
     }
 
     @Test
-    public void testBuilder()
-    {
+    public void testBuilder() {
         var builder = AlchemyHttpStateMachine.Builder.newInstance();
         assertThat(builder, notNullValue());
 
         var result = AlchemyHttpStateMachine.Builder.newInstance()
-                .usingExecutorService(executor)
-                .build();
+                                                    .usingExecutorService(executor)
+                                                    .build();
 
         assertThat(result, notNullValue());
     }
 
     @Test
-    public void testUsingGson() throws Exception
-    {
-        Gson gson = new Gson();
+    public void testUsingGson() throws Exception {
+        var gson = new Gson();
 
         var result = AlchemyHttpStateMachine.Builder.newInstance()
-                .usingGson(gson)
-                .build();
+                                                    .usingGson(gson)
+                                                    .build();
 
         assertThat(result, notNullValue());
     }
 
     @Test
-    public void testBuilderWithEdgeCases()
-    {
+    public void testBuilderWithEdgeCases() {
         var result = AlchemyHttpStateMachine.Builder.newInstance().build();
         assertThat(result, notNullValue());
     }
 
-    class TestImpl implements AlchemyHttpStateMachine
-    {
+    class TestImpl implements AlchemyHttpStateMachine {
         @Override
-        public AlchemyRequestSteps.Step1 begin(HttpRequest initialRequest)
-        {
+        public AlchemyRequestSteps.Step1 begin(HttpRequest initialRequest) {
             return step1;
         }
 
         @Override
-        public AlchemyRequestSteps.Step2 jumpToStep2(HttpRequest request)
-        {
+        public AlchemyRequestSteps.Step2 jumpToStep2(HttpRequest request) {
             return step2;
         }
 
         @Override
-        public AlchemyRequestSteps.Step3 jumpToStep3(HttpRequest request)
-        {
+        public AlchemyRequestSteps.Step3 jumpToStep3(HttpRequest request) {
             return step3;
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public <ResponseType> AlchemyRequestSteps.Step4<ResponseType> jumpToStep4(HttpRequest request, Class<ResponseType> classOfResponseType)
-        {
+        public <ResponseType> AlchemyRequestSteps.Step4<ResponseType> jumpToStep4(
+            HttpRequest request,
+            Class<ResponseType> classOfResponseType
+        ) {
             return (AlchemyRequestSteps.Step4<ResponseType>) step4;
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public <ResponseType> AlchemyRequestSteps.Step5<ResponseType> jumpToStep5(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequestSteps.OnSuccess<ResponseType> successCallback)
-        {
+        public <ResponseType> AlchemyRequestSteps.Step5<ResponseType> jumpToStep5(
+            HttpRequest request, Class<ResponseType> classOfResponseType,
+            AlchemyRequestSteps.OnSuccess<ResponseType> successCallback
+        ) {
             return (AlchemyRequestSteps.Step5<ResponseType>) step5;
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public <ResponseType> AlchemyRequestSteps.Step6<ResponseType> jumpToStep6(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequestSteps.OnSuccess<ResponseType> successCallback, AlchemyRequestSteps.OnFailure failureCallback)
-        {
+        public <ResponseType> AlchemyRequestSteps.Step6<ResponseType> jumpToStep6(
+            HttpRequest request, Class<ResponseType> classOfResponseType,
+            AlchemyRequestSteps.OnSuccess<ResponseType> successCallback,
+            AlchemyRequestSteps.OnFailure failureCallback
+        ) {
             return (AlchemyRequestSteps.Step6<ResponseType>) step6;
         }
 
         @Override
-        public <ResponseType> ResponseType executeSync(HttpRequest request, Class<ResponseType> classOfResponseType) throws AlchemyHttpException
-        {
+        public <ResponseType> ResponseType executeSync(
+            HttpRequest request,
+            Class<ResponseType> classOfResponseType
+        ) throws AlchemyHttpException {
             return Mockito.mock(classOfResponseType);
         }
 
         @Override
-        public <ResponseType> void executeAsync(HttpRequest request, Class<ResponseType> classOfResponseType, AlchemyRequestSteps.OnSuccess<ResponseType> successCallback, AlchemyRequestSteps.OnFailure failureCallback)
-        {
-        }
+        public <ResponseType> void executeAsync(
+            HttpRequest request,
+            Class<ResponseType> classOfResponseType,
+            AlchemyRequestSteps.OnSuccess<ResponseType> successCallback,
+            AlchemyRequestSteps.OnFailure failureCallback
+        ) { }
     }
 }

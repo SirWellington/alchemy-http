@@ -26,10 +26,7 @@ import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import org.junit.jupiter.api.RepeatedTest;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,8 +37,7 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
  * @author SirWellington
  */
 @AlchemyTest
-public class AlchemyHttpTest
-{
+public class AlchemyHttpTest {
 
     @Mock
     private AlchemyHttpStateMachine stateMachine;
@@ -61,90 +57,91 @@ public class AlchemyHttpTest
     private AlchemyHttpImpl instance;
 
     @BeforeEach
-    public void setUp()
-    {
-        defaultHeaders = CollectionGenerators.mapOf(alphabeticStrings(),
-                                                     alphabeticStrings(),
-                                                     20);
+    public void setUp() {
+        defaultHeaders = CollectionGenerators.mapOf(
+            alphabeticStrings(),
+            alphabeticStrings(),
+            20
+        );
 
         instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);
     }
 
     @Test
-    public void testUsingDefaultHeader()
-    {
+    public void testUsingDefaultHeader() {
+        // When
         var result = instance.usingDefaultHeader(headerKey, headerValue);
+        // Then
         assertThat(result, notNullValue());
-        assertThat(result.getDefaultHeaders().containsKey(headerKey), is(true));
-        assertThat(result.getDefaultHeaders().get(headerKey), equalTo(headerValue));
+        // When
+        var requestHeaders = result.getDefaultHeaders();
+        // Then
+        assertThat(requestHeaders.keySet(), contains(headerKey));
+        assertThat(requestHeaders.get(headerKey), equalTo(headerValue));
     }
 
     @Test
-    public void testUsingDefaultHeaderWithEmptyKey() throws Exception
-    {
+    public void testUsingDefaultHeaderWithEmptyKey() throws Exception {
         assertThrows(() -> instance.usingDefaultHeader("", headerValue))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testGetDefaultHeaders()
-    {
+    public void testGetDefaultHeaders() {
         var result = instance.getDefaultHeaders();
         assertThat(result, equalTo(defaultHeaders));
     }
 
     @Test
-    public void testGo()
-    {
+    public void testGo() {
+        // Given
         when(stateMachine.begin(any())).thenReturn(step1);
 
+        // When
         var step = instance.go();
-
+        // Then
         assertThat(step, equalTo(step1));
 
-        ArgumentCaptor<HttpRequest> captor = ArgumentCaptor.forClass(HttpRequest.class);
-
+        var captor = ArgumentCaptor.forClass(HttpRequest.class);
         verify(stateMachine).begin(captor.capture());
 
-        HttpRequest request = captor.getValue();
+        // Then
+        var request = captor.getValue();
         assertThat(request, notNullValue());
         assertThat(request.method(), notNullValue());
         assertThat(request.requestHeaders(), notNullValue());
+        assertThat(request.requestHeaders(), not(anEmptyMap()));
     }
 
     @Test
-    public void testNewDefaultInstance()
-    {
+    public void testNewDefaultInstance() {
         var result = AlchemyHttp.newDefaultInstance();
         assertThat(result, notNullValue());
     }
 
     @Test
-    public void testNewInstance()
-    {
+    public void testNewInstance() {
         var result = AlchemyHttp.newInstance(executor, defaultHeaders);
         assertThat(result, notNullValue());
 
         // Edge cases
         assertThrows(() -> AlchemyHttp.newInstance(executor, defaultHeaders, -1, TimeUnit.SECONDS))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testNewBuilder()
-    {
+    public void testNewBuilder() {
         var result = AlchemyHttp.newBuilder();
         assertThat(result, notNullValue());
 
         var client = result
-                .usingExecutor(executor)
-                .usingDefaultHeaders(defaultHeaders)
-                .build();
+            .usingExecutor(executor)
+            .usingDefaultHeaders(defaultHeaders)
+            .build();
 
         assertThat(client, notNullValue());
 
-        for (var entry : defaultHeaders.entrySet())
-        {
+        for (var entry : defaultHeaders.entrySet()) {
             assertThat(entry.getValue().equals(client.getDefaultHeaders().get(entry.getKey())), is(true));
         }
     }

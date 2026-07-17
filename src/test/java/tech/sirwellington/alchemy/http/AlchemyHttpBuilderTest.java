@@ -25,13 +25,13 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import sir.wellington.alchemy.collections.maps.Maps;
-import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.NumberGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.*;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
@@ -52,7 +52,11 @@ final class AlchemyHttpBuilderTest {
 
     @BeforeEach
     void setUp() {
-        defaultHeaders = CollectionGenerators.mapOf(alphabeticStrings(), alphabeticStrings(), 20);
+        defaultHeaders = mapOf(
+            alphabeticStrings(),
+            alphabeticStrings(),
+            20
+        );
         var timeout = NumberGenerators.longs(100, 2000).get();
 
         instance = AlchemyHttpBuilder.newInstance()
@@ -113,7 +117,7 @@ final class AlchemyHttpBuilderTest {
     public void testUsingDefaultHeaders() {
         instance = AlchemyHttpBuilder.newInstance();
 
-        var headers = CollectionGenerators.mapOf(
+        var headers = mapOf(
             alphabeticStrings(),
             smallPositiveIntegers().mapping(String::valueOf),
             100

@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.http.restful;
 
 import java.util.Arrays;
-import java.util.List;
 import javax.swing.*;
 
 import org.junit.jupiter.api.Test;
@@ -34,8 +33,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.
 
 @AlchemyTest
 @IntegrationTest
-public class ClearbitAPITest
-{
+public class ClearbitAPITest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClearbitAPITest.class);
 
@@ -44,89 +42,75 @@ public class ClearbitAPITest
 
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 
-    private static class AutocompleteResponse
-    {
-        String name;
-        String domain;
-        String logo;
-
-        @Override
-        public String toString()
-        {
-            return "AutocompleteResponse{" +
-                   "name='" + name + '\'' +
-                   ", domain='" + domain + '\'' +
-                   ", logo='" + logo + '\'' +
-                   '}';
-        }
-    }
+    private record AutocompleteResponse(
+        String name,
+        String domain,
+        String logo
+    ) {}
 
     @Test
-    public void testGetGoogleLogo()
-    {
-        String url = LOGO_ENDPOINT + "/google.com";
+    public void testGetGoogleLogo() {
+        var url = LOGO_ENDPOINT + "/google.com";
 
-        byte[] response = http.go().download(url);
+        var response = http.go().download(url);
         testDownloadedLogo(response);
     }
 
     @Test
-    public void testGetAmazonLogo()
-    {
-        String url = LOGO_ENDPOINT + "/amazon.com";
+    public void testGetAmazonLogo() {
+        var url = LOGO_ENDPOINT + "/amazon.com";
 
-        byte[] response = http.go().download(url);
+        var response = http.go().download(url);
         testDownloadedLogo(response);
     }
 
     @Test
-    public void testGithubLogo()
-    {
-        String url = LOGO_ENDPOINT + "/github.com";
+    public void testGithubLogo() {
+        var url = LOGO_ENDPOINT + "/github.com";
 
-        byte[] response = http.go().download(url);
+        var response = http.go().download(url);
         testDownloadedLogo(response);
     }
 
     @Test
-    public void testAutocomplete() throws Exception
-    {
+    public void testAutocomplete() throws Exception {
         testAutocompleteWithText("Am");
         testAutocompleteWithText("Cen");
         testAutocompleteWithText("Goo");
         testAutocompleteWithText("Ver");
     }
 
-    private void testDownloadedLogo(byte[] response)
-    {
+    private void testDownloadedLogo(byte[] response) {
         assertThat(response, notNullValue());
         assertThat(response.length == 0, is(false));
 
-        ImageIcon image = new ImageIcon(response);
+        var image = new ImageIcon(response);
         LOG.info("Downloaded logo: [{}, {}x{}]", image.getDescription(), image.getIconWidth(), image.getIconHeight());
     }
 
-    private void testAutocompleteWithText(String text) throws Exception
-    {
-        String url = AUTOCOMPLETE_ENDPOINT;
+    private void testAutocompleteWithText(String text) throws Exception {
+        var url = AUTOCOMPLETE_ENDPOINT;
 
-        AutocompleteResponse[] responseArray = http.go()
-                                                   .get()
-                                                   .usingQueryParam("query", text)
-                                                   .expecting(AutocompleteResponse[].class)
-                                                   .at(url);
+        var responseArray = http.go()
+                                .get()
+                                .usingQueryParam("query", text)
+                                .expecting(AutocompleteResponse[].class)
+                                .at(url);
 
         assertThat(responseArray, notNullValue());
-        List<AutocompleteResponse> response = Arrays.asList(responseArray);
+        var response = Arrays.asList(responseArray);
         assertThat(response, not(empty()));
 
-        for (AutocompleteResponse item : response)
-        {
-            assertThat(item.name, not(isEmptyOrNullString()));
-            assertThat(item.domain, not(isEmptyOrNullString()));
-            assertThat(item.logo, not(isEmptyOrNullString()));
+        for (var item : response) {
+            assertThat(item.name, not(emptyOrNullString()));
+            assertThat(item.domain, not(emptyOrNullString()));
+            assertThat(item.logo, not(emptyOrNullString()));
 
-            try { checkThat(item.logo).isA(validURL()); } catch (Exception e) {}
+            try {
+                checkThat(item.logo).isA(validURL());
+            }
+            catch (Exception _) {
+            }
         }
     }
 

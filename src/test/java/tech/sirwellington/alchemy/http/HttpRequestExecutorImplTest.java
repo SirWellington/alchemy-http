@@ -39,10 +39,7 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import org.junit.jupiter.api.RepeatedTest;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
@@ -53,8 +50,7 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
  * @author SirWellington
  */
 @AlchemyTest
-public class HttpRequestExecutorImplTest
-{
+public class HttpRequestExecutorImplTest {
 
     @Mock
     private HttpConnectionPreparer requestMapper;
@@ -81,8 +77,7 @@ public class HttpRequestExecutorImplTest
     private HttpRequestExecutor instance;
 
     @BeforeEach
-    public void setUp() throws IOException
-    {
+    public void setUp() throws IOException {
         instance = new HttpRequestExecutorImpl(requestMapper);
         verifyNoInteractions(requestMapper);
 
@@ -92,19 +87,17 @@ public class HttpRequestExecutorImplTest
         setupResponse();
     }
 
-    private void setupResponse() throws IOException
-    {
+    private void setupResponse() throws IOException {
         setupResponseBody();
         setupResponseHeaders();
         when(httpConnection.getResponseCode()).thenReturn(200);
     }
 
-    private void setupResponseBody() throws IOException
-    {
+    private void setupResponseBody() throws IOException {
         responseBody = one(Generators.jsonElements());
         responseString = responseBody.toString();
 
-        byte[] bytes = responseString.getBytes(StandardCharsets.UTF_8);
+        var bytes = responseString.getBytes(StandardCharsets.UTF_8);
         input = new ByteArrayInputStream(bytes);
 
         when(httpConnection.getInputStream()).thenReturn(input);
@@ -112,14 +105,12 @@ public class HttpRequestExecutorImplTest
         when(httpConnection.getContentType()).thenReturn(ContentTypes.APPLICATION_JSON);
     }
 
-    private void setupResponseHeaders()
-    {
+    private void setupResponseHeaders() {
         responseHeaders = CollectionGenerators.mapOf(alphabeticStrings(), hexadecimalString(10), 15);
 
         Map<String, List<String>> headers = Maps.create();
 
-        for (var entry : responseHeaders.entrySet())
-        {
+        for (var entry : responseHeaders.entrySet()) {
             headers.put(entry.getKey(), Lists.createFrom(entry.getValue()));
         }
 
@@ -127,18 +118,16 @@ public class HttpRequestExecutorImplTest
     }
 
     @Test
-    public void testCreate()
-    {
-        HttpRequestExecutorImpl result = HttpRequestExecutorImpl.create(requestMapper);
+    public void testCreate() {
+        var result = HttpRequestExecutorImpl.create(requestMapper);
         assertThat(result, notNullValue());
 
         assertThrows(() -> HttpRequestExecutorImpl.create(null));
     }
 
     @Test
-    public void testExecute() throws IOException
-    {
-        HttpResponse response = instance.execute(request, gson, timeout);
+    public void testExecute() throws IOException {
+        var response = instance.execute(request, gson, timeout);
 
         assertThat(response, notNullValue());
         assertThat(response.statusCode(), equalTo(httpConnection.getResponseCode()));
@@ -152,85 +141,76 @@ public class HttpRequestExecutorImplTest
 
     // Edge Cases
     @Test
-    public void testExecuteWithBadArgs()
-    {
+    public void testExecuteWithBadArgs() {
         assertThrows(() -> instance.execute(request, gson, -1L));
     }
 
     @Test
-    public void testExecuteWhenRequestMapperReturnsNull()
-    {
+    public void testExecuteWhenRequestMapperReturnsNull() {
         when(requestMapper.map(request)).thenReturn(null);
         assertThrows(() -> instance.execute(request, gson, timeout));
     }
 
     @Test
-    public void testWhenRequestTimesOut() throws Exception
-    {
+    public void testWhenRequestTimesOut() throws Exception {
         when(httpConnection.getInputStream())
-                .thenThrow(SocketTimeoutException.class);
+            .thenThrow(SocketTimeoutException.class);
 
         assertThrows(() -> instance.execute(request, gson, timeout))
-                .isInstanceOf(AlchemyConnectionException.class);
+            .isInstanceOf(AlchemyConnectionException.class);
     }
 
     @Test
-    public void testWhenResponseBodyIsNull() throws Exception
-    {
+    public void testWhenResponseBodyIsNull() throws Exception {
         when(httpConnection.getInputStream())
-                .thenReturn(null);
+            .thenReturn(null);
 
-        HttpResponse response = instance.execute(request, gson, timeout);
+        var response = instance.execute(request, gson, timeout);
         assertThat(response, notNullValue());
         assertThat(response.body(), equalTo(JsonNull.INSTANCE));
     }
 
     @Test
-    public void testWhenResponseBodyIsEmpty() throws Exception
-    {
-        byte[] binary = "".getBytes(StandardCharsets.UTF_8);
-        InputStream istream = new ByteArrayInputStream(binary);
+    public void testWhenResponseBodyIsEmpty() throws Exception {
+        var binary = "".getBytes(StandardCharsets.UTF_8);
+        var istream = new ByteArrayInputStream(binary);
         when(httpConnection.getInputStream()).thenReturn(istream);
 
-        HttpResponse response = instance.execute(request, gson, timeout);
+        var response = instance.execute(request, gson, timeout);
         assertThat(response, notNullValue());
         assertThat(response.body(), equalTo(JsonNull.INSTANCE));
     }
 
     @Test
-    public void testWhenResponseContentTypeIsNotJson() throws Exception
-    {
+    public void testWhenResponseContentTypeIsNotJson() throws Exception {
         when(httpConnection.getContentType()).thenReturn(ContentTypes.PLAIN_TEXT);
 
-        HttpResponse response = instance.execute(request, gson, timeout);
+        var response = instance.execute(request, gson, timeout);
         assertThat(response, notNullValue());
         assertThat(response.isOk(), is(true));
 
-        JsonPrimitive expected = new JsonPrimitive(responseBody.toString());
-        JsonElement result = response.body();
+        var expected = new JsonPrimitive(responseBody.toString());
+        var result = response.body();
         assertThat(result, equalTo(expected));
     }
 
     @Test
-    public void testWhenConnectionFails()
-    {
-        java.net.URL url = Generators.validUrls().get();
+    public void testWhenConnectionFails() {
+        var url = Generators.validUrls().get();
         request = HttpRequest.Builder.from(request).usingUrl(url).build();
 
         HttpURLConnection realConnection;
-        try
-        {
+        try {
             realConnection = (HttpURLConnection) url.openConnection();
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         when(requestMapper.map(request)).thenReturn(realConnection);
 
         assertThrows(() -> instance.execute(request, gson, timeout))
-                .isInstanceOf(AlchemyConnectionException.class);
+            .isInstanceOf(AlchemyConnectionException.class);
     }
 
     // =============================================
@@ -238,14 +218,11 @@ public class HttpRequestExecutorImplTest
     // =============================================
 
     @Test
-    public void testPerformance()
-    {
-        var parser = new JsonParser();
-
+    public void testPerformance() {
         System.out.println("performance test");
         var body = one(Generators.jsonObjects()).toString();
 
-        long time = time(() -> parser.parse(body));
+        long time = time(() -> JsonParser.parseString(body));
         System.out.println("Parser took " + time);
 
         time = time(() -> gson.fromJson(body, JsonElement.class));
@@ -254,17 +231,15 @@ public class HttpRequestExecutorImplTest
         var iterations = 100;
 
         time = time(() -> {
-            for (int i = 0; i < iterations; i++)
-            {
-                parser.parse(body);
+            for (int i = 0; i < iterations; i++) {
+                var _ = JsonParser.parseString(body);
             }
         });
 
         System.out.printf("Parser took %dms across %d runs%n", time, iterations);
 
         time = time(() -> {
-            for (int i = 0; i < iterations; i++)
-            {
+            for (int i = 0; i < iterations; i++) {
                 gson.fromJson(body, JsonElement.class);
             }
         });
@@ -272,8 +247,7 @@ public class HttpRequestExecutorImplTest
     }
 
     @Test
-    public void compareGsonMethods()
-    {
+    public void compareGsonMethods() {
         responseBody = one(Generators.jsonObjects());
 
         var text = responseBody.toString();
@@ -281,15 +255,14 @@ public class HttpRequestExecutorImplTest
         var fromJson = gson.fromJson(text, JsonElement.class);
         var toJsonTree = gson.toJsonTree(text);
 
-        boolean equals = fromJson.equals(toJsonTree);
+        var equals = fromJson.equals(toJsonTree);
         System.out.println("Equal? " + equals);
     }
 
-    private long time(Runnable task)
-    {
-        long start = System.currentTimeMillis();
+    private long time(Runnable task) {
+        var start = System.currentTimeMillis();
         task.run();
-        long end = System.currentTimeMillis();
+        var end = System.currentTimeMillis();
         return end - start;
     }
 }

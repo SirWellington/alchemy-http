@@ -14,7 +14,6 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.net.URL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,16 +29,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
 @AlchemyTest
-public class Step4ImplTest
-{
+public class Step4ImplTest {
     @Mock
     private AlchemyHttpStateMachine stateMachine;
 
@@ -57,8 +53,7 @@ public class Step4ImplTest
     private Step4<TestPojo> instance;
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         responseClass = TestPojo.class;
 
         instance = new Step4Impl<>(stateMachine, request, responseClass);
@@ -66,9 +61,8 @@ public class Step4ImplTest
     }
 
     @Test
-    public void testAt()
-    {
-        URL url = one(Generators.validUrls());
+    public void testAt() {
+        var url = one(Generators.validUrls());
 
         instance.at(url);
 
@@ -81,15 +75,13 @@ public class Step4ImplTest
     }
 
     @Test
-    public void testAtWithBadArgs() throws Exception
-    {
+    public void testAtWithBadArgs() throws Exception {
         assertThrows(() -> instance.at(""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testOnSuccess()
-    {
+    public void testOnSuccess() {
         // Edge cases
         instance.onSuccess(onSuccess);
 
@@ -97,8 +89,7 @@ public class Step4ImplTest
     }
 
     @Test
-    public void testToString()
-    {
+    public void testToString() {
         assertThat(Strings.isNullOrEmpty(instance.toString()), equalTo(false));
     }
 }

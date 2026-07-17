@@ -38,15 +38,14 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
  * @author SirWellington
  */
 @AlchemyTest
-public class AlchemyMachineImplTest
-{
+public class AlchemyMachineImplTest {
     @Mock
     private Executor executor;
 
     @Captor
     private ArgumentCaptor<Runnable> taskCaptor;
 
-    private Gson gson = Constants.DEFAULT_GSON;
+    private final Gson gson = Constants.DEFAULT_GSON;
 
     @Mock
     private HttpRequest mockRequest;
@@ -66,13 +65,13 @@ public class AlchemyMachineImplTest
     private HttpResponse response;
 
     private TestPojo pojo;
-    private Class<TestPojo> responseClass = TestPojo.class;
+
+    private final Class<TestPojo> responseClass = TestPojo.class;
 
     private AlchemyHttpStateMachine instance;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         request = new TestRequest();
 
         instance = new AlchemyMachineImpl(executor, gson, requestExecutor);
@@ -82,14 +81,12 @@ public class AlchemyMachineImplTest
         setupResponse();
     }
 
-    private void setupExecutor()
-    {
+    private void setupExecutor() {
         when(requestExecutor.execute(eq(request), eq(gson), anyLong()))
-                .thenReturn(response);
+            .thenReturn(response);
     }
 
-    private void setupResponse()
-    {
+    private void setupResponse() {
         pojo = TestPojo.generate();
 
         when(response.isOk()).thenReturn(true);
@@ -97,72 +94,65 @@ public class AlchemyMachineImplTest
     }
 
     @Test
-    public void testBegin()
-    {
+    public void testBegin() {
         var step1 = instance.begin(mockRequest);
         assertThat(step1, notNullValue());
     }
 
     @Test
-    public void testJumpToStep2()
-    {
+    public void testJumpToStep2() {
         var step2 = instance.jumpToStep2(mockRequest);
         assertThat(step2, notNullValue());
     }
 
     @Test
-    public void testJumpToStep3()
-    {
+    public void testJumpToStep3() {
         var step3 = instance.jumpToStep3(mockRequest);
         assertThat(step3, notNullValue());
     }
 
     @Test
-    public void testJumpToStep4()
-    {
+    public void testJumpToStep4() {
         var step4 = instance.jumpToStep4(mockRequest, responseClass);
         assertThat(step4, notNullValue());
 
         assertThrows(() -> instance.jumpToStep4(mockRequest, Void.class))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testJumpToStep5()
-    {
+    public void testJumpToStep5() {
         var step5 = instance.jumpToStep5(mockRequest, responseClass, onSuccess);
         assertThat(step5, notNullValue());
 
         // Edge cases
-        @SuppressWarnings("unchecked")
-        OnSuccess<Void> mockOnSuccess = mock(OnSuccess.class);
+        var mockOnSuccess = mock(OnSuccess.class);
         assertThrows(() -> instance.jumpToStep5(mockRequest, Void.class, mockOnSuccess))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testJumpToStep6()
-    {
+    public void testJumpToStep6() {
         var step6 = instance.jumpToStep6(mockRequest, responseClass, onSuccess, onFailure);
         assertThat(step6, notNullValue());
 
         // Edge cases
         @SuppressWarnings("unchecked")
-        OnSuccess<Void> mockOnSuccess = mock(OnSuccess.class);
+        var mockOnSuccess = mock(OnSuccess.class);
         assertThrows(() -> instance.jumpToStep6(mockRequest, Void.class, mockOnSuccess, onFailure))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testExecuteSync()
-    {
+    public void testExecuteSync() {
         var result = instance.executeSync(request);
         assertThat(result, equalTo(response));
     }
 
     @Test
-    public void testExecuteSyncWithCustomClass()
-    {
+    public void testExecuteSyncWithCustomClass() {
         when(response.bodyAs(responseClass)).thenReturn(pojo);
 
         var result = instance.executeSync(request, responseClass);
@@ -170,73 +160,66 @@ public class AlchemyMachineImplTest
     }
 
     @Test
-    public void testExecuteSyncWhenHttpExecutorFails()
-    {
+    public void testExecuteSyncWhenHttpExecutorFails() {
         when(requestExecutor.execute(eq(request), eq(gson), anyLong()))
-                .thenThrow(RuntimeException.class);
+            .thenThrow(RuntimeException.class);
 
         assertThrows(() -> instance.executeSync(request))
-                .isInstanceOf(AlchemyHttpException.class);
+            .isInstanceOf(AlchemyHttpException.class);
 
         // Reset and do another assertion
         reset(requestExecutor);
 
         when(requestExecutor.execute(eq(request), eq(gson), anyLong()))
-                .thenThrow(new AlchemyHttpException(request));
+            .thenThrow(new AlchemyHttpException(request));
 
         assertThrows(() -> instance.executeSync(request))
-                .isInstanceOf(AlchemyHttpException.class);
+            .isInstanceOf(AlchemyHttpException.class);
     }
 
     @Test
-    public void testExecuteSyncWithBadArguments()
-    {
+    public void testExecuteSyncWithBadArguments() {
         assertThrows(() -> instance.executeSync(mockRequest, Void.class))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         assertThrows(() -> instance.executeSync(request, Void.class))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testExecuteWhenHttpExecutorReturnsNullResponse()
-    {
+    public void testExecuteWhenHttpExecutorReturnsNullResponse() {
         when(requestExecutor.execute(eq(request), eq(gson), anyLong()))
-                .thenReturn(null);
+            .thenReturn(null);
 
         assertThrows(() -> instance.executeSync(request, responseClass))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testExecuteSyncWhenClassOfResponseTypeIsString()
-    {
+    public void testExecuteSyncWhenClassOfResponseTypeIsString() {
         instance.executeSync(request, String.class);
         verify(response).bodyAsString();
     }
 
     @Test
-    public void testExecuteWhenResponseNotOk()
-    {
+    public void testExecuteWhenResponseNotOk() {
         when(response.isOk()).thenReturn(false);
 
         assertThrows(() -> instance.executeSync(request, responseClass))
-                .isInstanceOf(AlchemyHttpException.class);
+            .isInstanceOf(AlchemyHttpException.class);
     }
 
     @Test
-    public void testExecuteWhenCastingToResponseClassFails()
-    {
+    public void testExecuteWhenCastingToResponseClassFails() {
         when(response.bodyAs(responseClass))
-                .thenThrow(new JsonException());
+            .thenThrow(new JsonException());
 
         assertThrows(() -> instance.executeSync(request, responseClass))
-                .isInstanceOf(AlchemyHttpException.class);
+            .isInstanceOf(AlchemyHttpException.class);
     }
 
     @Test
-    public void testExecuteAsync() throws Exception
-    {
+    public void testExecuteAsync() throws Exception {
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
         verify(executor).execute(taskCaptor.capture());
@@ -249,12 +232,11 @@ public class AlchemyMachineImplTest
     }
 
     @Test
-    public void testExecuteAsyncWhenFails()
-    {
-        AlchemyHttpException ex = new AlchemyHttpException();
+    public void testExecuteAsyncWhenFails() {
+        var ex = new AlchemyHttpException();
 
         when(requestExecutor.execute(request, gson, Constants.DEFAULT_TIMEOUT))
-                .thenThrow(ex);
+            .thenThrow(ex);
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
@@ -268,10 +250,9 @@ public class AlchemyMachineImplTest
     }
 
     @Test
-    public void testExecuteAsyncWhenRuntimeExceptionHappens()
-    {
+    public void testExecuteAsyncWhenRuntimeExceptionHappens() {
         when(requestExecutor.execute(eq(request), eq(gson), anyLong()))
-                .thenThrow(RuntimeException.class);
+            .thenThrow(RuntimeException.class);
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
@@ -285,11 +266,10 @@ public class AlchemyMachineImplTest
     }
 
     @Test
-    public void testExecuteAsyncWhenOnSuccessFails()
-    {
+    public void testExecuteAsyncWhenOnSuccessFails() {
         doThrow(RuntimeException.class)
-                .when(onSuccess)
-                .processResponse(pojo);
+            .when(onSuccess)
+            .processResponse(pojo);
 
         instance.executeAsync(request, responseClass, onSuccess, onFailure);
 
@@ -301,20 +281,18 @@ public class AlchemyMachineImplTest
         verify(onFailure).handleError(any());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testExecuteAsyncWithBadArgs()
-    {
-        @SuppressWarnings("unchecked")
+    public void testExecuteAsyncWithBadArgs() {
         var mockOnSuccess = mock(OnSuccess.class);
 
         assertThrows(() -> instance.executeAsync(mockRequest, Void.class, mockOnSuccess, onFailure))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testToString()
-    {
-        String toString = instance.toString();
-        assertThat(toString, not(isEmptyOrNullString()));
+    public void testToString() {
+        var toString = instance.toString();
+        assertThat(toString, not(emptyOrNullString()));
     }
 }

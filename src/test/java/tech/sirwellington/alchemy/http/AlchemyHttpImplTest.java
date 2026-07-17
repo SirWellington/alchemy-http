@@ -72,7 +72,7 @@ public class AlchemyHttpImplTest {
         var key = one(alphabeticStrings());
         var value = one(alphabeticStrings());
 
-        AlchemyHttp result = instance.usingDefaultHeader(key, value);
+        var result = instance.usingDefaultHeader(key, value);
         assertThat(result, notNullValue());
         assertThat(result, not(sameInstance(instance)));
 

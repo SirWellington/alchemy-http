@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.http;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -44,8 +45,7 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
  * @author SirWellington
  */
 @AlchemyTest
-public class Step3ImplTest
-{
+public class Step3ImplTest {
     @Mock
     private AlchemyHttpStateMachine stateMachine;
 
@@ -62,13 +62,12 @@ public class Step3ImplTest
     private Step3 instance;
 
     @BeforeEach
-    public void setUp() throws MalformedURLException
-    {
+    public void setUp() throws MalformedURLException {
         url = one(Generators.validUrls());
 
         request = HttpRequest.Builder.newInstance()
-                .usingUrl(url)
-                .build();
+                                     .usingUrl(url)
+                                     .build();
 
         instance = new Step3Impl(stateMachine, request);
 
@@ -76,19 +75,19 @@ public class Step3ImplTest
     }
 
     @Test
-    public void testUsingHeader()
-    {
+    public void testUsingHeader() {
         // Edge Cases
         assertThrows(() -> instance.usingHeader("", ""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         // Happy cases
-        var expectedHeaders = CollectionGenerators.mapOf(alphabeticStrings(),
-                hexadecimalString(10),
-                20);
+        var expectedHeaders = CollectionGenerators.mapOf(
+            alphabeticStrings(),
+            hexadecimalString(10),
+            20
+        );
 
-        for (var entry : expectedHeaders.entrySet())
-        {
+        for (var entry : expectedHeaders.entrySet()) {
             instance = instance.usingHeader(entry.getKey(), entry.getValue());
         }
 
@@ -107,46 +106,46 @@ public class Step3ImplTest
     }
 
     @Test
-    public void testUsingQueryParam()
-    {
+    public void testUsingQueryParam() {
         int amount = one(integers(5, 20));
 
-        var strings = CollectionGenerators.mapOf(alphabeticStrings(),
-                hexadecimalString(10),
-                amount);
+        var strings = CollectionGenerators.mapOf(
+            alphabeticStrings(),
+            hexadecimalString(10),
+            amount
+        );
 
-        Map<String, Integer> integers = CollectionGenerators.mapOf(alphabeticStrings(),
-                smallPositiveIntegers(),
-                amount);
+        Map<String, Integer> integers = CollectionGenerators.mapOf(
+            alphabeticStrings(),
+            smallPositiveIntegers(),
+            amount
+        );
 
-        Map<String, Boolean> booleans = CollectionGenerators.mapOf(alphabeticStrings(),
-                booleans(),
-                amount);
+        Map<String, Boolean> booleans = CollectionGenerators.mapOf(
+            alphabeticStrings(),
+            booleans(),
+            amount
+        );
 
-        for (var entry : strings.entrySet())
-        {
+        for (var entry : strings.entrySet()) {
             instance = instance.usingQueryParam(entry.getKey(), entry.getValue());
         }
 
-        for (Map.Entry<String, Integer> entry : integers.entrySet())
-        {
+        for (var entry : integers.entrySet()) {
             instance = instance.usingQueryParam(entry.getKey(), entry.getValue());
         }
 
-        for (Map.Entry<String, Boolean> entry : booleans.entrySet())
-        {
+        for (var entry : booleans.entrySet()) {
             instance = instance.usingQueryParam(entry.getKey(), entry.getValue());
         }
 
         var expected = Maps.mutableCopyOf(strings);
         // Put the integers
-        for (var entry : integers.entrySet())
-        {
+        for (var entry : integers.entrySet()) {
             expected.put(entry.getKey(), entry.getValue().toString());
         }
         // Put the booleans too
-        for (var entry : booleans.entrySet())
-        {
+        for (var entry : booleans.entrySet()) {
             expected.put(entry.getKey(), entry.getValue().toString());
         }
 
@@ -160,18 +159,16 @@ public class Step3ImplTest
     }
 
     @Test
-    public void testUsingQueryParamEdgeCases()
-    {
+    public void testUsingQueryParamEdgeCases() {
         // Edge cases
         assertThrows(() -> instance.usingQueryParam("", ""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testFollowRedirects()
-    {
+    public void testFollowRedirects() {
         assertThrows(() -> instance.followRedirects(-10))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         instance = instance.followRedirects();
         assertThat(instance, notNullValue());
@@ -181,11 +178,10 @@ public class Step3ImplTest
     }
 
     @Test
-    public void testAt()
-    {
+    public void testAt() {
         // Edge Cases
         assertThrows(() -> instance.at(""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         instance.at(url);
         verify(stateMachine).executeSync(requestCaptor.capture());
@@ -198,19 +194,17 @@ public class Step3ImplTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testOnSuccess()
-    {
+    public void testOnSuccess() {
         instance.onSuccess((OnSuccess<HttpResponse>) onSuccess);
 
         verify(stateMachine).jumpToStep5(request, HttpResponse.class, (OnSuccess<HttpResponse>) onSuccess);
     }
 
     @Test
-    public void testExpecting()
-    {
+    public void testExpecting() {
         // Sad Cases
         assertThrows(() -> instance.expecting(Void.class))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         // Happy cases
         var expectedClass = String.class;
