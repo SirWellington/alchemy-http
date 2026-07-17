@@ -14,25 +14,23 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step5;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class Step5ImplTest
 {
     @Mock
@@ -51,7 +49,7 @@ public class Step5ImplTest
 
     private Step5<?> instance;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         expectedClass = TestPojo.class;
@@ -74,6 +72,6 @@ public class Step5ImplTest
     {
         String toString = instance.toString();
         assertThat(toString, notNullValue());
-        assertFalse(toString.isEmpty());
+        assertThat(toString.isEmpty(), is(false));
     }
 }

@@ -15,21 +15,19 @@
 
 package tech.sirwellington.alchemy.http.restful;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
@@ -38,9 +36,8 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 @IntegrationTest
-@RepeatedTest(50)
 public class ReqResponseAPITest
 {
 
@@ -99,11 +96,10 @@ public class ReqResponseAPITest
         }
     }
 
-    @GeneratePojo
     private CreateUserRequest request;
 
     @Test
-    public void testCreateUser()
+    public void testCreateUser() throws Exception
     {
         String url = ENDPOINT + "/api/users";
 
@@ -118,12 +114,12 @@ public class ReqResponseAPITest
         assertThat(response, notNullValue());
         assertThat(response.name, equalTo(request.name));
         assertThat(response.job, equalTo(request.job));
-        assertFalse(response.id == null || response.id.isEmpty());
-        assertFalse(response.createdAt == null || response.createdAt.isEmpty());
+        assertThat(response.id == null || response.id.isEmpty(), is(false));
+        assertThat(response.createdAt == null || response.createdAt.isEmpty(), is(false));
     }
 
     @Test
-    public void testUpdateUser()
+    public void testUpdateUser() throws Exception
     {
         int userId = 3;
         String url = ENDPOINT + "/api/users/" + userId;
@@ -139,11 +135,11 @@ public class ReqResponseAPITest
         assertThat(response, notNullValue());
         assertThat(response.name, equalTo(request.name));
         assertThat(response.job, equalTo(request.job));
-        assertFalse(response.updatedAt == null || response.updatedAt.isEmpty());
+        assertThat(response.updatedAt == null || response.updatedAt.isEmpty(), is(false));
     }
 
     @Test
-    public void testDeleteUser()
+    public void testDeleteUser() throws Exception
     {
         int userId = one(smallPositiveIntegers());
         String url = ENDPOINT + "/api/users/" + userId;
@@ -156,12 +152,12 @@ public class ReqResponseAPITest
         LOG.info("DELETE request @[{}] produced | [{}]", url, response);
 
         assertThat(response, notNullValue());
-        assertTrue(response.isOk());
+        assertThat(response.isOk(), is(true));
         assertThat(response.statusCode(), equalTo(204));
     }
 
     @Test
-    public void testWithInvalidBody()
+    public void testWithInvalidBody() throws Exception
     {
         String url = ENDPOINT + "/api/users";
         String body = one(alphabeticStrings());
@@ -180,11 +176,7 @@ public class ReqResponseAPITest
             LOG.info("Received response: [{}]", ex.getResponse());
             return;
         }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
 
-        fail("Expected exception here");
+        org.junit.jupiter.api.Assertions.fail("Expected exception here");
     }
 }

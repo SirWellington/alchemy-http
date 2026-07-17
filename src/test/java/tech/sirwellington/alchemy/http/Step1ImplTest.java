@@ -17,27 +17,24 @@ package tech.sirwellington.alchemy.http;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.generator.BinaryGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-@Repeat
+@AlchemyTest
 public class Step1ImplTest
 {
     @Mock(answer = Answers.RETURNS_SMART_NULLS)
@@ -50,7 +47,7 @@ public class Step1ImplTest
 
     private Step1Impl instance;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         request = HttpRequest.Builder

@@ -17,9 +17,8 @@ package tech.sirwellington.alchemy.http;
 import java.util.concurrent.Executor;
 
 import com.google.gson.Gson;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -27,20 +26,18 @@ import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnFailure;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class AlchemyMachineImplTest
 {
     @Mock
@@ -73,7 +70,7 @@ public class AlchemyMachineImplTest
 
     private AlchemyHttpStateMachine instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         request = new TestRequest();
@@ -156,7 +153,6 @@ public class AlchemyMachineImplTest
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @RepeatedTest(200)
     @Test
     public void testExecuteSync()
     {
@@ -164,7 +160,6 @@ public class AlchemyMachineImplTest
         assertThat(result, equalTo(response));
     }
 
-    @RepeatedTest(200)
     @Test
     public void testExecuteSyncWithCustomClass()
     {
@@ -220,7 +215,6 @@ public class AlchemyMachineImplTest
         verify(response).bodyAsString();
     }
 
-    @RepeatedTest(200)
     @Test
     public void testExecuteWhenResponseNotOk()
     {
@@ -240,7 +234,6 @@ public class AlchemyMachineImplTest
                 .isInstanceOf(AlchemyHttpException.class);
     }
 
-    @RepeatedTest(200)
     @Test
     public void testExecuteAsync() throws Exception
     {

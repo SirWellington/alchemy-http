@@ -28,34 +28,31 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import sir.wellington.alchemy.collections.lists.Lists;
 import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.NumberGenerators;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import org.junit.jupiter.api.RepeatedTest;
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-@RepeatedTest(100)
+@AlchemyTest
 public class HttpRequestExecutorImplTest
 {
 
@@ -83,7 +80,7 @@ public class HttpRequestExecutorImplTest
 
     private HttpRequestExecutor instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException
     {
         instance = new HttpRequestExecutorImpl(requestMapper);
@@ -154,7 +151,6 @@ public class HttpRequestExecutorImplTest
     }
 
     // Edge Cases
-    @DontRepeat
     @Test
     public void testExecuteWithBadArgs()
     {
@@ -208,21 +204,20 @@ public class HttpRequestExecutorImplTest
 
         HttpResponse response = instance.execute(request, gson, timeout);
         assertThat(response, notNullValue());
-        assertTrue(response.isOk());
+        assertThat(response.isOk(), is(true));
 
         JsonPrimitive expected = new JsonPrimitive(responseBody.toString());
         JsonElement result = response.body();
         assertThat(result, equalTo(expected));
     }
 
-    @RepeatedTest(5)
     @Test
     public void testWhenConnectionFails()
     {
         java.net.URL url = Generators.validUrls().get();
         request = HttpRequest.Builder.from(request).usingUrl(url).build();
 
-        var realConnection;
+        HttpURLConnection realConnection;
         try
         {
             realConnection = (HttpURLConnection) url.openConnection();
@@ -234,7 +229,7 @@ public class HttpRequestExecutorImplTest
 
         when(requestMapper.map(request)).thenReturn(realConnection);
 
-        assertThrows(() -> instance.execute(request, gson))
+        assertThrows(() -> instance.execute(request, gson, timeout))
                 .isInstanceOf(AlchemyConnectionException.class);
     }
 
@@ -242,7 +237,6 @@ public class HttpRequestExecutorImplTest
     // PERFORMANCE TESTS
     // =============================================
 
-    @DontRepeat
     @Test
     public void testPerformance()
     {
@@ -277,7 +271,6 @@ public class HttpRequestExecutorImplTest
         System.out.printf("Gson took %dms across %d runs%n", time, iterations);
     }
 
-    @DontRepeat
     @Test
     public void compareGsonMethods()
     {

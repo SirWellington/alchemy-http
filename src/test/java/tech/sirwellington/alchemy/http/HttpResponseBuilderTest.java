@@ -17,26 +17,23 @@ package tech.sirwellington.alchemy.http;
 import java.util.Collections;
 
 import com.google.gson.JsonElement;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import sir.wellington.alchemy.collections.maps.Maps;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static org.hamcrest.Matchers.notNullValue;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-@Repeat
+@AlchemyTest
 public class HttpResponseBuilderTest
 {
 
@@ -47,7 +44,7 @@ public class HttpResponseBuilderTest
 
     private HttpResponse.Builder instance;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         instance = HttpResponse.Builder.newInstance();

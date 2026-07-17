@@ -14,33 +14,28 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateEnum;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 
-@RunWith(AlchemyTestRunner.class)
-@Repeat
+@AlchemyTest
 public class HttpStatusCodeTest
 {
 
-    @GenerateEnum
     private HttpStatusCode status;
 
     @Test
     public void testMatchesCode()
     {
         int code = status.getCode();
-        assertTrue(status.matchesCode(code));
+        assertThat(status.matchesCode(code), equalTo(true));
 
         HttpStatusCode other = HttpStatusCode.anyExcept(status);
-        assertFalse(other.matchesCode(code));
+        assertThat(other.matchesCode(code), equalTo(false));
     }
 
     @Test

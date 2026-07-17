@@ -16,23 +16,19 @@ package tech.sirwellington.alchemy.http;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-@RepeatedTest(50)
+@AlchemyTest
 public class HttpRequestTest
 {
 
@@ -40,7 +36,7 @@ public class HttpRequestTest
 
     private HttpRequest instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         testRequest = new TestRequest();

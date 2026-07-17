@@ -17,35 +17,32 @@ package tech.sirwellington.alchemy.http;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateEnum;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.*;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class HttpAssertionsTest
 {
 
-    @GenerateEnum
     private RequestMethod requestMethod;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
     }
@@ -57,7 +54,6 @@ public class HttpAssertionsTest
                 .isInstanceOf(Exception.class);
     }
 
-    @Repeat
     @Test
     public void testValidHttpStatusCode()
     {
@@ -77,6 +73,7 @@ public class HttpAssertionsTest
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testValidResponseClass()
     {
         // Check Object
@@ -86,14 +83,14 @@ public class HttpAssertionsTest
 
         // Check String
         var instanceTwo = HttpAssertions.validResponseClass();
-        instanceTwo.check(String.class);
+        instanceTwo.check((Class<Object>) (Class<?>) String.class);
 
         // Edge Cases
         assertThrows(() -> instanceOne.check(null))
                 .isInstanceOf(FailedAssertionException.class);
 
         var instanceThree = HttpAssertions.validResponseClass();
-        assertThrows(() -> instanceThree.check(Void.class))
+        assertThrows(() -> instanceThree.check((Class<Object>) (Class<?>) Void.class))
                 .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -111,7 +108,6 @@ public class HttpAssertionsTest
         instance.check(request);
     }
 
-    @Repeat
     @Test
     public void testRequestReadyEdgeCases() throws MalformedURLException
     {
@@ -148,7 +144,6 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
     }
 
-    @RepeatedTest(10)
     @Test
     public void testValidContentType()
     {
@@ -180,7 +175,6 @@ public class HttpAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
     }
 
-    @Repeat
     @Test
     public void testJsonArray()
     {

@@ -19,37 +19,37 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.BinaryGenerators;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.*;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RepeatedTest(100)
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class AlchemyRequestTest
 {
     private URL url;
     private Map<String, String> headers;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         url = one(Generators.validUrls());

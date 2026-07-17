@@ -14,17 +14,16 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class SynchronousExecutorTest
 {
 
@@ -33,7 +32,7 @@ public class SynchronousExecutorTest
 
     private SynchronousExecutor instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         setupData();

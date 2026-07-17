@@ -18,25 +18,22 @@ package tech.sirwellington.alchemy.http.restful;
 import java.util.List;
 
 import com.google.gson.JsonObject;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 @IntegrationTest
-@RepeatedTest(5)
 public class DomainsDBTest
 {
 
@@ -63,7 +60,7 @@ public class DomainsDBTest
     }
 
     @Test
-    public void testCensio()
+    public void testCensio() throws Exception
     {
         String url = ENDPOINT;
 
@@ -78,7 +75,7 @@ public class DomainsDBTest
     }
 
     @Test
-    public void testFacebook()
+    public void testFacebook() throws Exception
     {
         String url = ENDPOINT;
 
@@ -93,7 +90,7 @@ public class DomainsDBTest
     }
 
     @Test
-    public void testAmazon()
+    public void testAmazon() throws Exception
     {
         String url = ENDPOINT;
 

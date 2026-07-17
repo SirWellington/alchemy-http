@@ -17,28 +17,24 @@ package tech.sirwellington.alchemy.http;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-@RepeatedTest(50)
+@AlchemyTest
 public class Step2ImplTest
 {
     @Mock
@@ -55,7 +51,7 @@ public class Step2ImplTest
 
     private Step2Impl instance;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         request = HttpRequest.Builder.newInstance().build();
@@ -65,7 +61,6 @@ public class Step2ImplTest
         expectedBody = one(Generators.jsonObjects());
     }
 
-    @DontRepeat
     @Test
     public void testNoBody()
     {
@@ -78,7 +73,6 @@ public class Step2ImplTest
         verifyRequestMade(requestMade);
     }
 
-    @DontRepeat
     @Test
     public void testNothing()
     {

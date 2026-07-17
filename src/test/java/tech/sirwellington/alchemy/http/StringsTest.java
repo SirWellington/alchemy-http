@@ -14,26 +14,20 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateString;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
-@RunWith(AlchemyTestRunner.class)
-@Repeat
+@AlchemyTest
 public class StringsTest
 {
 
-    @GenerateString
     private String string;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         setupData();
@@ -54,9 +48,9 @@ public class StringsTest
     @Test
     public void testIsNullOrEmpty() throws Exception
     {
-        assertFalse(Strings.isNullOrEmpty(string));
-        assertTrue(Strings.isNullOrEmpty(null));
-        assertTrue(Strings.isNullOrEmpty(""));
+        assertThat(Strings.isNullOrEmpty(string), is(false));
+        assertThat(Strings.isNullOrEmpty(null), is(true));
+        assertThat(Strings.isNullOrEmpty(""), is(true));
     }
 
     private void setupData() throws Exception

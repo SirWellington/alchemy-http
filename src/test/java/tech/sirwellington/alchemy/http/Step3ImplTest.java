@@ -17,9 +17,8 @@ package tech.sirwellington.alchemy.http;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -27,12 +26,10 @@ import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.OnSuccess;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step3;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
@@ -41,13 +38,12 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-@Repeat
+@AlchemyTest
 public class Step3ImplTest
 {
     @Mock
@@ -65,7 +61,7 @@ public class Step3ImplTest
 
     private Step3 instance;
 
-    @Before
+    @BeforeEach
     public void setUp() throws MalformedURLException
     {
         url = one(Generators.validUrls());
@@ -163,7 +159,6 @@ public class Step3ImplTest
         assertThat(requestMade, not(sameInstance(request)));
     }
 
-    @DontRepeat
     @Test
     public void testUsingQueryParamEdgeCases()
     {

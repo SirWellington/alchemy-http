@@ -21,16 +21,15 @@ import java.util.Map;
 
 import com.google.gson.JsonElement;
 import io.mikael.urlbuilder.UrlBuilder;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.*;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
@@ -38,20 +37,16 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 /**
  * @author SirWellington
  */
-@RepeatedTest(50)
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class HttpConnectionPreparerTest
 {
 
     private HttpConnectionPreparer instance;
 
-    @GenerateURL
     private URL url;
 
-    @GenerateURL
     private URL expandedUrl;
 
-    @GenerateEnum
     private RequestMethod requestMethod;
 
     @Mock
@@ -61,7 +56,7 @@ public class HttpConnectionPreparerTest
 
     private Map<String, String> queryParams;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         body = one(Generators.jsonElements());
@@ -111,7 +106,6 @@ public class HttpConnectionPreparerTest
         assertThat(result.getURL(), equalTo(expandedUrl));
     }
 
-    @DontRepeat
     @Test
     public void testExpandUrlFromRequestWhenNoQueryParams() throws Exception
     {

@@ -15,27 +15,26 @@
 package tech.sirwellington.alchemy.http;
 
 import java.net.URL;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.http.AlchemyRequestSteps.Step6;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class Step6ImplTest
 {
     @Mock
@@ -59,7 +58,7 @@ public class Step6ImplTest
 
     private Step6<Object> instance;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         responseClass = Object.class;
@@ -77,7 +76,6 @@ public class Step6ImplTest
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @RepeatedTest(50)
     @Test
     public void testAt() throws Exception
     {

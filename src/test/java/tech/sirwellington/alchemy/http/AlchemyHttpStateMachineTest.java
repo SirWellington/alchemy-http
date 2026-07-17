@@ -18,21 +18,20 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import com.google.gson.Gson;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
@@ -40,7 +39,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class AlchemyHttpStateMachineTest
 {
     private AlchemyHttpStateMachine instance;
@@ -74,7 +73,7 @@ public class AlchemyHttpStateMachineTest
 
     private Map<String, String> requestHeaders;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         requestHeaders = CollectionGenerators.mapOf(alphabeticStrings(), alphabeticStrings(), 15);
@@ -110,7 +109,6 @@ public class AlchemyHttpStateMachineTest
         assertThat(result, notNullValue());
     }
 
-    @DontRepeat
     @Test
     public void testUsingGson() throws Exception
     {

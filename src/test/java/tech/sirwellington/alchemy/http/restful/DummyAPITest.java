@@ -15,26 +15,22 @@
 
 package tech.sirwellington.alchemy.http.restful;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 @IntegrationTest
-@RepeatedTest(35)
 public class DummyAPITest
 {
 
@@ -77,13 +73,12 @@ public class DummyAPITest
         }
     }
 
-    @GeneratePojo
     private PostRequest request;
 
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 
     @Test
-    public void testCreatePost()
+    public void testCreatePost() throws Exception
     {
         String url = ENDPOINT + "/posts";
 
@@ -102,7 +97,7 @@ public class DummyAPITest
     }
 
     @Test
-    public void testDeletePost()
+    public void testDeletePost() throws Exception
     {
         int postId = 1;
         String url = ENDPOINT + "/posts/" + postId;
@@ -113,7 +108,7 @@ public class DummyAPITest
                                     .at(url);
 
         assertThat(response, notNullValue());
-        assertTrue(response.isOk());
+        assertThat(response.isOk(), is(true));
 
         LOG.info("Received response when deleting [{}] | [{}]", url, response);
     }

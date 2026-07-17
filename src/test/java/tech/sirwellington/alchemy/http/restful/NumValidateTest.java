@@ -16,27 +16,25 @@
 package tech.sirwellington.alchemy.http.restful;
 
 import com.google.gson.JsonObject;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.HttpResponse;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.PeopleGenerators.phoneNumberStrings;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 @IntegrationTest
-@Ignore
+@Disabled
 public class NumValidateTest
 {
 
@@ -45,13 +43,12 @@ public class NumValidateTest
 
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 
-    @Ignore
-    @RepeatedTest(5)
+    @Disabled
     @Test
-    public void testPhone()
+    public void testPhone() throws Exception
     {
         String url = ENDPOINT;
-        String phone = one(phoneNumberStrings());
+        String phone = one(alphabeticStrings(10));
 
         HttpResponse response = http.go()
                                     .get()
@@ -59,7 +56,7 @@ public class NumValidateTest
                                     .at(url);
 
         assertThat(response, notNullValue());
-        assertTrue(response.body().isJsonObject());
+        assertThat(response.body().isJsonObject(), is(true));
 
         JsonObject json = response.body().getAsJsonObject();
 

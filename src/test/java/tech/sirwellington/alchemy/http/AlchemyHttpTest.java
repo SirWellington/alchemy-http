@@ -18,29 +18,28 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateString;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.RepeatedTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 public class AlchemyHttpTest
 {
 
@@ -55,15 +54,13 @@ public class AlchemyHttpTest
 
     private Map<String, String> defaultHeaders;
 
-    @GenerateString
     private String headerKey;
 
-    @GenerateString
     private String headerValue;
 
     private AlchemyHttpImpl instance;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         defaultHeaders = CollectionGenerators.mapOf(alphabeticStrings(),
@@ -73,14 +70,13 @@ public class AlchemyHttpTest
         instance = new AlchemyHttpImpl(defaultHeaders, stateMachine);
     }
 
-    @RepeatedTest(100)
     @Test
     public void testUsingDefaultHeader()
     {
         var result = instance.usingDefaultHeader(headerKey, headerValue);
         assertThat(result, notNullValue());
-        assertTrue(result.getDefaultHeaders().containsKey(headerKey));
-        assertEquals(result.getDefaultHeaders().get(headerKey), headerValue);
+        assertThat(result.getDefaultHeaders().containsKey(headerKey), is(true));
+        assertThat(result.getDefaultHeaders().get(headerKey), equalTo(headerValue));
     }
 
     @Test
@@ -149,7 +145,7 @@ public class AlchemyHttpTest
 
         for (var entry : defaultHeaders.entrySet())
         {
-            assertTrue(entry.getValue().equals(client.getDefaultHeaders().get(entry.getKey())));
+            assertThat(entry.getValue().equals(client.getDefaultHeaders().get(entry.getKey())), is(true));
         }
     }
 }
