@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.verify;
 
 @AlchemyTest
-public class SynchronousExecutorTest
-{
+public class SynchronousExecutorTest {
 
     @Mock
     private Runnable command;
@@ -33,8 +32,7 @@ public class SynchronousExecutorTest
     private SynchronousExecutor instance;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         setupData();
         setupMocks();
 
@@ -42,25 +40,21 @@ public class SynchronousExecutorTest
     }
 
     @Test
-    public void testNewInstance() throws Exception
-    {
+    public void testNewInstance() throws Exception {
         instance = SynchronousExecutor.newInstance();
         assertThat(instance, notNullValue());
     }
 
     @Test
-    public void testExecute() throws Exception
-    {
+    public void testExecute() throws Exception {
         instance.execute(command);
 
         verify(command).run();
     }
 
-    private void setupData() throws Exception
-    {
+    private void setupData() throws Exception {
     }
 
-    private void setupMocks() throws Exception
-    {
+    private void setupMocks() throws Exception {
     }
 }

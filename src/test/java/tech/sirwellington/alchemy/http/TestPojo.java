@@ -15,7 +15,6 @@
 package tech.sirwellington.alchemy.http;
 
 import java.util.Date;
-import java.util.Objects;
 
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.DateGenerators.pastDates;
@@ -27,64 +26,27 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.*;
  *
  * @author SirWellington
  */
-class TestPojo
-{
+record TestPojo(
+    String firstName,
+    String lastName,
+    Date birthday,
+    String address,
+    int age
+) {
 
-    public String firstName;
-    public String lastName;
-    public Date birthday;
-    public String address;
-    public int age;
+    static TestPojo generate() {
+        var firstName = one(alphabeticStrings());
+        var lastName = one(hexadecimalString(10));
+        var birthday = one(pastDates());
+        var address = one(strings(50));
+        var age = one(smallPositiveIntegers());
 
-    public TestPojo()
-    {
-    }
-
-    public TestPojo(String firstName, String lastName, Date birthday, String address, int age)
-    {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthday = birthday;
-        this.address = address;
-        this.age = age;
-    }
-
-    static TestPojo generate()
-    {
-        String firstName = one(alphabeticStrings());
-        String lastName = one(hexadecimalString(10));
-        Date birthday = one(pastDates());
-        String address = one(strings(50));
-        int age = one(smallPositiveIntegers());
-
-        return new TestPojo(firstName, lastName, birthday, address, age);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (!(o instanceof TestPojo other)) return false;
-        return age == other.age
-                && Objects.equals(firstName, other.firstName)
-                && Objects.equals(lastName, other.lastName)
-                && Objects.equals(birthday, other.birthday)
-                && Objects.equals(address, other.address);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(firstName, lastName, birthday, address, age);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "TestPojo(firstName=" + firstName
-                + ", lastName=" + lastName
-                + ", birthday=" + birthday
-                + ", address=" + address
-                + ", age=" + age + ")";
+        return new TestPojo(
+            firstName,
+            lastName,
+            birthday,
+            address,
+            age
+        );
     }
 }

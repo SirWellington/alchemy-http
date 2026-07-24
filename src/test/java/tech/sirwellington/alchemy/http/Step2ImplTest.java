@@ -35,8 +35,7 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
  * @author SirWellington
  */
 @AlchemyTest
-public class Step2ImplTest
-{
+public class Step2ImplTest {
     @Mock
     private AlchemyHttpStateMachine stateMachine;
 
@@ -52,8 +51,7 @@ public class Step2ImplTest
     private Step2Impl instance;
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         request = HttpRequest.Builder.newInstance().build();
 
         instance = new Step2Impl(request, stateMachine, gson);
@@ -62,8 +60,7 @@ public class Step2ImplTest
     }
 
     @Test
-    public void testNoBody()
-    {
+    public void testNoBody() {
         instance.noBody();
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
@@ -74,8 +71,7 @@ public class Step2ImplTest
     }
 
     @Test
-    public void testNothing()
-    {
+    public void testNothing() {
         instance.nothing();
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
@@ -86,9 +82,8 @@ public class Step2ImplTest
     }
 
     @Test
-    public void testStringBody()
-    {
-        String stringBody = gson.toJson(expectedBody);
+    public void testStringBody() {
+        var stringBody = gson.toJson(expectedBody);
         instance.body(stringBody);
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
@@ -98,16 +93,14 @@ public class Step2ImplTest
     }
 
     @Test
-    public void testStringBodyWhenEmpty()
-    {
+    public void testStringBodyWhenEmpty() {
         assertThrows(() -> instance.body(""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testObjectBody()
-    {
-        TestPojo pojo = TestPojo.generate();
+    public void testObjectBody() {
+        var pojo = TestPojo.generate();
 
         instance.body(pojo);
 
@@ -118,16 +111,14 @@ public class Step2ImplTest
         verifyRequestMade(requestMade);
     }
 
-    private void verifyRequestMade(HttpRequest requestMade)
-    {
+    private void verifyRequestMade(HttpRequest requestMade) {
         assertThat(requestMade, notNullValue());
         assertThat(requestMade.body(), equalTo(expectedBody));
     }
 
     @Test
-    public void testToString()
-    {
-        String toString = instance.toString();
+    public void testToString() {
+        var toString = instance.toString();
         assertThat(Strings.isNullOrEmpty(toString), equalTo(false));
     }
 }

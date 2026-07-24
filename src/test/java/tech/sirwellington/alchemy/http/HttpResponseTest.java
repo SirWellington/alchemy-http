@@ -14,9 +14,7 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,17 +27,15 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
-import static org.hamcrest.Matchers.is;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
 @AlchemyTest
-public class HttpResponseTest
-{
+public class HttpResponseTest {
 
-    private final com.google.gson.Gson gson = Constants.DEFAULT_GSON;
+    private final Gson gson = Constants.DEFAULT_GSON;
 
     private TestResponse first;
     private TestResponse second;
@@ -50,8 +46,7 @@ public class HttpResponseTest
     private HttpResponse.Builder builder;
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         first = new TestResponse();
         second = first.copy();
 
@@ -62,15 +57,13 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testStatusCode()
-    {
+    public void testStatusCode() {
         var instance = builder.build();
         assertThat(instance.statusCode(), equalTo(first.statusCode));
     }
 
     @Test
-    public void testStatus()
-    {
+    public void testStatus() {
         var instance = builder.build();
         var status = instance.statusCode();
         var expected = HttpStatusCode.forCode(status);
@@ -78,9 +71,8 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testNotFound()
-    {
-        HttpStatusCode status = HttpStatusCode.any();
+    public void testNotFound() {
+        var status = HttpStatusCode.any();
         var code = status.getCode();
         var instance = builder.withStatusCode(code).build();
 
@@ -89,8 +81,7 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testIsOk()
-    {
+    public void testIsOk() {
         first.statusCode = one(integers(200, 209));
         builder = builder.copyFrom(first);
 
@@ -99,8 +90,7 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testIsOkWhenNotOk()
-    {
+    public void testIsOkWhenNotOk() {
         first.statusCode = one(integers(400, 506));
         builder = builder.copyFrom(first);
 
@@ -109,8 +99,7 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testResponseHeaders()
-    {
+    public void testResponseHeaders() {
         var instance = builder.build();
         assertThat(instance.responseHeaders(), equalTo(first.responseHeaders));
 
@@ -120,15 +109,13 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testBody()
-    {
+    public void testBody() {
         var instance = builder.build();
         assertThat(instance.body(), equalTo(first.responseBody));
     }
 
     @Test
-    public void testBodyAsString()
-    {
+    public void testBodyAsString() {
         var instance = builder.build();
         var asString = instance.bodyAsString();
         var expected = first.responseBody.toString();
@@ -136,8 +123,7 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testBodyAs()
-    {
+    public void testBodyAs() {
         first.responseBody = pojoAsJson;
         var instance = builder.copyFrom(first).build();
 
@@ -146,10 +132,9 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testBodyAsArrayOf()
-    {
-        List<TestPojo> pojos = CollectionGenerators.listOf(() -> TestPojo.generate());
-        com.google.gson.JsonElement jsonArray = gson.toJsonTree(pojos);
+    public void testBodyAsArrayOf() {
+        var pojos = CollectionGenerators.listOf(TestPojo::generate);
+        var jsonArray = gson.toJsonTree(pojos);
         assertThat(jsonArray.isJsonArray(), equalTo(true));
         first.responseBody = jsonArray;
 
@@ -159,16 +144,13 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testEqualsWhenTrue()
-    {
+    public void testEqualsWhenTrue() {
         assertBothEquals();
     }
 
     @Test
-    public void testEqualsWhenStatusCodeDifferent()
-    {
-        do
-        {
+    public void testEqualsWhenStatusCodeDifferent() {
+        do {
             second.statusCode = one(integers(200, 500));
         }
         while (second.statusCode == first.statusCode);
@@ -177,44 +159,39 @@ public class HttpResponseTest
     }
 
     @Test
-    public void testEqualsWhenResponseHeadersDifferent()
-    {
-        do
-        {
-            second.responseHeaders = CollectionGenerators.mapOf(strings(10),
-                                                                 strings(10),
-                                                                 20);
+    public void testEqualsWhenResponseHeadersDifferent() {
+        do {
+            second.responseHeaders = CollectionGenerators.mapOf(
+                strings(10),
+                strings(10),
+                20
+            );
         }
         while (second.responseHeaders.equals(first.responseHeaders));
     }
 
     @Test
-    public void testEqualsWhenResponseBodyDifferent()
-    {
-        do
-        {
+    public void testEqualsWhenResponseBodyDifferent() {
+        do {
             second.responseBody = one(Generators.jsonElements());
         }
         while (second.responseBody.equals(first.responseBody));
     }
 
-    private void assertBothEquals()
-    {
+    private void assertBothEquals() {
         assertThat(second, equalTo(first));
         assertThat(first.equals(second), equalTo(true));
         assertThat(second.equals(first), equalTo(true));
     }
 
-    private void assertBothDifferent()
-    {
+    private void assertBothDifferent() {
         assertThat(second, not(equalTo(first)));
         assertThat(first.equals(second), equalTo(false));
         assertThat(second.equals(first), equalTo(false));
     }
 
     @Test
-    public void testBuilder()
-    {
+    public void testBuilder() {
         assertThat(HttpResponse.builder(), notNullValue());
     }
 }

@@ -14,9 +14,8 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
@@ -35,8 +34,7 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
  * @author SirWellington
  */
 @AlchemyTest
-public class Step1ImplTest
-{
+public class Step1ImplTest {
     @Mock(answer = Answers.RETURNS_SMART_NULLS)
     private AlchemyHttpStateMachine stateMachine;
 
@@ -48,18 +46,16 @@ public class Step1ImplTest
     private Step1Impl instance;
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         request = HttpRequest.Builder
-                .newInstance()
-                .build();
+            .newInstance()
+            .build();
 
         instance = new Step1Impl(stateMachine, request);
     }
 
     @Test
-    public void testGet() throws Exception
-    {
+    public void testGet() throws Exception {
         instance.get();
 
         verify(stateMachine).jumpToStep3(requestCaptor.capture());
@@ -71,8 +67,7 @@ public class Step1ImplTest
     }
 
     @Test
-    public void testPost() throws Exception
-    {
+    public void testPost() throws Exception {
         instance.post();
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
@@ -84,8 +79,7 @@ public class Step1ImplTest
     }
 
     @Test
-    public void testPut() throws Exception
-    {
+    public void testPut() throws Exception {
         instance.put();
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
@@ -97,8 +91,7 @@ public class Step1ImplTest
     }
 
     @Test
-    public void testDelete() throws Exception
-    {
+    public void testDelete() throws Exception {
         instance.delete();
 
         verify(stateMachine).jumpToStep2(requestCaptor.capture());
@@ -110,8 +103,7 @@ public class Step1ImplTest
     }
 
     @Test
-    public void testCustomMethod() throws Exception
-    {
+    public void testCustomMethod() throws Exception {
         RequestMethod method = RequestMethod.any();
         instance.method(method);
 
@@ -124,34 +116,31 @@ public class Step1ImplTest
     }
 
     @Test
-    public void testDownload() throws IOException
-    {
-        byte[] bytes = one(BinaryGenerators.binary(100000));
-        File tempFile = TestFile.writeToTempFile(bytes);
+    public void testDownload() throws IOException {
+        var bytes = one(BinaryGenerators.binary(100000));
+        var tempFile = TestFile.writeToTempFile(bytes);
 
-        URL url = tempFile.toURI().toURL();
+        var url = tempFile.toURI().toURL();
 
-        byte[] download = instance.download(url);
+        var download = instance.download(url);
         assertThat(download, equalTo(bytes));
     }
 
     @Test
-    public void testDownloadString() throws Exception
-    {
-        byte[] binary = one(BinaryGenerators.binary(10_000));
-        File tempFile = TestFile.writeToTempFile(binary);
+    public void testDownloadString() throws Exception {
+        var binary = one(BinaryGenerators.binary(10_000));
+        var tempFile = TestFile.writeToTempFile(binary);
 
-        String urlString = tempFile.toURI().toURL().toString();
+        var urlString = tempFile.toURI().toURL().toString();
 
-        byte[] download = instance.download(urlString);
+        var download = instance.download(urlString);
 
         assertThat(download, equalTo(binary));
     }
 
     @Test
-    public void testToString()
-    {
-        String toString = instance.toString();
+    public void testToString() {
+        var toString = instance.toString();
         assertThat(toString, containsString(request.toString()));
         assertThat(toString, containsString(stateMachine.toString()));
     }

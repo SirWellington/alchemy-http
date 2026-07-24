@@ -34,78 +34,62 @@ import static org.hamcrest.Matchers.*;
  */
 @AlchemyTest
 @IntegrationTest
-public class DomainsDBTest
-{
+public class DomainsDBTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DomainsDBTest.class);
 
     private static final String ENDPOINT = "https://api.domainsdb.info/search";
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 
-    private static class ResponseBody
-    {
-        Integer total;
-        Integer time;
-        List<JsonObject> domains;
-
-        @Override
-        public String toString()
-        {
-            return "ResponseBody{" +
-                   "total=" + total +
-                   ", time=" + time +
-                   ", domains=" + domains +
-                   '}';
-        }
-    }
+    private record ResponseBody(
+        Integer total,
+        Integer time,
+        List<JsonObject> domains
+    ) {}
 
     @Test
-    public void testCensio() throws Exception
-    {
-        String url = ENDPOINT;
+    public void testMicrosoft() throws Exception {
+        var url = ENDPOINT;
 
-        ResponseBody response = http.go()
-                                    .get()
-                                    .usingQueryParam("query", "censio")
-                                    .usingQueryParam("tld", "love")
-                                    .expecting(ResponseBody.class)
-                                    .at(url);
+        var response = http.go()
+                           .get()
+                           .usingQueryParam("query", "microsoft")
+                           .usingQueryParam("tld", "com")
+                           .expecting(ResponseBody.class)
+                           .at(url);
 
         checkResponse(response);
     }
 
     @Test
-    public void testFacebook() throws Exception
-    {
-        String url = ENDPOINT;
+    public void testFacebook() throws Exception {
+        var url = ENDPOINT;
 
-        ResponseBody response = http.go()
-                                    .get()
-                                    .usingQueryParam("query", "facebook")
-                                    .usingQueryParam("tld", "com")
-                                    .expecting(ResponseBody.class)
-                                    .at(url);
+        var response = http.go()
+                           .get()
+                           .usingQueryParam("query", "facebook")
+                           .usingQueryParam("tld", "com")
+                           .expecting(ResponseBody.class)
+                           .at(url);
 
         checkResponse(response);
     }
 
     @Test
-    public void testAmazon() throws Exception
-    {
-        String url = ENDPOINT;
+    public void testAmazon() throws Exception {
+        var url = ENDPOINT;
 
-        ResponseBody response = http.go()
-                                    .get()
-                                    .usingQueryParam("query", "Google")
-                                    .usingQueryParam("told", "com")
-                                    .expecting(ResponseBody.class)
-                                    .at(url);
+        var response = http.go()
+                           .get()
+                           .usingQueryParam("query", "Google")
+                           .usingQueryParam("told", "com")
+                           .expecting(ResponseBody.class)
+                           .at(url);
 
         checkResponse(response);
     }
 
-    private void checkResponse(ResponseBody response)
-    {
+    private void checkResponse(ResponseBody response) {
         LOG.info("Received response: [{}]", response);
 
         assertThat(response, notNullValue());

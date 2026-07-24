@@ -29,25 +29,21 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 /**
  * @author SirWellington
  */
-final class TestFile
-{
+final class TestFile {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestFile.class);
 
-    private TestFile()
-    {
+    private TestFile() {
         throw new AssertionError("non-instantiable");
     }
 
-    static File writeToTempFile(byte[] binary) throws IOException
-    {
+    static File writeToTempFile(byte[] binary) throws IOException {
         checkThat(binary).isA(notNull());
 
         var filename = one(alphabeticStrings(10));
-        File tempFile = File.createTempFile(filename, ".txt");
+        var tempFile = File.createTempFile(filename, ".txt");
 
-        try (var fos = new FileOutputStream(tempFile))
-        {
+        try (var fos = new FileOutputStream(tempFile)) {
             fos.write(binary);
         }
 

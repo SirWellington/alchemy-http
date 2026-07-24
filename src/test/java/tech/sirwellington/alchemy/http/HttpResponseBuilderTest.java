@@ -34,8 +34,7 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
  * @author SirWellington
  */
 @AlchemyTest
-public class HttpResponseBuilderTest
-{
+public class HttpResponseBuilderTest {
 
     private final com.google.gson.Gson gson = Constants.DEFAULT_GSON;
 
@@ -45,8 +44,7 @@ public class HttpResponseBuilderTest
     private HttpResponse.Builder instance;
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         instance = HttpResponse.Builder.newInstance();
 
         response = new TestResponse();
@@ -54,24 +52,22 @@ public class HttpResponseBuilderTest
     }
 
     @Test
-    public void testWithStatusCode()
-    {
+    public void testWithStatusCode() {
         var goodStatusCode = one(integers(200, 500));
         var result = instance.withStatusCode(goodStatusCode);
         assertThat(result, notNullValue());
 
         var badStatusCode = one(integers(600, 10000));
         assertThrows(() -> instance.withStatusCode(badStatusCode))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
         var negativeStatusCode = one(negativeIntegers());
         assertThrows(() -> instance.withStatusCode(negativeStatusCode))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testWithStatusCodeEnum()
-    {
+    public void testWithStatusCodeEnum() {
         var status = HttpStatusCode.any();
 
         var result = instance.withStatusCode(status).build();
@@ -79,15 +75,13 @@ public class HttpResponseBuilderTest
     }
 
     @Test
-    public void testUsingGson()
-    {
+    public void testUsingGson() {
         var result = instance.usingGson(gson);
         assertThat(result, notNullValue());
     }
 
     @Test
-    public void testWithResponseBody()
-    {
+    public void testWithResponseBody() {
         var result = instance.withResponseBody(responseBody);
         assertThat(result, notNullValue());
 
@@ -95,8 +89,7 @@ public class HttpResponseBuilderTest
     }
 
     @Test
-    public void testWithResponseHeaders()
-    {
+    public void testWithResponseHeaders() {
         var result = instance.withResponseHeaders(response.responseHeaders);
         assertThat(result, notNullValue());
 
@@ -106,13 +99,12 @@ public class HttpResponseBuilderTest
     }
 
     @Test
-    public void testBuild()
-    {
+    public void testBuild() {
         var result = instance
-                .withResponseBody(responseBody)
-                .withResponseHeaders(response.responseHeaders)
-                .withStatusCode(response.statusCode)
-                .build();
+            .withResponseBody(responseBody)
+            .withResponseHeaders(response.responseHeaders)
+            .withStatusCode(response.statusCode)
+            .build();
 
         assertThat(result, notNullValue());
         assertThat(result.equals(response), equalTo(true));
@@ -120,18 +112,16 @@ public class HttpResponseBuilderTest
     }
 
     @Test
-    public void testBuildMissingStatusCode()
-    {
+    public void testBuildMissingStatusCode() {
         instance.withResponseBody(responseBody)
                 .withResponseHeaders(response.responseHeaders);
 
         assertThrows(() -> instance.build())
-                .isInstanceOf(IllegalStateException.class);
+            .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    public void testMergeFrom()
-    {
+    public void testMergeFrom() {
         instance.copyFrom(response);
 
         var result = instance.build();
@@ -140,18 +130,14 @@ public class HttpResponseBuilderTest
     }
 
     @Test
-    public void testSetResponseHeadersWithBadArgs() throws Exception
-    {
-        // Kotlin's lateinit var throws on null assignment.
-        // In Java, we test that building with null responseHeaders in a response works gracefully.
+    public void testSetResponseHeadersWithBadArgs() throws Exception {
         response.responseHeaders = null;
         // copyFrom should handle null headers without error
         instance.copyFrom(response);
     }
 
     @Test
-    public void testMergeFromEdgeCases()
-    {
+    public void testMergeFromEdgeCases() {
         var headers = response.responseHeaders;
         response.responseHeaders = Maps.emptyMap();
         var result = instance.copyFrom(response).build();
@@ -160,6 +146,6 @@ public class HttpResponseBuilderTest
         response.responseHeaders = headers;
         response.statusCode = one(negativeIntegers());
         assertThrows(() -> instance.copyFrom(response))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

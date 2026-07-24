@@ -31,8 +31,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
  * @author SirWellington
  */
 @AlchemyTest
-public class Step5ImplTest
-{
+public class Step5ImplTest {
     @Mock
     private AlchemyHttpStateMachine stateMachine;
 
@@ -50,8 +49,7 @@ public class Step5ImplTest
     private Step5<?> instance;
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         expectedClass = TestPojo.class;
 
         instance = new Step5Impl<>(stateMachine, request, expectedClass, onSuccess);
@@ -60,17 +58,15 @@ public class Step5ImplTest
     }
 
     @Test
-    public void testOnFailure()
-    {
+    public void testOnFailure() {
         instance.onFailure(onFailure);
 
         verify(stateMachine).jumpToStep6(request, expectedClass, onSuccess, onFailure);
     }
 
     @Test
-    public void testToString()
-    {
-        String toString = instance.toString();
+    public void testToString() {
+        var toString = instance.toString();
         assertThat(toString, notNullValue());
         assertThat(toString.isEmpty(), is(false));
     }

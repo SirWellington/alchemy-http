@@ -20,17 +20,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 
 /**
@@ -38,76 +36,38 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  */
 @AlchemyTest
 @IntegrationTest
-public class ReqResponseAPITest
-{
+public class ReqResponseAPITest {
 
     private static final String ENDPOINT = "https://reqres.in";
     private static final AlchemyHttp http = AlchemyHttp.newBuilder().build();
     private static final Logger LOG = LoggerFactory.getLogger(ReqResponseAPITest.class);
 
-    private static class CreateUserRequest
-    {
-        String name;
-        String job;
+    private record CreateUserRequest(String name, String job) {}
 
-        @Override
-        public String toString()
-        {
-            return "CreateUserRequest{" +
-                   "name='" + name + '\'' +
-                   ", job='" + job + '\'' +
-                   '}';
-        }
-    }
+    private record CreateUserResponse(
+        String name,
+        String job,
+        String id,
+        String createdAt
+    ) {}
 
-    private static class CreateUserResponse
-    {
-        String name;
-        String job;
-        String id;
-        String createdAt;
-
-        @Override
-        public String toString()
-        {
-            return "CreateUserResponse{" +
-                   "name='" + name + '\'' +
-                   ", job='" + job + '\'' +
-                   ", id='" + id + '\'' +
-                   ", createdAt='" + createdAt + '\'' +
-                   '}';
-        }
-    }
-
-    private static class UpdateUserResponse
-    {
-        String name;
-        String job;
-        String updatedAt;
-
-        @Override
-        public String toString()
-        {
-            return "UpdateUserResponse{" +
-                   "name='" + name + '\'' +
-                   ", job='" + job + '\'' +
-                   ", updatedAt='" + updatedAt + '\'' +
-                   '}';
-        }
-    }
+    private record UpdateUserResponse(
+        String name,
+        String job,
+        String updatedAt
+    ) {}
 
     private CreateUserRequest request;
 
     @Test
-    public void testCreateUser() throws Exception
-    {
-        String url = ENDPOINT + "/api/users";
+    public void testCreateUser() throws Exception {
+        var url = ENDPOINT + "/api/users";
 
-        CreateUserResponse response = http.go()
-                                          .post()
-                                          .body(request)
-                                          .expecting(CreateUserResponse.class)
-                                          .at(url);
+        var response = http.go()
+                           .post()
+                           .body(request)
+                           .expecting(CreateUserResponse.class)
+                           .at(url);
 
         LOG.info("POST @ [{}] produced | [{}]", url, response);
 
@@ -119,10 +79,9 @@ public class ReqResponseAPITest
     }
 
     @Test
-    public void testUpdateUser() throws Exception
-    {
-        int userId = 3;
-        String url = ENDPOINT + "/api/users/" + userId;
+    public void testUpdateUser() throws Exception {
+        var userId = 3;
+        var url = ENDPOINT + "/api/users/" + userId;
 
         UpdateUserResponse response = http.go()
                                           .put()
@@ -139,15 +98,14 @@ public class ReqResponseAPITest
     }
 
     @Test
-    public void testDeleteUser() throws Exception
-    {
-        int userId = one(smallPositiveIntegers());
-        String url = ENDPOINT + "/api/users/" + userId;
+    public void testDeleteUser() throws Exception {
+        var userId = one(smallPositiveIntegers());
+        var url = ENDPOINT + "/api/users/" + userId;
 
-        HttpResponse response = http.go()
-                                    .delete()
-                                    .noBody()
-                                    .at(url);
+        var response = http.go()
+                           .delete()
+                           .noBody()
+                           .at(url);
 
         LOG.info("DELETE request @[{}] produced | [{}]", url, response);
 
@@ -157,26 +115,21 @@ public class ReqResponseAPITest
     }
 
     @Test
-    public void testWithInvalidBody() throws Exception
-    {
-        String url = ENDPOINT + "/api/users";
-        String body = one(alphabeticStrings());
+    public void testWithInvalidBody() throws Exception {
+        var url = ENDPOINT + "/api/users";
+        var body = one(alphabeticStrings());
 
-        try
-        {
-            HttpResponse response = http.go()
-                                        .post()
-                                        .body(body)
-                                        .at(url);
-        }
-        catch (AlchemyHttpException ex)
-        {
-            assertThat(ex.getRequest(), notNullValue());
-            assertThat(ex.getResponse(), notNullValue());
-            LOG.info("Received response: [{}]", ex.getResponse());
-            return;
-        }
-
-        org.junit.jupiter.api.Assertions.fail("Expected exception here");
+        assertThrows(
+            () -> http.go()
+                      .post()
+                      .body(body)
+                      .at(url)
+        ).isInstanceOf(AlchemyHttpException.class)
+         .assertThatException(ex -> {
+             var alchemyEx = (AlchemyHttpException) ex;
+             assertThat(alchemyEx.getRequest(), notNullValue());
+             assertThat(alchemyEx.getResponse(), notNullValue());
+             LOG.info("Received response: [{}]", alchemyEx.getResponse());
+         });
     }
 }

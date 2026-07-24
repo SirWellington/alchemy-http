@@ -22,22 +22,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @AlchemyTest
-public class StringsTest
-{
+public class StringsTest {
 
     private String string;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         setupData();
         setupMocks();
     }
 
     @Test
-    public void testNullToEmpty() throws Exception
-    {
-        String result = Strings.nullToEmpty(string);
+    public void testNullToEmpty() throws Exception {
+        var result = Strings.nullToEmpty(string);
         assertThat(result, equalTo(string));
 
         result = Strings.nullToEmpty(null);
@@ -46,18 +43,15 @@ public class StringsTest
     }
 
     @Test
-    public void testIsNullOrEmpty() throws Exception
-    {
+    public void testIsNullOrEmpty() throws Exception {
         assertThat(Strings.isNullOrEmpty(string), is(false));
         assertThat(Strings.isNullOrEmpty(null), is(true));
         assertThat(Strings.isNullOrEmpty(""), is(true));
     }
 
-    private void setupData() throws Exception
-    {
+    private void setupData() throws Exception {
     }
 
-    private void setupMocks() throws Exception
-    {
+    private void setupMocks() throws Exception {
     }
 }

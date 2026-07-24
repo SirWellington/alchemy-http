@@ -29,80 +29,71 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  * @author SirWellington
  */
 @AlchemyTest
-public class HttpRequestTest
-{
+public class HttpRequestTest {
 
     private TestRequest testRequest;
 
     private HttpRequest instance;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         testRequest = new TestRequest();
         instance = HttpRequest.copyOf(testRequest);
     }
 
     @Test
-    public void testGetRequestHeaders()
-    {
+    public void testGetRequestHeaders() {
         assertThat(instance.requestHeaders(), equalTo(testRequest.requestHeaders));
     }
 
     @Test
-    public void testGetQueryParams()
-    {
+    public void testGetQueryParams() {
         assertThat(instance.queryParams(), equalTo(testRequest.queryParams));
     }
 
     @Test
-    public void testHasQueryParams()
-    {
+    public void testHasQueryParams() {
         testRequest.queryParams = Collections.emptyMap();
         instance = HttpRequest.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), equalTo(false));
 
-        testRequest.queryParams = CollectionGenerators.mapOf(alphabeticStrings(),
-                                                              alphabeticStrings(),
-                                                              10);
+        testRequest.queryParams = CollectionGenerators.mapOf(
+            alphabeticStrings(),
+            alphabeticStrings(),
+            10
+        );
         instance = HttpRequest.copyOf(testRequest);
         assertThat(instance.hasQueryParams(), equalTo(true));
     }
 
     @Test
-    public void testGetUrl()
-    {
+    public void testGetUrl() {
         assertThat(instance.url(), equalTo(testRequest.url));
     }
 
     @Test
-    public void testGetBody()
-    {
+    public void testGetBody() {
         assertThat(instance.body(), equalTo(testRequest.body));
     }
 
     @Test
-    public void testGetRequestMethod() throws Exception
-    {
+    public void testGetRequestMethod() throws Exception {
         assertThat(instance.method(), equalTo(testRequest.method));
     }
 
     @Test
-    public void testHasBody()
-    {
+    public void testHasBody() {
         assertThat(instance.body(), equalTo(testRequest.body));
     }
 
     @Test
-    public void testEquals()
-    {
+    public void testEquals() {
         assertThat(instance.equals(testRequest), equalTo(true));
         assertThat(testRequest.equals(instance), equalTo(true));
     }
 
     @Test
-    public void testCopyOf()
-    {
+    public void testCopyOf() {
         var result = HttpRequest.copyOf(instance);
         assertThat(result, notNullValue());
         assertThat(result, equalTo(instance));
@@ -110,8 +101,7 @@ public class HttpRequestTest
     }
 
     @Test
-    public void testFrom()
-    {
+    public void testFrom() {
         var result = HttpRequest.Builder.from(null);
         assertThat(result, notNullValue());
     }

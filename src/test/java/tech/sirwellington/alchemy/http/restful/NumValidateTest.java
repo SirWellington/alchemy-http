@@ -15,14 +15,12 @@
 
 package tech.sirwellington.alchemy.http.restful;
 
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,8 +33,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 @AlchemyTest
 @IntegrationTest
 @Disabled
-public class NumValidateTest
-{
+public class NumValidateTest {
 
     private static final String ENDPOINT = "https://numvalidate.com/api/validate";
     private static final Logger LOG = LoggerFactory.getLogger(NumValidateTest.class);
@@ -45,20 +42,19 @@ public class NumValidateTest
 
     @Disabled
     @Test
-    public void testPhone() throws Exception
-    {
-        String url = ENDPOINT;
-        String phone = one(alphabeticStrings(10));
+    public void testPhone() throws Exception {
+        var url = ENDPOINT;
+        var phone = one(alphabeticStrings(10));
 
-        HttpResponse response = http.go()
-                                    .get()
-                                    .usingQueryParam("number", phone)
-                                    .at(url);
+        var response = http.go()
+                           .get()
+                           .usingQueryParam("number", phone)
+                           .at(url);
 
         assertThat(response, notNullValue());
         assertThat(response.body().isJsonObject(), is(true));
 
-        JsonObject json = response.body().getAsJsonObject();
+        var json = response.body().getAsJsonObject();
 
         LOG.info("Received response for phone number [{}] | [{}]", phone, json);
     }

@@ -20,56 +20,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 
 @AlchemyTest
 @IntegrationTest
-public class DummyAPITest
-{
+public class DummyAPITest {
 
     private static final String ENDPOINT = "https://jsonplaceholder.typicode.com";
     private static final Logger LOG = LoggerFactory.getLogger(DummyAPITest.class);
 
-    private static class PostRequest
-    {
+    private static class PostRequest {
         String title;
         String body;
         int userId;
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "PostRequest{" +
-                   "title='" + title + '\'' +
-                   ", body='" + body + '\'' +
-                   ", userId=" + userId +
-                   '}';
+                "title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", userId=" + userId +
+                '}';
         }
     }
 
-    private static class Post
-    {
+    private static class Post {
         int id;
         String title;
         String body;
         int userId;
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "Post{" +
-                   "id=" + id +
-                   ", title='" + title + '\'' +
-                   ", body='" + body + '\'' +
-                   ", userId=" + userId +
-                   '}';
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", userId=" + userId +
+                '}';
         }
     }
 
@@ -78,15 +70,14 @@ public class DummyAPITest
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 
     @Test
-    public void testCreatePost() throws Exception
-    {
-        String url = ENDPOINT + "/posts";
+    public void testCreatePost() throws Exception {
+        var url = ENDPOINT + "/posts";
 
-        Post response = http.go()
-                            .post()
-                            .body(request)
-                            .expecting(Post.class)
-                            .at(url);
+        var response = http.go()
+                           .post()
+                           .body(request)
+                           .expecting(Post.class)
+                           .at(url);
 
         assertThat(response, notNullValue());
         assertThat(response.userId, equalTo(request.userId));
@@ -97,15 +88,14 @@ public class DummyAPITest
     }
 
     @Test
-    public void testDeletePost() throws Exception
-    {
+    public void testDeletePost() throws Exception {
         int postId = 1;
-        String url = ENDPOINT + "/posts/" + postId;
+        var url = ENDPOINT + "/posts/" + postId;
 
-        HttpResponse response = http.go()
-                                    .delete()
-                                    .noBody()
-                                    .at(url);
+        var response = http.go()
+                           .delete()
+                           .noBody()
+                           .at(url);
 
         assertThat(response, notNullValue());
         assertThat(response.isOk(), is(true));

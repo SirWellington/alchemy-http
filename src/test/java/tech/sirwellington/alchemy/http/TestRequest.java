@@ -28,8 +28,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 /**
  * @author SirWellington
  */
-class TestRequest implements HttpRequest
-{
+class TestRequest implements HttpRequest {
 
     public Map<String, String> queryParams = mapOf(alphabeticStrings(), alphabeticStrings(), 6);
     public URL url = one(Generators.validUrls());
@@ -38,76 +37,64 @@ class TestRequest implements HttpRequest
     public Map<String, String> requestHeaders = mapOf(alphabeticStrings(), alphabeticStrings(), 20);
 
     @Override
-    public Map<String, String> requestHeaders()
-    {
+    public Map<String, String> requestHeaders() {
         return requestHeaders;
     }
 
     @Override
-    public Map<String, String> queryParams()
-    {
+    public Map<String, String> queryParams() {
         return queryParams;
     }
 
     @Override
-    public URL url()
-    {
+    public URL url() {
         return url;
     }
 
     @Override
-    public JsonElement body()
-    {
+    public JsonElement body() {
         return body;
     }
 
     @Override
-    public RequestMethod method()
-    {
+    public RequestMethod method() {
         return method;
     }
 
     @Override
-    public boolean hasBody()
-    {
+    public boolean hasBody() {
         return body != null && !(body instanceof JsonNull);
     }
 
     @Override
-    public boolean hasQueryParams()
-    {
+    public boolean hasQueryParams() {
         return queryParams != null && !queryParams.isEmpty();
     }
 
     @Override
-    public boolean hasMethod()
-    {
+    public boolean hasMethod() {
         return method != null;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (o instanceof HttpRequest other)
-        {
+    public boolean equals(Object o) {
+        if (o instanceof HttpRequest other) {
             return HttpRequest.super.equals(other);
         }
         return false;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(queryParams, url, body, method, requestHeaders);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "TestRequest(queryParams=" + queryParams
-                + ", url=" + url
-                + ", body=" + body
-                + ", method=" + method
-                + ", requestHeaders=" + requestHeaders + ")";
+            + ", url=" + url
+            + ", body=" + body
+            + ", method=" + method
+            + ", requestHeaders=" + requestHeaders + ")";
     }
 }
