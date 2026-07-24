@@ -55,8 +55,7 @@ final class HttpAssertions {
     }
 
     static AlchemyAssertion<HttpRequest> ready() {
-        return request ->
-        {
+        return request -> {
             checkThat(request)
                 .usingMessage("Request missing")
                 .is(notNull());
@@ -75,8 +74,7 @@ final class HttpAssertions {
     }
 
     static AlchemyAssertion<String> validContentType() {
-        return contentType ->
-        {
+        return contentType -> {
             checkThat(contentType)
                 .usingMessage("missing Content-Type")
                 .isA(nonEmptyString());

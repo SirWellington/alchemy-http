@@ -115,21 +115,27 @@ final class AlchemyHttpBuilderTest {
 
     @RepeatedTest(100)
     public void testUsingDefaultHeaders() {
+        // Given
         instance = AlchemyHttpBuilder.newInstance();
-
         var headers = mapOf(
             alphabeticStrings(),
             smallPositiveIntegers().mapping(String::valueOf),
             100
         );
-
+        // When
         var result = instance.usingDefaultHeaders(headers);
+        // Then
         assertThat(result, notNullValue());
-
+        // When
         var http = result.build();
+        // Then
         assertThat(http, notNullValue());
 
-        var expected = Map.copyOf(headers);
+        // When
+        var expected = Maps.mutableCopyOf(headers);
+        expected.putAll(Constants.DEFAULT_HEADERS);
+
+        // Then
         assertThat(http.getDefaultHeaders(), equalTo(expected));
 
         // Empty headers is ok
@@ -157,10 +163,13 @@ final class AlchemyHttpBuilderTest {
 
     @RepeatedTest(100)
     public void testBuild() {
+        // Given
         var result = instance.build();
+        // Then
         assertThat(result, notNullValue());
+        // When
         var expectedHeaders = Maps.copyOf(defaultHeaders);
-        expectedHeaders.putAll(this.defaultHeaders);
+        expectedHeaders.putAll(Constants.DEFAULT_HEADERS);
         assertThat(result.getDefaultHeaders(), equalTo(expectedHeaders));
     }
 
