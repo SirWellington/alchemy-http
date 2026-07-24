@@ -109,11 +109,11 @@ public class AlchemyHttpImplTest {
     }
 
     @Test
-    public void testGetDefaultHeaders() {
+    public void testGetDefaultHeaders_Unmodifiable() {
         var result = instance.getDefaultHeaders();
         assertThat(result, equalTo(defaultHeaders));
 
-        assertThrows(() -> result.clear());
+        assertThrows(result::clear);
     }
 
     @Test

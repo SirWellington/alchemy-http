@@ -24,6 +24,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -50,8 +51,10 @@ public class AlchemyHttpTest {
 
     private Map<String, String> defaultHeaders;
 
+    @GenerateString
     private String headerKey;
 
+    @GenerateString(GenerateString.Type.ALPHABETIC)
     private String headerValue;
 
     private AlchemyHttpImpl instance;
@@ -76,7 +79,7 @@ public class AlchemyHttpTest {
         // When
         var requestHeaders = result.getDefaultHeaders();
         // Then
-        assertThat(requestHeaders.keySet(), contains(headerKey));
+        assertThat(requestHeaders.keySet(), hasItem(headerKey));
         assertThat(requestHeaders.get(headerKey), equalTo(headerValue));
     }
 

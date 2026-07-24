@@ -14,36 +14,32 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import tech.sirwellington.alchemy.arguments.Arguments;
 
+
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 
-final class AlchemyHttpImpl implements AlchemyHttp
-{
+final class AlchemyHttpImpl implements AlchemyHttp {
     private final Map<String, String> defaultHeaders;
     private final AlchemyHttpStateMachine stateMachine;
 
-    AlchemyHttpImpl(Map<String, String> defaultHeaders, AlchemyHttpStateMachine stateMachine)
-    {
-        this.defaultHeaders = Collections.unmodifiableMap(new HashMap<>(defaultHeaders));
+    AlchemyHttpImpl(Map<String, String> defaultHeaders, AlchemyHttpStateMachine stateMachine) {
+        this.defaultHeaders = Map.copyOf(defaultHeaders);
         this.stateMachine = stateMachine;
     }
 
     @Override
-    public Map<String, String> getDefaultHeaders()
-    {
+    public Map<String, String> getDefaultHeaders() {
         return defaultHeaders;
     }
 
     @Override
-    public AlchemyHttp usingDefaultHeader(String key, String value)
-    {
-        Arguments.checkThat(key)
-                .usingMessage("Key is empty")
-                .isA(nonEmptyString());
+    public AlchemyHttp usingDefaultHeader(String key, String value) {
+        checkThat(key)
+            .usingMessage("Key is empty")
+            .isA(nonEmptyString());
 
         var copy = new HashMap<>(defaultHeaders);
         copy.put(key, value);
@@ -52,19 +48,17 @@ final class AlchemyHttpImpl implements AlchemyHttp
     }
 
     @Override
-    public AlchemyRequestSteps.Step1 go()
-    {
+    public AlchemyRequestSteps.Step1 go() {
         var initialRequest = HttpRequest.Builder
-                                                  .newInstance()
-                                                  .usingRequestHeaders(defaultHeaders)
-                                                  .build();
+            .newInstance()
+            .usingRequestHeaders(defaultHeaders)
+            .build();
 
         return stateMachine.begin(initialRequest);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AlchemyHttp{defaultHeaders=" + defaultHeaders + ", stateMachine=" + stateMachine + "}";
     }
 }
