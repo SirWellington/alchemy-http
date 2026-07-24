@@ -17,10 +17,12 @@ package tech.sirwellington.alchemy.http;
 import java.net.MalformedURLException;
 import java.net.URI;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateEnum;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -37,6 +39,7 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 @AlchemyTest
 public class HttpAssertionsTest {
 
+    @GenerateEnum
     private RequestMethod requestMethod;
 
     @BeforeEach
@@ -90,48 +93,57 @@ public class HttpAssertionsTest {
 
     @Test
     public void testRequestReady() throws MalformedURLException {
+        // Given
         var instance = HttpAssertions.ready();
-
         var url = one(Generators.validUrls());
-
         var request = mock(HttpRequest.class);
+        // When
         when(request.url()).thenReturn(url);
         when(request.method()).thenReturn(requestMethod);
-
+        // Then
         instance.check(request);
     }
 
     @Test
     public void testRequestReadyEdgeCases() throws Exception {
+        // Given
         var instance = HttpAssertions.ready();
 
-        // Edge cases
+        // Then
         assertThrows(() -> instance.check(null))
             .isInstanceOf(FailedAssertionException.class);
 
+        // Given
         var url = one(Generators.validUrls());
         var request = mock(HttpRequest.class);
+        // When
         when(request.url()).thenReturn(url);
         when(request.method()).thenReturn(requestMethod);
+        // Then
+        Assertions.assertDoesNotThrow(
+            () -> instance.check(request)
+        );
 
+        // When
         // Missing Request Method
         when(request.method()).thenReturn(null);
-
+        // Then
         assertThrows(() -> instance.check(request))
             .isInstanceOf(FailedAssertionException.class);
 
+        // When - Missing URL
+        when(request.url()).thenReturn(null);
         when(request.method()).thenReturn(requestMethod);
 
-        // Missing URL
-        when(request.url()).thenReturn(null);
-
+        // Then
         assertThrows(() -> instance.check(request))
             .isInstanceOf(FailedAssertionException.class);
 
-        // Bad URL
+        // Given
         var badUrl = new URI("file://" + one(alphabeticStrings()));
+        // When
         when(request.url()).thenReturn(badUrl.toURL());
-
+        // Then
         assertThrows(() -> instance.check(request))
             .isInstanceOf(FailedAssertionException.class);
     }

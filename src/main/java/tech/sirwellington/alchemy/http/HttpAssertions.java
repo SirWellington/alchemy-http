@@ -66,18 +66,18 @@ final class HttpAssertions
         {
             checkThat(request)
                     .usingMessage("Request missing")
-                    .isA(notNull());
+                    .is(notNull());
 
             checkThat(request.method())
                     .usingMessage("Request missing HTTP Method")
-                    .isA(notNull());
+                    .is(notNull());
 
             checkThat(request.url())
                     .usingMessage("Request missing URL")
-                    .isA(notNull());
+                    .is(notNull());
 
             checkThat(request.url().getProtocol())
-                    .isA(stringBeginningWith("http"));
+                    .is(stringBeginningWith("http"));
         };
     }
 

@@ -22,16 +22,20 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author SirWellington
  */
-public enum RequestMethod
-{
-    GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE;
+public enum RequestMethod {
+    GET,
+    POST,
+    HEAD,
+    OPTIONS,
+    PUT,
+    DELETE,
+    TRACE;
 
     public final String asString = this.toString();
 
     public static final List<RequestMethod> all = List.of(values());
 
-    public static RequestMethod any()
-    {
+    public static RequestMethod any() {
         return all.get(ThreadLocalRandom.current().nextInt(all.size()));
     }
 }
