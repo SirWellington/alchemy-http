@@ -28,16 +28,13 @@ import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.s
 /**
  * @author SirWellington
  */
-final class HttpAssertions
-{
+final class HttpAssertions {
 
-    private HttpAssertions()
-    {
+    private HttpAssertions() {
         throw new AssertionError("non-instantiable");
     }
 
-    static AlchemyAssertion<Integer> validHttpStatusCode()
-    {
+    static AlchemyAssertion<Integer> validHttpStatusCode() {
         /*
          * See https://www.whoishostingthis.com/resources/http-status-codes
          */
@@ -47,55 +44,48 @@ final class HttpAssertions
     /*
      * TODO: Add check to see if the class structure is that of a POJO.
      */
-    static <Response> AlchemyAssertion<Class<Response>> validResponseClass()
-    {
-        return klass ->
-        {
-            checkThat(klass).isA(notNull());
+    static <Response> AlchemyAssertion<Class<Response>> validResponseClass() {
+        return klass -> {
+            checkThat(klass).is(notNull());
 
-            if (klass == Void.class)
-            {
+            if (klass == Void.class) {
                 throw new FailedAssertionException("Response class cannot be Void");
             }
         };
     }
 
-    static AlchemyAssertion<HttpRequest> ready()
-    {
+    static AlchemyAssertion<HttpRequest> ready() {
         return request ->
         {
             checkThat(request)
-                    .usingMessage("Request missing")
-                    .is(notNull());
+                .usingMessage("Request missing")
+                .is(notNull());
 
             checkThat(request.method())
-                    .usingMessage("Request missing HTTP Method")
-                    .is(notNull());
+                .usingMessage("Request missing HTTP Method")
+                .is(notNull());
 
             checkThat(request.url())
-                    .usingMessage("Request missing URL")
-                    .is(notNull());
+                .usingMessage("Request missing URL")
+                .is(notNull());
 
             checkThat(request.url().getProtocol())
-                    .is(stringBeginningWith("http"));
+                .is(stringBeginningWith("http"));
         };
     }
 
-    static AlchemyAssertion<String> validContentType()
-    {
+    static AlchemyAssertion<String> validContentType() {
         return contentType ->
         {
             checkThat(contentType)
-                    .usingMessage("missing Content-Type")
-                    .isA(nonEmptyString());
+                .usingMessage("missing Content-Type")
+                .isA(nonEmptyString());
 
-            if (contentType.contains(ContentTypes.APPLICATION_JSON))
-            {
+            if (contentType.contains(ContentTypes.APPLICATION_JSON)) {
                 return;
             }
 
-            if (contentType.contains(ContentTypes.PLAIN_TEXT))
-            {
+            if (contentType.contains(ContentTypes.PLAIN_TEXT)) {
                 return;
             }
 
@@ -103,41 +93,33 @@ final class HttpAssertions
         };
     }
 
-    static AlchemyAssertion<HttpRequest> validRequest()
-    {
-        return request ->
-        {
+    static AlchemyAssertion<HttpRequest> validRequest() {
+        return request -> {
             checkThat(request)
-                    .usingMessage("missing HTTP Request")
-                    .isA(notNull());
+                .usingMessage("missing HTTP Request")
+                .is(notNull());
 
             checkThat(request.url())
-                    .usingMessage("missing request URL")
-                    .isA(notNull());
+                .usingMessage("missing request URL")
+                .is(notNull());
         };
     }
 
-    static AlchemyAssertion<JsonElement> jsonArray()
-    {
-        return json ->
-        {
-            checkThat(json).isA(notNull());
+    static AlchemyAssertion<JsonElement> jsonArray() {
+        return json -> {
+            checkThat(json).is(notNull());
 
-            if (!json.isJsonArray())
-            {
+            if (!json.isJsonArray()) {
                 throw new FailedAssertionException("Expecting JSON Array, instead: " + json);
             }
         };
     }
 
-    static AlchemyAssertion<HttpResponse> okResponse()
-    {
-        return response ->
-        {
-            checkThat(response).isA(notNull());
+    static AlchemyAssertion<HttpResponse> okResponse() {
+        return response -> {
+            checkThat(response).is(notNull());
 
-            if (!response.isOk())
-            {
+            if (!response.isOk()) {
                 throw new FailedAssertionException("Http Response not OK. Status Code: " + response.statusCode());
             }
         };
