@@ -24,15 +24,16 @@ import io.mikael.urlbuilder.UrlBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateEnum;
+import tech.sirwellington.alchemy.test.generation.GenerateMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 
 /**
  * @author SirWellington
@@ -40,45 +41,39 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 @AlchemyTest
 public class HttpConnectionPreparerTest {
 
-    private HttpConnectionPreparer instance;
+    private final HttpConnectionPreparer instance = HttpConnectionPreparer.create();
 
-    private URL url;
-
-    private URL expandedUrl;
-
+    @GenerateEnum
     private RequestMethod requestMethod;
+    private URL url;
+    private URL expandedUrl;
 
     @Mock
     private HttpRequest request;
 
     private JsonElement body;
 
+    @GenerateMap(keyType = String.class, valueType = String.class)
     private Map<String, String> queryParams;
 
     @BeforeEach
     public void setUp() throws Exception {
         body = one(Generators.jsonElements());
-        queryParams = CollectionGenerators.mapOf(
-            alphabeticStrings(10),
-            alphabeticStrings(10),
-            10
-        );
         url = one(Generators.validUrls());
         expandedUrl = expandUrl();
 
-        when(request.url()).thenReturn(url);
-        when(request.body()).thenReturn(body);
-        when(request.queryParams()).thenReturn(queryParams);
-        when(request.method()).thenReturn(requestMethod);
-
-        instance = HttpConnectionPreparer.create();
+        lenient().when(request.url()).thenReturn(url);
+        lenient().when(request.body()).thenReturn(body);
+        lenient().when(request.queryParams()).thenReturn(queryParams);
+        lenient().when(request.method()).thenReturn(requestMethod);
     }
 
     @Test
     public void testMap() throws Exception {
+        // Given
         when(request.hasBody()).thenReturn(true);
-
         var result = instance.map(request);
+        // Then
         assertThat(result, notNullValue());
         assertThat(result.getRequestMethod(), equalTo(requestMethod.asString));
         assertThat(result.getDoInput(), equalTo(true));
@@ -95,11 +90,11 @@ public class HttpConnectionPreparerTest {
 
     @Test
     public void testMapExpandsURL() throws Exception {
-        instance = HttpConnectionPreparer.create();
-
+        // Given
         when(request.hasQueryParams()).thenReturn(true);
-
+        // When
         var result = instance.map(request);
+        // Then
         assertThat(result.getURL(), equalTo(expandedUrl));
     }
 
