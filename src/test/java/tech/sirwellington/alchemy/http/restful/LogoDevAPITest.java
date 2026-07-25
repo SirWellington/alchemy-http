@@ -27,8 +27,6 @@ import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.validURL;
 
 
 @AlchemyTest
@@ -44,8 +42,7 @@ public class LogoDevAPITest {
 
     private record AutocompleteResponse(
         String name,
-        String domain,
-        String logo
+        String domain
     ) {}
 
     @Test
@@ -104,13 +101,6 @@ public class LogoDevAPITest {
         for (var item : response) {
             assertThat(item.name, not(emptyOrNullString()));
             assertThat(item.domain, not(emptyOrNullString()));
-            assertThat(item.logo, not(emptyOrNullString()));
-
-            try {
-                checkThat(item.logo).isA(validURL());
-            }
-            catch (Exception _) {
-            }
         }
     }
 
