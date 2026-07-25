@@ -33,12 +33,12 @@ import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.
 
 @AlchemyTest
 @IntegrationTest
-public class ClearbitAPITest {
+public class LogoDevAPITest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ClearbitAPITest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LogoDevAPITest.class);
 
     private static final String AUTOCOMPLETE_ENDPOINT = "https://autocomplete.clearbit.com/v1/companies/suggest";
-    private static final String LOGO_ENDPOINT = "https://logo.clearbit.com";
+    private static final String LOGO_ENDPOINT = "https://logos.hunter.io";
 
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 

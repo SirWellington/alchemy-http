@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GeneratePojo;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -33,38 +34,20 @@ public class DummyAPITest {
     private static final String ENDPOINT = "https://jsonplaceholder.typicode.com";
     private static final Logger LOG = LoggerFactory.getLogger(DummyAPITest.class);
 
-    private static class PostRequest {
-        String title;
-        String body;
-        int userId;
+    private record PostRequest(
+        String title,
+        String body,
+        int userId
+    ) { }
 
-        @Override
-        public String toString() {
-            return "PostRequest{" +
-                "title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", userId=" + userId +
-                '}';
-        }
-    }
+    private record Post(
+        int id,
+        String title,
+        String body,
+        int userId
+    ) {}
 
-    private static class Post {
-        int id;
-        String title;
-        String body;
-        int userId;
-
-        @Override
-        public String toString() {
-            return "Post{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", userId=" + userId +
-                '}';
-        }
-    }
-
+    @GeneratePojo
     private PostRequest request;
 
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
@@ -89,7 +72,7 @@ public class DummyAPITest {
 
     @Test
     public void testDeletePost() throws Exception {
-        int postId = 1;
+        var postId = 1;
         var url = ENDPOINT + "/posts/" + postId;
 
         var response = http.go()

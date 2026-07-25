@@ -47,7 +47,7 @@ public interface AlchemyRequestSteps
             }
             catch (Exception ex)
             {
-                throw new AlchemyHttpException("Could not download from URL" + url, ex);
+                throw new AlchemyHttpException("Could not download from URL: " + url, ex);
             }
         }
 
