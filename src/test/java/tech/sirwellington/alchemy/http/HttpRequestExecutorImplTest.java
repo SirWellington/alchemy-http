@@ -24,19 +24,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import sir.wellington.alchemy.collections.lists.Lists;
 import sir.wellington.alchemy.collections.maps.Maps;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
-import tech.sirwellington.alchemy.generator.NumberGenerators;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateLong;
+import tech.sirwellington.alchemy.test.generation.GenerateMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -45,6 +44,7 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticStrings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.generation.GenerateLong.Type.RANGE;
 
 /**
  * @author SirWellington
@@ -68,10 +68,13 @@ public class HttpRequestExecutorImplTest {
     private InputStream input;
 
     private JsonElement responseBody;
-    private String responseString;
 
+    @GenerateMap(keyType = String.class, valueType = String.class)
     private Map<String, String> responseHeaders;
-    private final com.google.gson.Gson gson = Constants.DEFAULT_GSON;
+
+    private final Gson gson = Constants.DEFAULT_GSON;
+
+    @GenerateLong(value = RANGE, min= 10L, max = 1_000L)
     private long timeout;
 
     private HttpRequestExecutor instance;
@@ -81,8 +84,9 @@ public class HttpRequestExecutorImplTest {
         instance = new HttpRequestExecutorImpl(requestMapper);
         verifyNoInteractions(requestMapper);
 
-        timeout = NumberGenerators.smallPositiveLongs().get();
-        when(requestMapper.map(request)).thenReturn(httpConnection);
+        lenient()
+            .when(requestMapper.map(request))
+            .thenReturn(httpConnection);
 
         setupResponse();
     }
@@ -90,19 +94,30 @@ public class HttpRequestExecutorImplTest {
     private void setupResponse() throws IOException {
         setupResponseBody();
         setupResponseHeaders();
-        when(httpConnection.getResponseCode()).thenReturn(200);
+        lenient()
+            .when(httpConnection.getResponseCode())
+            .thenReturn(200);
     }
 
     private void setupResponseBody() throws IOException {
         responseBody = one(Generators.jsonElements());
-        responseString = responseBody.toString();
+        var responseString = responseBody.toString();
 
         var bytes = responseString.getBytes(StandardCharsets.UTF_8);
         input = new ByteArrayInputStream(bytes);
 
-        when(httpConnection.getInputStream()).thenReturn(input);
-        when(httpConnection.getOutputStream()).thenReturn(output);
-        when(httpConnection.getContentType()).thenReturn(ContentTypes.APPLICATION_JSON);
+        lenient()
+            .when(httpConnection.getInputStream())
+            .thenReturn(input);
+
+        lenient()
+            .when(httpConnection.getOutputStream())
+            .thenReturn(output);
+
+        lenient()
+            .when(httpConnection.getContentType())
+            .thenReturn(ContentTypes.APPLICATION_JSON);
+
     }
 
     private void setupResponseHeaders() {
@@ -114,7 +129,9 @@ public class HttpRequestExecutorImplTest {
             headers.put(entry.getKey(), Lists.createFrom(entry.getValue()));
         }
 
-        when(httpConnection.getHeaderFields()).thenReturn(headers);
+        lenient()
+            .when(httpConnection.getHeaderFields())
+            .thenReturn(headers);
     }
 
     @Test
@@ -195,17 +212,11 @@ public class HttpRequestExecutorImplTest {
     }
 
     @Test
-    public void testWhenConnectionFails() {
+    public void testWhenConnectionFails() throws IOException {
         var url = Generators.validUrls().get();
         request = HttpRequest.Builder.from(request).usingUrl(url).build();
 
-        HttpURLConnection realConnection;
-        try {
-            realConnection = (HttpURLConnection) url.openConnection();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        var realConnection = (HttpURLConnection) url.openConnection();
 
         when(requestMapper.map(request)).thenReturn(realConnection);
 
@@ -218,8 +229,8 @@ public class HttpRequestExecutorImplTest {
     // =============================================
 
     @Test
+    @DisplayName("performance test")
     public void testPerformance() {
-        System.out.println("performance test");
         var body = one(Generators.jsonObjects()).toString();
 
         long time = time(() -> JsonParser.parseString(body));

@@ -31,12 +31,14 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.http.exceptions.JsonException;
 import tech.sirwellington.alchemy.http.exceptions.OperationFailedException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveLong;
 
 /**
@@ -48,7 +50,10 @@ final class HttpRequestExecutorImpl implements HttpRequestExecutor {
 
     private final HttpConnectionPreparer requestMapper;
 
-    HttpRequestExecutorImpl(HttpConnectionPreparer requestMapper) {
+    HttpRequestExecutorImpl(@Required HttpConnectionPreparer requestMapper) {
+        checkThat(requestMapper)
+            .throwing(IllegalArgumentException.class)
+            .is(notNull());
         this.requestMapper = requestMapper;
     }
 
@@ -226,7 +231,10 @@ final class HttpRequestExecutorImpl implements HttpRequestExecutor {
         return new HttpRequestExecutorImpl(HttpConnectionPreparer.create());
     }
 
-    static HttpRequestExecutorImpl create(HttpConnectionPreparer mapper) {
+    static HttpRequestExecutorImpl create(@Required HttpConnectionPreparer mapper) {
+        checkThat(mapper)
+            .throwing(IllegalArgumentException.class)
+            .is(notNull());
         return new HttpRequestExecutorImpl(mapper);
     }
 }
