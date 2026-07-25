@@ -14,23 +14,18 @@
  */
 package tech.sirwellington.alchemy.http;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @AlchemyTest
-public class StringsTest {
+final class StringsTest {
 
+    @GenerateString
     private String string;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        setupData();
-        setupMocks();
-    }
 
     @Test
     public void testNullToEmpty() throws Exception {
@@ -47,11 +42,5 @@ public class StringsTest {
         assertThat(Strings.isNullOrEmpty(string), is(false));
         assertThat(Strings.isNullOrEmpty(null), is(true));
         assertThat(Strings.isNullOrEmpty(""), is(true));
-    }
-
-    private void setupData() throws Exception {
-    }
-
-    private void setupMocks() throws Exception {
     }
 }

@@ -16,6 +16,7 @@ package tech.sirwellington.alchemy.http;
 
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateEnum;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -23,13 +24,14 @@ import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 
 @AlchemyTest
-public class HttpStatusCodeTest {
+final class HttpStatusCodeTest {
 
+    @GenerateEnum
     private HttpStatusCode status;
 
     @Test
     public void testMatchesCode() {
-        int code = status.getCode();
+        var code = status.getCode();
         assertThat(status.matchesCode(code), equalTo(true));
 
         var otherCode = HttpStatusCode.anyExcept(status);
@@ -38,14 +40,14 @@ public class HttpStatusCodeTest {
 
     @Test
     public void testForCode() {
-        int code = status.getCode();
+        var code = status.getCode();
         var resultCode = HttpStatusCode.forCode(code);
         assertThat(resultCode, equalTo(status));
     }
 
     @Test
     public void testForCodeWhenUnknown() {
-        int code = one(integers(-100, 100));
+        var code = one(integers(-100, 100));
         var resultCode = HttpStatusCode.forCode(code);
         assertThat(resultCode, nullValue());
     }

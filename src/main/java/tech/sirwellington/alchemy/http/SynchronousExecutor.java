@@ -16,16 +16,13 @@ package tech.sirwellington.alchemy.http;
 
 import java.util.concurrent.Executor;
 
-final class SynchronousExecutor implements Executor
-{
+final class SynchronousExecutor implements Executor {
     @Override
-    public void execute(Runnable command)
-    {
+    public void execute(Runnable command) {
         command.run();
     }
 
-    static SynchronousExecutor newInstance()
-    {
+    static SynchronousExecutor newInstance() {
         return new SynchronousExecutor();
     }
 }

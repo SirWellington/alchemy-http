@@ -15,6 +15,9 @@
 
 package tech.sirwellington.alchemy.http.restful;
 
+import java.net.URI;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,7 @@ import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GeneratePojo;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -36,13 +40,35 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
  */
 @AlchemyTest
 @IntegrationTest
-public class ReqResponseAPITest {
+final class ReqResponseAPITest {
 
     private static final String ENDPOINT = "https://reqres.in";
-    private static final AlchemyHttp http = AlchemyHttp.newBuilder().build();
+    private static final String API_KEY = System.getenv("REQ_RES_API_KEY");
+    private static final AlchemyHttp http = AlchemyHttp
+        .newBuilder()
+        .usingDefaultHeader("X-Api-Key", API_KEY)
+        .build();
     private static final Logger LOG = LoggerFactory.getLogger(ReqResponseAPITest.class);
 
-    private record CreateUserRequest(String name, String job) {}
+    private record User(
+        String id,
+        String email,
+        String firstName,
+        String lastName,
+        URI avatar
+    ) {}
+
+    private record GetUsersResponse(
+        int page,
+        int perPage,
+        int totalPages,
+        List<User> data
+    ) {}
+
+    private record CreateUserRequest(
+        String name,
+        String job
+    ) {}
 
     private record CreateUserResponse(
         String name,
@@ -57,7 +83,24 @@ public class ReqResponseAPITest {
         String updatedAt
     ) {}
 
+    @GeneratePojo
     private CreateUserRequest request;
+
+    @Test
+    public void testGetUsers() throws Exception {
+        var url = ENDPOINT + "/api/users";
+
+        var response = http.go()
+            .get()
+            .expecting(GetUsersResponse.class)
+            .at(url);
+
+        assertThat(response.data, not(empty()));
+        var firstUser = response.data.getFirst();
+        assertThat(firstUser.id, not(emptyOrNullString()));
+        assertThat(firstUser.email, not(emptyOrNullString()));
+        assertThat(firstUser.avatar, not(nullValue()));
+    }
 
     @Test
     public void testCreateUser() throws Exception {
@@ -83,11 +126,11 @@ public class ReqResponseAPITest {
         var userId = 3;
         var url = ENDPOINT + "/api/users/" + userId;
 
-        UpdateUserResponse response = http.go()
-                                          .put()
-                                          .body(request)
-                                          .expecting(UpdateUserResponse.class)
-                                          .at(url);
+        var response = http.go()
+                           .put()
+                           .body(request)
+                           .expecting(UpdateUserResponse.class)
+                           .at(url);
 
         LOG.info("PUT request @ [{}] produced response [{}]", url, response);
 
