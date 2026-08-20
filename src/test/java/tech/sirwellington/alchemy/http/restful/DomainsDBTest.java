@@ -15,9 +15,7 @@
 
 package tech.sirwellington.alchemy.http.restful;
 
-import java.util.List;
-
-import com.google.gson.JsonObject;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,57 +32,57 @@ import static org.hamcrest.Matchers.*;
  */
 @AlchemyTest
 @IntegrationTest
-public class DomainsDBTest {
+final class DomainsDBTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DomainsDBTest.class);
 
-    private static final String ENDPOINT = "https://api.domainsdb.info/search";
+    private static final String ENDPOINT = "https://dns.google/resolve";
     private final AlchemyHttp http = AlchemyHttp.newBuilder().build();
 
     private record ResponseBody(
-        Integer total,
-        Integer time,
-        List<JsonObject> domains
-    ) {}
+        int Status,
+        Answer[] Answer
+    ) {
+        record Answer(
+            String name,
+            int type,
+            int ttl,
+            String data
+        ) { }
+    }
 
     @Test
     public void testMicrosoft() throws Exception {
-        var url = ENDPOINT;
-
         var response = http.go()
                            .get()
-                           .usingQueryParam("query", "microsoft")
-                           .usingQueryParam("tld", "com")
+                           .usingQueryParam("name", "microsoft.com")
+                           .usingQueryParam("type", "A")
                            .expecting(ResponseBody.class)
-                           .at(url);
+                           .at(ENDPOINT);
 
         checkResponse(response);
     }
 
     @Test
     public void testFacebook() throws Exception {
-        var url = ENDPOINT;
-
         var response = http.go()
                            .get()
-                           .usingQueryParam("query", "facebook")
+                           .usingQueryParam("name", "facebook")
                            .usingQueryParam("tld", "com")
                            .expecting(ResponseBody.class)
-                           .at(url);
+                           .at(ENDPOINT);
 
         checkResponse(response);
     }
 
     @Test
     public void testAmazon() throws Exception {
-        var url = ENDPOINT;
-
         var response = http.go()
                            .get()
-                           .usingQueryParam("query", "Google")
+                           .usingQueryParam("name", "Google")
                            .usingQueryParam("told", "com")
                            .expecting(ResponseBody.class)
-                           .at(url);
+                           .at(ENDPOINT);
 
         checkResponse(response);
     }
@@ -93,9 +91,13 @@ public class DomainsDBTest {
         LOG.info("Received response: [{}]", response);
 
         assertThat(response, notNullValue());
-        assertThat(response.total, notNullValue());
-        assertThat(response.time, notNullValue());
-        assertThat(response.domains, notNullValue());
-        assertThat(response.domains, not(empty()));
+        assertThat(response.Status, notNullValue());
+        assertThat(response.Answer, notNullValue());
+        var answers = response.Answer;
+        assertThat(answers, Matchers.not(emptyArray()));
+        var first = answers[0];
+        assertThat(first.name, not(emptyOrNullString()));
+        assertThat(first.ttl, not(nullValue()));
+        assertThat(first.data, not(emptyOrNullString()));
     }
 }
