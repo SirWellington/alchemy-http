@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019. Sir Wellington.
+ * Copyright © 2026. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -14,7 +14,9 @@
  */
 package tech.sirwellington.alchemy.http.exceptions;
 
-import tech.sirwellington.alchemy.http.*;
+import tech.sirwellington.alchemy.http.AlchemyRequestSteps;
+import tech.sirwellington.alchemy.http.HttpRequest;
+import tech.sirwellington.alchemy.http.HttpResponse;
 
 /**
  * Thrown when an error occurs trying to parse JSON, or unwrap JSON into a

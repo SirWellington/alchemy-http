@@ -18,89 +18,90 @@ import tech.sirwellington.alchemy.http.HttpRequest;
 import tech.sirwellington.alchemy.http.HttpResponse;
 
 /**
+ * Thrown when a connection could not be established
+ * to the server.
  *
  * @author SirWellington
  */
-public class OperationFailedException extends AlchemyHttpException
+public class AlchemyConnectionException extends AlchemyHttpException
 {
 
-    public OperationFailedException()
+    public AlchemyConnectionException()
     {
     }
 
-    public OperationFailedException(String message)
+    public AlchemyConnectionException(String message)
     {
         super(message);
     }
 
-    public OperationFailedException(String message, Throwable cause)
+    public AlchemyConnectionException(String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    public OperationFailedException(Throwable cause)
+    public AlchemyConnectionException(Throwable cause)
     {
         super(cause);
     }
 
-    public OperationFailedException(HttpRequest request)
+    public AlchemyConnectionException(HttpRequest request)
     {
         super(request);
     }
 
-    public OperationFailedException(HttpRequest request, String message)
+    public AlchemyConnectionException(HttpRequest request, String message)
     {
         super(request, message);
     }
 
-    public OperationFailedException(HttpRequest request, String message, Throwable cause)
+    public AlchemyConnectionException(HttpRequest request, String message, Throwable cause)
     {
         super(request, message, cause);
     }
 
-    public OperationFailedException(HttpRequest request, Throwable cause)
+    public AlchemyConnectionException(HttpRequest request, Throwable cause)
     {
         super(request, cause);
     }
 
-    public OperationFailedException(HttpResponse response)
+    public AlchemyConnectionException(HttpResponse response)
     {
         super(response);
     }
 
-    public OperationFailedException(HttpResponse response, String message)
+    public AlchemyConnectionException(HttpResponse response, String message)
     {
         super(response, message);
     }
 
-    public OperationFailedException(HttpResponse response, String message, Throwable cause)
+    public AlchemyConnectionException(HttpResponse response, String message, Throwable cause)
     {
         super(response, message, cause);
     }
 
-    public OperationFailedException(HttpResponse response, Throwable cause)
+    public AlchemyConnectionException(HttpResponse response, Throwable cause)
     {
         super(response, cause);
     }
 
-    public OperationFailedException(HttpRequest request, HttpResponse response)
+    public AlchemyConnectionException(HttpRequest request, HttpResponse response)
     {
         super(request, response);
     }
 
-    public OperationFailedException(HttpRequest request, HttpResponse response, String message)
+    public AlchemyConnectionException(HttpRequest request, HttpResponse response, String message)
     {
         super(request, response, message);
     }
 
-    public OperationFailedException(HttpRequest request, HttpResponse response, String message, Throwable cause)
+    public AlchemyConnectionException(HttpRequest request, HttpResponse response, String message, Throwable cause)
     {
         super(request, response, message, cause);
     }
 
-    public OperationFailedException(HttpRequest request, HttpResponse response, Throwable cause)
+    public AlchemyConnectionException(HttpRequest request, HttpResponse response, Throwable cause)
     {
         super(request, response, cause);
     }
-
 }

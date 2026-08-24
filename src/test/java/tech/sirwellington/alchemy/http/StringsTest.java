@@ -1,0 +1,46 @@
+/*
+ * Copyright © 2026. Sir Wellington.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package tech.sirwellington.alchemy.http;
+
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateString;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+@AlchemyTest
+final class StringsTest {
+
+    @GenerateString
+    private String string;
+
+    @Test
+    public void testNullToEmpty() throws Exception {
+        var result = Strings.nullToEmpty(string);
+        assertThat(result, equalTo(string));
+
+        result = Strings.nullToEmpty(null);
+        assertThat(result, notNullValue());
+        assertThat(result, equalTo(""));
+    }
+
+    @Test
+    public void testIsNullOrEmpty() throws Exception {
+        assertThat(Strings.isNullOrEmpty(string), is(false));
+        assertThat(Strings.isNullOrEmpty(null), is(true));
+        assertThat(Strings.isNullOrEmpty(""), is(true));
+    }
+}

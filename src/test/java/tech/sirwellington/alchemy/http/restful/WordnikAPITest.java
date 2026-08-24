@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019. Sir Wellington.
+ * Copyright © 2026. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -15,31 +15,27 @@
 
 package tech.sirwellington.alchemy.http.restful;
 
-import com.google.gson.JsonObject;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.testing.IntegrationTest;
 import tech.sirwellington.alchemy.http.AlchemyHttp;
-import tech.sirwellington.alchemy.http.HttpResponse;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
+@AlchemyTest
 @IntegrationTest
-@Ignore
-public class WordnikAPITest
-{
+@Disabled
+public class WordnikAPITest {
 
     private static final Logger LOG = LoggerFactory.getLogger(WordnikAPITest.class);
 
@@ -47,75 +43,71 @@ public class WordnikAPITest
     private static final String API_KEY = "a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5";
     private static final String api_key = "api_key";
 
-    private AlchemyHttp http = AlchemyHttp.Factory.newBuilder()
-                                                  .usingDefaultHeader(api_key, API_KEY)
-                                                  .build();
+    private final AlchemyHttp http = AlchemyHttp.newBuilder()
+                                                .usingDefaultHeader(api_key, API_KEY)
+                                                .build();
 
-    @Ignore
+    @Disabled
     @Test
-    public void testWordOfDay() throws Exception
-    {
-        String url = ENDPOINT + "/words.json/wordOfTheDay";
+    public void testWordOfDay() throws Exception {
+        var url = ENDPOINT + "/words.json/wordOfTheDay";
 
-        HttpResponse response = http.go()
-                                    .get()
-                                    .at(url);
+        var response = http.go()
+                           .get()
+                           .at(url);
 
         assertThat(response, notNullValue());
-        assertTrue(response.body() != null);
-        assertTrue(response.body().isJsonObject());
+        assertThat(response.body() != null, is(true));
+        assertThat(response.body().isJsonObject(), is(true));
 
-        JsonObject json = response.body().getAsJsonObject();
-        assertTrue(json.has("id"));
-        assertTrue(json.has("word"));
-        assertTrue(json.has("definitions"));
-        assertTrue(json.has("examples"));
+        var json = response.body().getAsJsonObject();
+        assertThat(json.has("id"), is(true));
+        assertThat(json.has("word"), is(true));
+        assertThat(json.has("definitions"), is(true));
+        assertThat(json.has("examples"), is(true));
     }
 
-    @Ignore
-    @Repeat(5)
+    @Disabled
     @Test
-    public void testRandomWord() throws Exception
-    {
-        String url = ENDPOINT + "/words.json/randomWord";
+    public void testRandomWord() throws Exception {
+        var url = ENDPOINT + "/words.json/randomWord";
 
-        HttpResponse response = http.go()
-                                    .get()
-                                    .usingQueryParam("hasDictionaryDef", true)
-                                    .at(url);
+        var response = http.go()
+                           .get()
+                           .usingQueryParam("hasDictionaryDef", true)
+                           .at(url);
 
         assertThat(response, notNullValue());
         assertThat(response.body(), notNullValue());
 
-        JsonObject json = response.body().getAsJsonObject();
+        var json = response.body().getAsJsonObject();
 
-        assertTrue(json.has("id"));
-        assertTrue(json.has("word"));
+        assertThat(json.has("id"), is(true));
+        assertThat(json.has("word"), is(true));
 
         LOG.info("Random word is [{}]", json.get("word").getAsString());
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void testGetTokenStatus() throws Exception
-    {
-        String url = ENDPOINT + "/account.json/apiTokenStatus";
+    public void testGetTokenStatus() throws Exception {
+        var url = ENDPOINT + "/account.json/apiTokenStatus";
 
-        HttpResponse response = http.go()
-                                    .get()
-                                    .at(url);
+        var response = http.go()
+                           .get()
+                           .at(url);
 
-        JsonObject json = response.body().getAsJsonObject();
+        var json = response.body().getAsJsonObject();
 
         LOG.info("Token status: [{}]", json);
     }
 
-    @Test(expected = AlchemyHttpException.class)
-    public void testWhenNotFound() throws Exception
-    {
-        String url = ENDPOINT + "/unknown";
+    @Test
+    public void testWhenNotFound() throws Exception {
+        var url = ENDPOINT + "/unknown";
 
-        http.go().get().at(url);
+        assertThrows(() -> http.go().get().at(url))
+            .isInstanceOf(AlchemyHttpException.class);
     }
 
 }
