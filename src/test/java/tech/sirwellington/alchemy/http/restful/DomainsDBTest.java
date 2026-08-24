@@ -67,8 +67,8 @@ final class DomainsDBTest {
     public void testFacebook() throws Exception {
         var response = http.go()
                            .get()
-                           .usingQueryParam("name", "facebook")
-                           .usingQueryParam("tld", "com")
+                           .usingQueryParam("name", "facebook.com")
+                           .usingQueryParam("type", "A")
                            .expecting(ResponseBody.class)
                            .at(ENDPOINT);
 
@@ -79,8 +79,8 @@ final class DomainsDBTest {
     public void testAmazon() throws Exception {
         var response = http.go()
                            .get()
-                           .usingQueryParam("name", "Google")
-                           .usingQueryParam("told", "com")
+                           .usingQueryParam("name", "google.com")
+                           .usingQueryParam("type", "a")
                            .expecting(ResponseBody.class)
                            .at(ENDPOINT);
 
