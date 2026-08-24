@@ -31,6 +31,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyConnectionException;
 import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
@@ -44,6 +45,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.p
 /**
  * @author SirWellington
  */
+@Internal
 final class HttpRequestExecutorImpl implements HttpRequestExecutor {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestExecutorImpl.class);
@@ -137,10 +139,11 @@ final class HttpRequestExecutorImpl implements HttpRequestExecutor {
                 var errorStream = http.getErrorStream();
 
                 if (errorStream != null) {
-                    try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(errorStream, StandardCharsets.UTF_8))) {
-                        StringBuilder sb = new StringBuilder();
-                        String line;
+                    try (var reader = new BufferedReader(
+                        new InputStreamReader(errorStream, StandardCharsets.UTF_8)
+                    )) {
+                        var sb = new StringBuilder();
+                        var line = "";
 
                         while ((line = reader.readLine()) != null) {
                             sb.append(line);

@@ -20,7 +20,10 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 /**
  * @author SirWellington
  */
-interface HttpRequestExecutor
-{
-    HttpResponse execute(HttpRequest request, Gson gson, long timeoutMillis) throws AlchemyHttpException;
+interface HttpRequestExecutor {
+    HttpResponse execute(
+        HttpRequest request,
+        Gson gson,
+        long timeoutMillis
+    ) throws AlchemyHttpException;
 }

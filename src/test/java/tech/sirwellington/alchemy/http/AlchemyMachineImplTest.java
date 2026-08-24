@@ -82,15 +82,18 @@ public class AlchemyMachineImplTest {
     }
 
     private void setupExecutor() {
-        when(requestExecutor.execute(eq(request), eq(gson), anyLong()))
+        lenient()
+            .when(requestExecutor.execute(eq(request), eq(gson), anyLong()))
             .thenReturn(response);
     }
 
     private void setupResponse() {
         pojo = TestPojo.generate();
 
-        when(response.isOk()).thenReturn(true);
-        when(response.bodyAs(responseClass)).thenReturn(pojo);
+        lenient().when(response.isOk()).thenReturn(true);
+        lenient()
+            .when(response.bodyAs(responseClass))
+            .thenReturn(pojo);
     }
 
     @Test
